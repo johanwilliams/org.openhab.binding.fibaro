@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="fibaro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+        xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+    <!-- Binary Switch Thing Type -->
+    <thing-type id="binarySwitch">
+        <label>Binary Switch Thing</label>
+        <description>Thing for a binary switch</description>
+
+        <channels>
+            <channel id="switch" typeId="switch"/>
+        </channels>
+    </thing-type>
+
+    <!-- Switch Channel Type -->
+    <channel-type id="switch">
+        <item-type>Switch</item-type>
+        <label>Switch</label>
+        <description>Current state of the Switch</description>
+    </channel-type>
+
+
+    <!-- Sample Thing Type -->
+    <!--  <thing-type id="sample">
+        <label>Fibaro Thing</label>
+        <description>Sample thing for Fibaro Binding</description>
+
+        <channels>
+            <channel id="channel1" typeId="sample-channel"/>
+        </channels>
+    </thing-type>-->
+
+    <!-- Sample Channel Type -->
+    <!--  <channel-type id="sample-channel">
+        <item-type>Switch</item-type>
+        <label>Fibaro Switch</label>
+        <description>Sample channel for Fibaro Binding</description>
+    </channel-type>-->
+    
+
+</thing:thing-descriptions>

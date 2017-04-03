@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="fibaro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+        xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+    <bridge-type id="fibaroBridge">
+        <label>Fibaro</label>
+        <description>Bridge to the Fibaro Home Center 2 controller</description>
+        
+        <config-description>
+            <parameter name="ipAdress" type="text" required="true">
+                <label>Ip address</label>
+                <description>Ip address to the Fibaro controller</description>
+                <context>network-address</context>
+            </parameter>
+
+            <parameter name="username" type="text" required="true">
+                <label>Username</label>
+                <description>Admin username to the Fibaro controller.</description>
+                <default>admin</default>
+            </parameter>
+                        
+            <parameter name="password" type="text" required="true">
+                <context>password</context>
+                <label>Password</label>
+                <description>Admin password to the Fibaro controller.</description>
+                <default>admin</default>
+            </parameter>
+        
+        </config-description>
+            
+    </bridge-type>    
+
+</thing:thing-descriptions>
