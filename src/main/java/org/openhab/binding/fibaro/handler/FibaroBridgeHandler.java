@@ -2,6 +2,7 @@ package org.openhab.binding.fibaro.handler;
 
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
+import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
@@ -42,6 +43,10 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
             logger.debug("   IP Address:         {},", ipAddress);
             logger.debug("   Username:           {},", username);
             logger.debug("   Password:           {},", password);
+
+            // todo: This should probably be moved to when we have successfully called the Ficaro api to verify it is
+            // working ok
+            updateStatus(ThingStatus.ONLINE);
 
         }
     }
