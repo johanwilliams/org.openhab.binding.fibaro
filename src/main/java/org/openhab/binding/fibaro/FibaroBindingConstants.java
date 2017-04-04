@@ -39,7 +39,8 @@ public class FibaroBindingConstants {
     public final static String SWITCH = "switch";
 
     // Set of all supported Thing Type UIDs
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(BINARY_SWITCH_THING_TYPE);
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(FIBAROBRIDGE_THING_TYPE,
+            BINARY_SWITCH_THING_TYPE);
 
     // Set of all supported Bridge Type UIDs
     public final static Set<ThingTypeUID> SUPPORTED_BRIDGE_THING_TYPES_UIDS = ImmutableSet.of(FIBAROBRIDGE_THING_TYPE);

@@ -9,7 +9,7 @@
         <description>Bridge to the Fibaro Home Center 2 controller</description>
         
         <config-description>
-            <parameter name="ipAdress" type="text" required="true">
+            <parameter name="ipAddress" type="text" required="true">
                 <label>Ip address</label>
                 <description>Ip address to the Fibaro controller</description>
                 <context>network-address</context>
