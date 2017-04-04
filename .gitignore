@@ -47,4 +47,4 @@ Temporary Items
 .apdisk
 
 # Maven build files
-*/target/*
+target/*
