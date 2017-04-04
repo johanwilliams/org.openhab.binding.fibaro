@@ -6,6 +6,7 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
+import org.openhab.binding.fibaro.internal.server.MultiThreadedServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,8 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
     private String ipAddress;
     private String username;
     private String password;
+
+    private MultiThreadedServer server = new MultiThreadedServer(9000);
 
     public FibaroBridgeHandler(Bridge bridge) {
         super(bridge);
@@ -44,6 +47,8 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
             logger.debug("   Username:           {},", username);
             logger.debug("   Password:           {},", password);
 
+            new Thread(server).start();
+
             // todo: This should probably be moved to when we have successfully called the Ficaro api to verify it is
             // working ok
             updateStatus(ThingStatus.ONLINE);
@@ -56,5 +61,4 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
         // TODO Auto-generated method stub
 
     }
-
 }
