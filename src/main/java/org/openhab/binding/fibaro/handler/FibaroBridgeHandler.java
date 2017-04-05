@@ -71,12 +71,14 @@ public class FibaroBridgeHandler extends BaseBridgeHandler implements TcpClientR
         InputStream input = clientSocket.getInputStream();
         OutputStream output = clientSocket.getOutputStream();
         long time = System.currentTimeMillis();
+        // String response = IOUtils.toString(input);
+        logger.debug("Response: " + time);
 
         output.write(
                 ("HTTP/1.1 200 OK\n\n<html><body>" + "Singlethreaded Server: " + time + "</body></html>").getBytes());
         output.close();
         input.close();
-        logger.debug("Request processed: " + time);
+
     }
 
     @Override

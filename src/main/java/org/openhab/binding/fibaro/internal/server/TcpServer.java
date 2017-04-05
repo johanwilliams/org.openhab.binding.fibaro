@@ -56,6 +56,7 @@ public class TcpServer implements Runnable {
     private void processClientRequest(Socket clientSocket) throws IOException {
         InputStream input = clientSocket.getInputStream();
         OutputStream output = clientSocket.getOutputStream();
+
         long time = System.currentTimeMillis();
 
         output.write(
@@ -81,6 +82,7 @@ public class TcpServer implements Runnable {
     private void openServerSocket() {
         try {
             this.serverSocket = new ServerSocket(this.serverPort);
+            logger.debug("Tcp server started on port " + serverPort);
         } catch (IOException e) {
             throw new RuntimeException("Cannot open port " + serverPort, e);
         }
