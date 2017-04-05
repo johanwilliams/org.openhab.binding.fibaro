@@ -1,12 +1,18 @@
 package org.openhab.binding.fibaro.handler;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
-import org.openhab.binding.fibaro.internal.server.MultiThreadedServer;
+import org.openhab.binding.fibaro.internal.server.TcpClientRequestListener;
+import org.openhab.binding.fibaro.internal.server.TcpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Johan Williams - Initial Contribution
  */
-public class FibaroBridgeHandler extends BaseBridgeHandler {
+public class FibaroBridgeHandler extends BaseBridgeHandler implements TcpClientRequestListener {
 
     private Logger logger = LoggerFactory.getLogger(FibaroBridgeHandler.class);
 
@@ -23,10 +29,11 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
     private String username;
     private String password;
 
-    private MultiThreadedServer server = new MultiThreadedServer(9000);
+    private TcpServer server;
 
     public FibaroBridgeHandler(Bridge bridge) {
         super(bridge);
+
         // TODO Auto-generated constructor stub
     }
 
@@ -35,6 +42,9 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
         logger.debug("Initializing the Fibaro Bridge handler.");
 
         FibaroBridgeConfiguration configuration = getConfigAs(FibaroBridgeConfiguration.class);
+
+        // TODO Move the port to bridge configuration
+        server = new TcpServer(this, 9000);
 
         if (configuration.ipAddress != null) {
 
@@ -49,11 +59,24 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
 
             new Thread(server).start();
 
-            // todo: This should probably be moved to when we have successfully called the Ficaro api to verify it is
+            // TODO This should probably be moved to when we have successfully called the Ficaro api to verify it is
             // working ok
             updateStatus(ThingStatus.ONLINE);
 
         }
+    }
+
+    @Override
+    public void processClientRequest(Socket clientSocket) throws IOException {
+        InputStream input = clientSocket.getInputStream();
+        OutputStream output = clientSocket.getOutputStream();
+        long time = System.currentTimeMillis();
+
+        output.write(
+                ("HTTP/1.1 200 OK\n\n<html><body>" + "Singlethreaded Server: " + time + "</body></html>").getBytes());
+        output.close();
+        input.close();
+        logger.debug("Request processed: " + time);
     }
 
     @Override
