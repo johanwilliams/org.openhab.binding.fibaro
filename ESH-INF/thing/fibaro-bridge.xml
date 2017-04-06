@@ -14,6 +14,12 @@
                 <description>Ip address to the Fibaro controller</description>
                 <context>network-address</context>
             </parameter>
+            
+            <parameter name="port" type="integer" required="true">
+                <label>Port</label>
+                <description>Port used by the Fibaro controller to send updates</description>
+                <default>9000</default>
+            </parameter>            
 
             <parameter name="username" type="text" required="true">
                 <label>Username</label>
