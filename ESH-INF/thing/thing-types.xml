@@ -6,12 +6,25 @@
 
     <!-- Binary Switch Thing Type -->
     <thing-type id="binarySwitch">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="fibaroBridge" />
+        </supported-bridge-type-refs>
         <label>Binary Switch Thing</label>
         <description>Thing for a binary switch</description>
 
         <channels>
             <channel id="switch" typeId="switch"/>
         </channels>
+        
+        <config-description>
+            <parameter name="id" type="integer" min="1" required="true">
+                <label>Device id</label>
+                <description>The z-wave device id on the Fibaro controller</description>
+            </parameter>
+            
+        </config-description>
+        
+        
     </thing-type>
 
     <!-- Switch Channel Type -->

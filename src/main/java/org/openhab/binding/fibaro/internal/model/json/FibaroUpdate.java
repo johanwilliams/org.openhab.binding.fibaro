@@ -1,4 +1,4 @@
-package org.openhab.binding.fibaro.internal.model;
+package org.openhab.binding.fibaro.internal.model.json;
 
 public class FibaroUpdate {
 
@@ -6,13 +6,6 @@ public class FibaroUpdate {
     private String name;
     private String property;
     private String value;
-
-    public FibaroUpdate(int id, String name, String property, String value) {
-        this.id = id;
-        this.name = name;
-        this.property = property;
-        this.value = value;
-    }
 
     public int getId() {
         return id;

@@ -1,23 +1,25 @@
+/**
+ * Copyright (c) 2014-2016 by the respective copyright holders.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.openhab.binding.fibaro.handler;
 
 import static org.openhab.binding.fibaro.FibaroBindingConstants.SWITCH;
 
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.api.AuthenticationStore;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.util.BasicAuthentication;
-import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
+import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.openhab.binding.fibaro.config.BinarySwitchConfiguration;
+import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
+import org.openhab.binding.fibaro.internal.model.json.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,28 +33,33 @@ public class BinarySwitchThingHandler extends BaseThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(BinarySwitchThingHandler.class);
 
-    private static int TIMEOUT = 5;
-    private static HttpClient httpClient = new HttpClient();
-
     public BinarySwitchThingHandler(Thing thing) {
         super(thing);
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
+        // TODO Add some more error handling here (if item has no bridge for example)
+        FibaroBridgeHandler bridge = (FibaroBridgeHandler) getBridge().getHandler();
+        FibaroBridgeConfiguration bridgeConfig = bridge.getConfigAs(FibaroBridgeConfiguration.class);
+        BinarySwitchConfiguration config = getConfigAs(BinarySwitchConfiguration.class);
+
         if (channelUID.getId().equals(SWITCH)) {
+            String baseUrl = "http://" + bridgeConfig.ipAddress + "/api/devices/";
             try {
                 if (command.equals(OnOffType.ON)) {
-                    post("http://192.168.1.4/api/devices/31/action/turnOn", "");
+                    ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST,
+                            baseUrl + config.id + "/action/turnOn", "", ApiResponse.class);
+                    logger.debug(apiResponse.toString());
                 } else if (command.equals(OnOffType.OFF)) {
-                    post("http://192.168.1.4/api/devices/31/action/turnOff", "");
+                    ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST,
+                            baseUrl + config.id + "/action/turnOff", "", ApiResponse.class);
+                    logger.debug(apiResponse.toString());
+
                 }
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.debug("Failed to handle command SWITCH " + e.getMessage());
             }
-
-            // TODO: handle command
 
             // Note: if communication with thing fails for some reason,
             // indicate that by setting the status with detail information
@@ -64,56 +71,28 @@ public class BinarySwitchThingHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
-        // TODO: Initialize the thing. If done set status to ONLINE to indicate proper working.
-        // Long running initialization should be done asynchronously in background.
-        updateStatus(ThingStatus.ONLINE);
+        logger.debug("Initializing the binary switch handler");
+        super.initialize();
 
-        // Note: When initialization can NOT be done set the status with more details for further
-        // analysis. See also class ThingStatusDetail for all available status details.
-        // Add a description to give user information to understand why thing does not work
-        // as expected. E.g.
-        // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-        // "Can not access device as username and/or password are invalid");
-    }
+        BinarySwitchConfiguration config = getConfigAs(BinarySwitchConfiguration.class);
+        logger.debug("config id = {}", config.id);
 
-    /**
-     * Simple logic to perform a post request
-     *
-     * @param url
-     * @param timeout
-     * @return
-     */
-    private String post(String url, String postData) throws Exception {
-        if (!httpClient.isStarted()) {
-            httpClient.start();
+        boolean validConfig = true;
+        String errorMsg = null;
+
+        if (config.id < 1) {
+            errorMsg = BinarySwitchConfiguration.ID + "' must be larget than 0";
+            validConfig = false;
         }
+        // TODO: Call the fibaro API to verify that this id exists and the device is of correct type. This should
+        // preferably be done in the refresh to simultaneously get the channel values
 
-        URI uri = new URI(url);
-        String realm = "fibaro";
-        String user = "admin";
-        String pass = "admin";
-
-        // Add authentication credentials
-        AuthenticationStore auth = httpClient.getAuthenticationStore();
-        auth.addAuthentication(new BasicAuthentication(uri, realm, user, pass));
-
-        // @formatter:off
-        ContentResponse response = httpClient.newRequest(uri)
-                .method(HttpMethod.POST)
-                .content(new StringContentProvider(postData))
-                .timeout(TIMEOUT, TimeUnit.SECONDS)
-                .send();
-
-        int statusCode = response.getStatus();
-
-        if (statusCode != HttpStatus.OK_200 && statusCode != HttpStatus.ACCEPTED_202) {
-            String statusLine = response.getStatus() + " " + response.getReason();
-            logger.error("Method failed: {}", statusLine);
-            throw new Exception("Method failed: " + statusLine);
+        if (validConfig) {
+            // TODO: startAutomaticRefresh();
+            updateStatus(ThingStatus.ONLINE);
+        } else {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, errorMsg);
         }
-
-        return response.getContentAsString();
     }
-
 
 }

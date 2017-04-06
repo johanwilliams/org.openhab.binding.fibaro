@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2014-2016 by the respective copyright holders.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.openhab.binding.fibaro.config;
 
 /**
@@ -8,11 +15,10 @@ package org.openhab.binding.fibaro.config;
 
 public class FibaroBridgeConfiguration {
 
-    // Fibaro Bridge Thing constants
-    public static final String IP_ADDRESS = "ipAddress";
-    public static final String PORT = "port";
-    public static final String USERNAME = "username";
-    public static final String PASSWORD = "password";
+    public static String IP_ADDRESS = "Ip address";
+    public static String PORT = "Port";
+    public static String USERNAME = "Username";
+    public static String PASSWORD = "Password";
 
     /**
      * The IP address of the Fibaro controller
