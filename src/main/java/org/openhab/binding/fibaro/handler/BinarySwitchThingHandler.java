@@ -7,8 +7,6 @@
  */
 package org.openhab.binding.fibaro.handler;
 
-import static org.openhab.binding.fibaro.FibaroBindingConstants.SWITCH;
-
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -17,9 +15,11 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.fibaro.config.BinarySwitchConfiguration;
 import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
 import org.openhab.binding.fibaro.internal.model.json.ApiResponse;
+import org.openhab.binding.fibaro.internal.model.json.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +39,18 @@ public class BinarySwitchThingHandler extends BaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        // TODO Add some more error handling here (if item has no bridge for example)
-        FibaroBridgeHandler bridge = (FibaroBridgeHandler) getBridge().getHandler();
-        FibaroBridgeConfiguration bridgeConfig = bridge.getConfigAs(FibaroBridgeConfiguration.class);
-        BinarySwitchConfiguration config = getConfigAs(BinarySwitchConfiguration.class);
+        try {
+            // TODO Add some more error handling here (if item has no bridge for example)
+            FibaroBridgeHandler bridge = (FibaroBridgeHandler) getBridge().getHandler();
+            FibaroBridgeConfiguration bridgeConfig = bridge.getConfigAs(FibaroBridgeConfiguration.class);
+            BinarySwitchConfiguration config = getConfigAs(BinarySwitchConfiguration.class);
 
-        if (channelUID.getId().equals(SWITCH)) {
             String baseUrl = "http://" + bridgeConfig.ipAddress + "/api/devices/";
-            try {
+
+            if (command instanceof RefreshType) {
+                updateChannel(channelUID.getId(),
+                        bridge.callFibaroApi(HttpMethod.GET, baseUrl + config.id, "", Device.class));
+            } else if (command instanceof OnOffType) {
                 if (command.equals(OnOffType.ON)) {
                     ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST,
                             baseUrl + config.id + "/action/turnOn", "", ApiResponse.class);
@@ -57,16 +61,22 @@ public class BinarySwitchThingHandler extends BaseThingHandler {
                     logger.debug(apiResponse.toString());
 
                 }
-            } catch (Exception e) {
-                logger.debug("Failed to handle command SWITCH " + e.getMessage());
+            } else {
+                logger.debug("The binary switch handler can't handle command: " + command.toString());
             }
 
-            // Note: if communication with thing fails for some reason,
-            // indicate that by setting the status with detail information
-            // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
-            // "Could not control device at IP address x.x.x.x");
+        } catch (Exception e) {
+            logger.debug("Failed to handle command " + command.toString() + " : " + e.getMessage());
         }
+    }
 
+    public void updateChannel(String channelId, Device device) {
+        boolean state = Boolean.parseBoolean(device.getProperties().getValue());
+        if (state) {
+            updateState(channelId, OnOffType.ON);
+        } else {
+            updateState(channelId, OnOffType.OFF);
+        }
     }
 
     @Override
