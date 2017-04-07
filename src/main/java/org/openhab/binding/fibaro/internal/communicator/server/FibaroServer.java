@@ -5,6 +5,12 @@ import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Embedded jetty server which is used to listen for device updates. The http client is a lua scene in the Fibaro
+ * controller.
+ *
+ * @author Johan Williams - Initial contribution
+ */
 public class FibaroServer {
 
     private Logger logger = LoggerFactory.getLogger(FibaroServer.class);

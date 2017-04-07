@@ -1,5 +1,10 @@
 package org.openhab.binding.fibaro.internal.model.json;
 
+/**
+ * Json pojo for the device update request sent from the client implemented as a lua scene in the Fibaro controller
+ *
+ * @author Johan Williams - Initial contribution
+ */
 public class FibaroUpdate {
 
     private int id;

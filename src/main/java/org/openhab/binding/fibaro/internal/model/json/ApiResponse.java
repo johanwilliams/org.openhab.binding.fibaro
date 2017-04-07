@@ -1,5 +1,10 @@
 package org.openhab.binding.fibaro.internal.model.json;
 
+/**
+ * Json pojo for the response message from the Fibao API
+ *
+ * @author Johan Williams - Initial contribution
+ */
 public class ApiResponse {
 
     private String id;
