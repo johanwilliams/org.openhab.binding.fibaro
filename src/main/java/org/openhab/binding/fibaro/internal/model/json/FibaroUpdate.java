@@ -46,7 +46,7 @@ public class FibaroUpdate {
 
     @Override
     public String toString() {
-        return "FibaroUpdate [id=" + id + ", name=" + name + ", property=" + property + ", value=" + value + "]";
+        return "FibaroUpdateHandler [id=" + id + ", name=" + name + ", property=" + property + ", value=" + value + "]";
     }
 
 }

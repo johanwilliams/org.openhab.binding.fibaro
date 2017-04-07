@@ -1,6 +1,8 @@
 package org.openhab.binding.fibaro.handler;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,10 +41,13 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
     private FibaroServer server;
     private Gson gson;
 
+    private Map<Integer, FibaroUpdateHandler> things;
+
     public FibaroBridgeHandler(Bridge bridge) {
         super(bridge);
         httpClient = new HttpClient();
         gson = new Gson();
+        things = new HashMap<Integer, FibaroUpdateHandler>();
     }
 
     @Override
@@ -79,7 +84,7 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
         // might want to keep in the bridge config
 
         try {
-            server = new FibaroServer(config.port, new FibaroUpdateHandler(this));
+            server = new FibaroServer(config.port, new FibaroServerHandler(this));
         } catch (Exception e) {
             errorMsg = "Failed to start the server communicating with Fibaro on port " + config.port;
             validConfig = false;
@@ -95,11 +100,29 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
 
     public void handleFibaroUpdate(FibaroUpdate fibaroUpdate) {
         logger.debug(fibaroUpdate.toString());
+        FibaroUpdateHandler fibaroUpdateHandler = things.get(fibaroUpdate.getId());
+        if (fibaroUpdateHandler == null) {
+            logger.debug("No thing with id " + fibaroUpdate.getId() + " is configured");
+        } else {
+            fibaroUpdateHandler.update(fibaroUpdate);
+        }
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         // TODO Auto-generated method stub
+    }
+
+    public void addThing(int id, FibaroUpdateHandler fibaroUpdateHandler) {
+        things.put(id, fibaroUpdateHandler);
+    }
+
+    public void removeThing(int id) {
+        things.remove(id);
+    }
+
+    public FibaroUpdateHandler getThing(int id) {
+        return things.get(id);
     }
 
     @Override

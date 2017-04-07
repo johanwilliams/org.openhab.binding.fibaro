@@ -16,10 +16,12 @@ import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.openhab.binding.fibaro.FibaroBindingConstants;
 import org.openhab.binding.fibaro.config.BinarySwitchConfiguration;
 import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
 import org.openhab.binding.fibaro.internal.model.json.ApiResponse;
 import org.openhab.binding.fibaro.internal.model.json.Device;
+import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +31,43 @@ import org.slf4j.LoggerFactory;
  *
  * @author Johan Williams - Initial contribution
  */
-public class BinarySwitchThingHandler extends BaseThingHandler {
+public class BinarySwitchThingHandler extends BaseThingHandler implements FibaroUpdateHandler {
 
     private Logger logger = LoggerFactory.getLogger(BinarySwitchThingHandler.class);
 
     public BinarySwitchThingHandler(Thing thing) {
         super(thing);
+    }
+
+    @Override
+    public void initialize() {
+        logger.debug("Initializing the binary switch handler");
+        super.initialize();
+
+        BinarySwitchConfiguration config = getConfigAs(BinarySwitchConfiguration.class);
+        logger.debug("config id = {}", config.id);
+
+        boolean validConfig = true;
+        String errorMsg = null;
+
+        if (config.id < 1) {
+            errorMsg = BinarySwitchConfiguration.ID + "' must be larget than 0";
+            validConfig = false;
+        }
+        if (getBridge() == null) {
+            errorMsg = "This thing is not connected to a Fibaro bridge. Please add a Fibaro bridge and connect it in Thing settings.";
+            validConfig = false;
+        }
+        // TODO: Call the fibaro API to verify that this id exists and the device is of correct type. This should
+        // preferably be done in the refresh to simultaneously get the channel values
+
+        if (validConfig) {
+            // TODO: startAutomaticRefresh();
+            updateStatus(ThingStatus.ONLINE);
+            ((FibaroBridgeHandler) getBridge().getHandler()).addThing(config.id, this);
+        } else {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, errorMsg);
+        }
     }
 
     @Override
@@ -80,33 +113,16 @@ public class BinarySwitchThingHandler extends BaseThingHandler {
     }
 
     @Override
-    public void initialize() {
-        logger.debug("Initializing the binary switch handler");
-        super.initialize();
+    public void update(FibaroUpdate fibaroUpdate) {
+        String property = fibaroUpdate.getProperty();
 
-        BinarySwitchConfiguration config = getConfigAs(BinarySwitchConfiguration.class);
-        logger.debug("config id = {}", config.id);
-
-        boolean validConfig = true;
-        String errorMsg = null;
-
-        if (config.id < 1) {
-            errorMsg = BinarySwitchConfiguration.ID + "' must be larget than 0";
-            validConfig = false;
-        }
-        if (getBridge() == null) {
-            errorMsg = "This thing is not connected to a Fibaro bridge. Please add a Fibaro bridge and connect it in Thing settings.";
-            validConfig = false;
-        }
-        // TODO: Call the fibaro API to verify that this id exists and the device is of correct type. This should
-        // preferably be done in the refresh to simultaneously get the channel values
-
-        if (validConfig) {
-            // TODO: startAutomaticRefresh();
-            updateStatus(ThingStatus.ONLINE);
-        } else {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, errorMsg);
+        if (property.equals("value")) {
+            int value = Integer.parseInt(fibaroUpdate.getValue());
+            if (value == 1) {
+                updateState(FibaroBindingConstants.SWITCH, OnOffType.ON);
+            } else {
+                updateState(FibaroBindingConstants.SWITCH, OnOffType.OFF);
+            }
         }
     }
-
 }
