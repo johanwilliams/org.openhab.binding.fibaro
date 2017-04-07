@@ -84,6 +84,10 @@ public class BinarySwitchThingHandler extends BaseThingHandler {
             errorMsg = BinarySwitchConfiguration.ID + "' must be larget than 0";
             validConfig = false;
         }
+        if (getBridge() == null) {
+            errorMsg = "This thing is not connected to a Fibaro bridge. Please add a Fibaro bridge and connect it in Thing settings.";
+            validConfig = false;
+        }
         // TODO: Call the fibaro API to verify that this id exists and the device is of correct type. This should
         // preferably be done in the refresh to simultaneously get the channel values
 
