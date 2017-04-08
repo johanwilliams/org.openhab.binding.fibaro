@@ -7,6 +7,7 @@
  */
 package org.openhab.binding.fibaro.handler;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,9 @@ import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
+import org.openhab.binding.fibaro.internal.ExpiringCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
+import org.openhab.binding.fibaro.internal.model.json.Device;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +49,11 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
     private static int TIMEOUT = 5;
     private static HttpClient httpClient = new HttpClient();
     private FibaroServer server;
+    private final String REALM = "fibaro";
     private Gson gson;
+
+    // Cache settings
+    private final int CACHE_EXPIRY = 10 * 1000; // 10s
 
     private Map<Integer, FibaroUpdateHandler> things;
 
@@ -151,27 +158,50 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
         return getConfigAs(FibaroBridgeConfiguration.class).ipAddress;
     }
 
+    public Device getDeviceData(int id) throws Exception {
+        String url = "http://" + getIpAddress() + "/api/devices/" + id;
+
+        // TODO: Cache this data
+        return callFibaroApi(HttpMethod.GET, url, "", Device.class);
+
+    }
+
+    private final ExpiringCache<Integer, Device> CACHE = new ExpiringCache<Integer, Device>(CACHE_EXPIRY,
+            new ExpiringCache.LoadAction<Integer, Device>() {
+                @Override
+                public Device load(Integer id) throws IOException {
+                    try {
+                        String url = "http://" + getIpAddress() + "/api/devices/" + id;
+                        return callFibaroApi(HttpMethod.GET, url, "", Device.class);
+                    } catch (Exception e) {
+                        logger.debug("Could not get device data from Fibaro api with id '{}': {}", id, e.getMessage());
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+            });
+
     /**
-     * Simple logic to perform a post request
+     * Calls the Finaro API and returns a pojo of type passed in as result parameter
      *
-     * @param url
-     * @param timeout
-     * @return
+     * @param method The http method to send the request with
+     * @param url Url to the api
+     * @param content The data sent with the request (if any)
+     * @param result The json pojo to parse the response into (using gson)
+     * @return json pojo holding the response data
+     * @throws Exception
      */
     public synchronized <T> T callFibaroApi(HttpMethod method, String url, String content, Class<T> result)
             throws Exception {
         if (!httpClient.isStarted()) {
             httpClient.start();
         }
-
-        URI uri = new URI(url);
-        String realm = "fibaro";
-        String user = "admin";
-        String pass = "admin";
+        FibaroBridgeConfiguration config = getConfigAs(FibaroBridgeConfiguration.class);
 
         // Add authentication credentials
         AuthenticationStore auth = httpClient.getAuthenticationStore();
-        auth.addAuthentication(new BasicAuthentication(uri, realm, user, pass));
+        URI uri = new URI(url);
+        auth.addAuthentication(new BasicAuthentication(uri, REALM, config.username, config.password));
 
         // @formatter:off
         ContentResponse response = httpClient.newRequest(uri)

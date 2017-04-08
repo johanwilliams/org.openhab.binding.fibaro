@@ -34,11 +34,10 @@ public class BinarySwitchThingHandler extends BaseThingHandler implements Fibaro
 
     private Logger logger = LoggerFactory.getLogger(BinarySwitchThingHandler.class);
 
+    public static final String PROPERTY_VALUE = "value";
+
     // Reference to the bridge which we need for communication
     private FibaroBridgeHandler bridge = null;
-
-    // Device data. TODO: Store data in cache for a few seconds to avoid calling the api for every channel
-    private Device deviceData = null;
 
     public BinarySwitchThingHandler(Thing thing) {
         super(thing);
@@ -83,7 +82,6 @@ public class BinarySwitchThingHandler extends BaseThingHandler implements Fibaro
             String baseUrl = "http://" + bridge.getIpAddress() + "/api/devices/";
 
             if (command instanceof RefreshType) {
-                updateDeviceData();
                 updateChannel(channelUID.getId());
             } else if (command instanceof OnOffType) {
                 if (command.equals(OnOffType.ON)) {
@@ -107,19 +105,6 @@ public class BinarySwitchThingHandler extends BaseThingHandler implements Fibaro
     }
 
     /**
-     * Updates the device data. If the data has expired from cache it will make a call to the Fibaro api to fetch new
-     * data
-     * 
-     * @throws Exception
-     */
-    private void updateDeviceData() throws Exception {
-        String baseUrl = "http://" + bridge.getIpAddress() + "/api/devices/";
-
-        // TODO: Cache this data
-        deviceData = bridge.callFibaroApi(HttpMethod.GET, baseUrl + getId(), "", Device.class);
-    }
-
-    /**
      * Returns the configured id
      *
      * @return Thing id
@@ -132,9 +117,11 @@ public class BinarySwitchThingHandler extends BaseThingHandler implements Fibaro
      * Updates a thing channel from device data
      *
      * @param channelId Id of channel to update
+     * @throws Exception
      */
-    public void updateChannel(String channelId) {
-        boolean state = Boolean.parseBoolean(deviceData.getProperties().getValue());
+    public void updateChannel(String channelId) throws Exception {
+        Device device = bridge.getDeviceData(getId());
+        boolean state = Boolean.parseBoolean(device.getProperties().getValue());
         if (state) {
             updateState(channelId, OnOffType.ON);
         } else {
@@ -146,14 +133,13 @@ public class BinarySwitchThingHandler extends BaseThingHandler implements Fibaro
     public void update(FibaroUpdate fibaroUpdate) {
         String property = fibaroUpdate.getProperty();
 
-        if (property.equals("value")) {
+        if (property.equals(PROPERTY_VALUE)) {
             int value = Integer.parseInt(fibaroUpdate.getValue());
             if (value == 1) {
                 updateState(FibaroBindingConstants.SWITCH, OnOffType.ON);
             } else {
                 updateState(FibaroBindingConstants.SWITCH, OnOffType.OFF);
             }
-            // TODO: Invalidate the cached data
         }
     }
 }
