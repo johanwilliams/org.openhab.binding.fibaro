@@ -18,6 +18,8 @@ public class Properties {
     private String zwaveInfo;
     private String configured;
     private String dead;
+    private double energy;
+    private double power;
     private String value;
 
     public String getZwaveCompany() {
@@ -52,6 +54,22 @@ public class Properties {
         this.dead = dead;
     }
 
+    public double getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(double energy) {
+        this.energy = energy;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public void setPower(double power) {
+        this.power = power;
+    }
+
     public String getValue() {
         return value;
     }
@@ -63,7 +81,7 @@ public class Properties {
     @Override
     public String toString() {
         return "Properties [zwaveCompany=" + zwaveCompany + ", zwaveInfo=" + zwaveInfo + ", configured=" + configured
-                + ", dead=" + dead + ", value=" + value + "]";
+                + ", dead=" + dead + ", energy=" + energy + ", power=" + power + ", value=" + value + "]";
     }
 
 }

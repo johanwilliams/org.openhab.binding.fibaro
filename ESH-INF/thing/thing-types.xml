@@ -14,6 +14,9 @@
 
         <channels>
             <channel id="switch" typeId="switch"/>
+            <channel id="dead" typeId="dead"/>
+            <channel id="energy" typeId="energy"/>
+            <channel id="power" typeId="power"/>
         </channels>
         
         <config-description>
@@ -27,30 +30,37 @@
         
     </thing-type>
 
-    <!-- Switch Channel Type -->
     <channel-type id="switch">
         <item-type>Switch</item-type>
         <label>Switch</label>
         <description>Current state of the Switch</description>
     </channel-type>
 
-
-    <!-- Sample Thing Type -->
-    <!--  <thing-type id="sample">
-        <label>Fibaro Thing</label>
-        <description>Sample thing for Fibaro Binding</description>
-
-        <channels>
-            <channel id="channel1" typeId="sample-channel"/>
-        </channels>
-    </thing-type>-->
-
-    <!-- Sample Channel Type -->
-    <!--  <channel-type id="sample-channel">
+    <channel-type id="dead">
         <item-type>Switch</item-type>
-        <label>Fibaro Switch</label>
-        <description>Sample channel for Fibaro Binding</description>
-    </channel-type>-->
+        <label>Dead</label>
+        <description>Holds information if the device is dead or not</description>
+        <state readOnly="true">
+        </state>
+    </channel-type>
+
+    <channel-type id="energy">
+        <item-type>Number</item-type>
+        <label>Energy</label>
+        <description>Total energy consumption by this device in kWh</description>
+        <category>Energy</category>
+        <state readOnly="true" pattern="%.2f kWh">
+        </state>
+    </channel-type>
     
+    <channel-type id="power">
+        <item-type>Number</item-type>
+        <label>Power</label>
+        <description>Current device power usage in W</description>
+        <category>Energy</category>
+        <state readOnly="true" pattern="%.2f W">
+        </state>
+        
+    </channel-type>
 
 </thing:thing-descriptions>

@@ -8,6 +8,7 @@
 package org.openhab.binding.fibaro.handler;
 
 import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -34,7 +35,10 @@ public class BinarySwitchThingHandler extends BaseThingHandler implements Fibaro
 
     private Logger logger = LoggerFactory.getLogger(BinarySwitchThingHandler.class);
 
-    public static final String PROPERTY_VALUE = "value";
+    public static final String PROPERTY_SWITCH = "value";
+    public static final String PROPERTY_DEAD = "dead";
+    public static final String PROPERTY_ENERGY = "energy";
+    public static final String PROPERTY_POWER = "power";
 
     // Reference to the bridge which we need for communication
     private FibaroBridgeHandler bridge = null;
@@ -121,25 +125,69 @@ public class BinarySwitchThingHandler extends BaseThingHandler implements Fibaro
      */
     public void updateChannel(String channelId) throws Exception {
         Device device = bridge.getDeviceData(getId());
-        boolean state = Boolean.parseBoolean(device.getProperties().getValue());
-        if (state) {
-            updateState(channelId, OnOffType.ON);
-        } else {
-            updateState(channelId, OnOffType.OFF);
+        switch (channelId) {
+            case FibaroBindingConstants.SWITCH:
+                updateState(channelId, device.getProperties().getValue().equals("true") ? OnOffType.ON : OnOffType.OFF);
+                break;
+            case FibaroBindingConstants.DEAD:
+                updateState(channelId, device.getProperties().getDead().equals("true") ? OnOffType.ON : OnOffType.OFF);
+                break;
+            case FibaroBindingConstants.ENERGY:
+                updateState(channelId, new DecimalType(device.getProperties().getEnergy()));
+                break;
+            case FibaroBindingConstants.POWER:
+                updateState(channelId, new DecimalType(device.getProperties().getPower()));
+                break;
+            default:
+                logger.debug("Unknown channel: {}", channelId);
+                break;
         }
     }
 
     @Override
     public void update(FibaroUpdate fibaroUpdate) {
-        String property = fibaroUpdate.getProperty();
 
-        if (property.equals(PROPERTY_VALUE)) {
-            int value = Integer.parseInt(fibaroUpdate.getValue());
-            if (value == 1) {
-                updateState(FibaroBindingConstants.SWITCH, OnOffType.ON);
-            } else {
-                updateState(FibaroBindingConstants.SWITCH, OnOffType.OFF);
-            }
+        switch (fibaroUpdate.getProperty()) {
+            case PROPERTY_SWITCH:
+                updateSwitch(fibaroUpdate.getValue());
+                break;
+            case PROPERTY_DEAD:
+                updateDead(fibaroUpdate.getValue());
+                break;
+            case PROPERTY_ENERGY:
+                updateEnergy(fibaroUpdate.getValue());
+                break;
+            case PROPERTY_POWER:
+                updatePower(fibaroUpdate.getValue());
+                break;
+            default:
+                logger.debug("Update received for an unknown property: {}", fibaroUpdate.getProperty());
+                break;
         }
     }
+
+    private void updateSwitch(String value) {
+        if (value.equals("1")) {
+            updateState(FibaroBindingConstants.SWITCH, OnOffType.ON);
+        } else {
+            updateState(FibaroBindingConstants.SWITCH, OnOffType.OFF);
+        }
+    }
+
+    private void updateDead(String value) {
+        if (value.equals("true")) {
+            updateState(FibaroBindingConstants.DEAD, OnOffType.ON);
+        } else {
+            updateState(FibaroBindingConstants.DEAD, OnOffType.OFF);
+        }
+    }
+
+    private void updateEnergy(String value) {
+        updateState(FibaroBindingConstants.ENERGY, new DecimalType(value));
+    }
+
+    private void updatePower(String value) {
+        updateState(FibaroBindingConstants.POWER, new DecimalType(value));
+    }
+
 }

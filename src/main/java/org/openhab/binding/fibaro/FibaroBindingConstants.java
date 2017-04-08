@@ -37,6 +37,9 @@ public class FibaroBindingConstants {
 
     // List of all Channel ids
     public final static String SWITCH = "switch";
+    public final static String DEAD = "dead";
+    public final static String ENERGY = "energy";
+    public final static String POWER = "power";
 
     // Set of all supported Thing Type UIDs
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(FIBAROBRIDGE_THING_TYPE,
