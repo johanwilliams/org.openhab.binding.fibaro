@@ -147,6 +147,10 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
         return getConfig().as(configurationClass);
     }
 
+    public String getIpAddress() {
+        return getConfigAs(FibaroBridgeConfiguration.class).ipAddress;
+    }
+
     /**
      * Simple logic to perform a post request
      *
