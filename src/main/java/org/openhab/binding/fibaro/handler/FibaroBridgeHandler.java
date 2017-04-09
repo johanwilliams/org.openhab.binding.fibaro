@@ -7,7 +7,6 @@
  */
 package org.openhab.binding.fibaro.handler;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +27,7 @@ import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
-import org.openhab.binding.fibaro.internal.ExpiringCache;
+import org.openhab.binding.fibaro.internal.InMemoryCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
 import org.openhab.binding.fibaro.internal.model.json.Device;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
@@ -46,14 +45,15 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroBridgeHandler.class);
 
+    private InMemoryCache<Integer, Device> cache;
+    private final int CACHE_EXPIRY = 10; // 10s
+    private final int CACHE_SIZE = 100; // 10s
+
     private static int TIMEOUT = 5;
     private static HttpClient httpClient = new HttpClient();
     private FibaroServer server;
     private final String REALM = "fibaro";
     private Gson gson;
-
-    // Cache settings
-    private final int CACHE_EXPIRY = 10 * 1000; // 10s
 
     private Map<Integer, FibaroUpdateHandler> things;
 
@@ -67,6 +67,8 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
     @Override
     public void initialize() {
         logger.debug("Initializing the Fibaro Bridge handler.");
+
+        cache = new InMemoryCache<Integer, Device>(CACHE_EXPIRY, 1, CACHE_SIZE);
 
         FibaroBridgeConfiguration config = getConfigAs(FibaroBridgeConfiguration.class);
 
@@ -159,27 +161,14 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
     }
 
     public Device getDeviceData(int id) throws Exception {
-        String url = "http://" + getIpAddress() + "/api/devices/" + id;
-
-        // TODO: Cache this data
-        return callFibaroApi(HttpMethod.GET, url, "", Device.class);
-
+        Device device = cache.get(id);
+        if (device == null) {
+            String url = "http://" + getIpAddress() + "/api/devices/" + id;
+            device = callFibaroApi(HttpMethod.GET, url, "", Device.class);
+            cache.put(id, device);
+        }
+        return device;
     }
-
-    private final ExpiringCache<Integer, Device> CACHE = new ExpiringCache<Integer, Device>(CACHE_EXPIRY,
-            new ExpiringCache.LoadAction<Integer, Device>() {
-                @Override
-                public Device load(Integer id) throws IOException {
-                    try {
-                        String url = "http://" + getIpAddress() + "/api/devices/" + id;
-                        return callFibaroApi(HttpMethod.GET, url, "", Device.class);
-                    } catch (Exception e) {
-                        logger.debug("Could not get device data from Fibaro api with id '{}': {}", id, e.getMessage());
-                        e.printStackTrace();
-                    }
-                    return null;
-                }
-            });
 
     /**
      * Calls the Finaro API and returns a pojo of type passed in as result parameter
