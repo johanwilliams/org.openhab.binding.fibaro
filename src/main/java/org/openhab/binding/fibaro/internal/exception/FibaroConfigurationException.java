@@ -8,16 +8,24 @@
 package org.openhab.binding.fibaro.internal.exception;
 
 /**
- * Exception for invalid user and password.
+ * Exception thrown when configuration is invalid.
  *
  * @author Johan Williams - Initial contribution
  */
-public class FibaroUnauthorizedException extends FibaroException {
+public class FibaroConfigurationException extends FibaroException {
 
     private static final long serialVersionUID = 1231114236506945196L;
 
-    public FibaroUnauthorizedException(Throwable ex) {
+    public FibaroConfigurationException(String message) {
+        super(message);
+    }
+
+    public FibaroConfigurationException(Throwable ex) {
         super(ex);
+    }
+
+    public FibaroConfigurationException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }

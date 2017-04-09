@@ -56,13 +56,13 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
     private final String REALM = "fibaro";
     private Gson gson;
 
-    private Map<Integer, FibaroUpdateHandler> things;
+    private Map<Integer, FibaroThingHandler> things;
 
     public FibaroBridgeHandler(Bridge bridge) {
         super(bridge);
         httpClient = new HttpClient();
         gson = new Gson();
-        things = new HashMap<Integer, FibaroUpdateHandler>();
+        things = new HashMap<Integer, FibaroThingHandler>();
     }
 
     @Override
@@ -127,11 +127,11 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
 
     public void handleFibaroUpdate(FibaroUpdate fibaroUpdate) {
         logger.debug(fibaroUpdate.toString());
-        FibaroUpdateHandler fibaroUpdateHandler = things.get(fibaroUpdate.getId());
-        if (fibaroUpdateHandler == null) {
+        FibaroThingHandler fibaroThingHandler = things.get(fibaroUpdate.getId());
+        if (fibaroThingHandler == null) {
             logger.debug("No thing with id " + fibaroUpdate.getId() + " is configured");
         } else {
-            fibaroUpdateHandler.update(fibaroUpdate);
+            fibaroThingHandler.update(fibaroUpdate);
         }
     }
 
@@ -140,15 +140,15 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
         // TODO Auto-generated method stub
     }
 
-    public void addThing(int id, FibaroUpdateHandler fibaroUpdateHandler) {
-        things.put(id, fibaroUpdateHandler);
+    public void addThing(int id, FibaroThingHandler fibaroThingHandler) {
+        things.put(id, fibaroThingHandler);
     }
 
     public void removeThing(int id) {
         things.remove(id);
     }
 
-    public FibaroUpdateHandler getThing(int id) {
+    public FibaroThingHandler getThing(int id) {
         return things.get(id);
     }
 
