@@ -31,6 +31,7 @@ import org.openhab.binding.fibaro.internal.InMemoryCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
 import org.openhab.binding.fibaro.internal.model.json.Device;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
+import org.openhab.binding.fibaro.internal.model.json.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,9 +97,19 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
             errorMsg = "Parameter '" + FibaroBridgeConfiguration.PASSWORD + "' is mandatory and must be configured";
             validConfig = false;
         }
-        // TODO: Make a call to the api to 1. Verify connectivity, ip, username/password and 2. Fetch properties that we
-        // might want to keep in the bridge config
 
+        // Make a call to the controller API
+        String url = "http://" + getIpAddress() + "/api/settings/info";
+        try {
+            Settings settings = callFibaroApi(HttpMethod.GET, url, "", Settings.class);
+            logger.debug("Successfully connected to the Fibaro controller " + settings.toString());
+        } catch (Exception e1) {
+            errorMsg = "Failed to connect to the Fibaro controller through api call '" + url
+                    + "'. Please check that username, password and ip is correctly configured.";
+            validConfig = false;
+        }
+
+        // Start our http server to listen for device updates
         try {
             server = new FibaroServer(config.port, new FibaroServerHandler(this));
         } catch (Exception e) {

@@ -67,9 +67,17 @@ public class BinarySwitchThingHandler extends BaseThingHandler implements Fibaro
             validConfig = false;
         } else {
             bridge = (FibaroBridgeHandler) getBridge().getHandler();
+
         }
-        // TODO: Call the fibaro API to verify that this id exists and the device is of correct type. This should
-        // preferably be done in the refresh to simultaneously get the channel values
+
+        try {
+            if (bridge != null) {
+                bridge.getDeviceData(config.id);
+            }
+        } catch (Exception e) {
+            errorMsg = "Could not get device data from the Fibaro api for id " + config.id + ". Does this id exist?";
+            validConfig = false;
+        }
 
         if (validConfig) {
             // TODO: startAutomaticRefresh();
