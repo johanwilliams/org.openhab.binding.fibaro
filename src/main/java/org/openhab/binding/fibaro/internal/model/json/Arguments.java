@@ -7,7 +7,7 @@
  */
 package org.openhab.binding.fibaro.internal.model.json;
 
-import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Json pojo for arguments sent in with post requests to the Finaro api
@@ -16,11 +16,15 @@ import java.util.Arrays;
  */
 public class Arguments {
 
-    private String[] args;
+    private Collection<Object> args;
+
+    public void addArgs(Object a) {
+        args.add(a);
+    }
 
     @Override
     public String toString() {
-        return "Arguments [args=" + Arrays.toString(args) + "]";
+        return "Arguments [args=" + args + "]";
     }
 
 }

@@ -21,6 +21,8 @@ import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+
 /**
  * Abstract thing handler which implements all common functions the onterh thing handler need.
  *
@@ -29,6 +31,8 @@ import org.slf4j.LoggerFactory;
 public abstract class FibaroThingHandler extends BaseThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroThingHandler.class);
+
+    protected Gson gson;
 
     protected int id;
 
@@ -45,6 +49,8 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      * @throws FibaroConfigurationException Thrown if a configuration error is encountered
      */
     protected void init() throws FibaroConfigurationException {
+        gson = new Gson();
+
         if (getBridge() == null) {
             throw new FibaroConfigurationException(
                     "This thing is not connected to a Fibaro bridge. Please add a Fibaro bridge and connect it in Thing settings.");

@@ -19,6 +19,7 @@ import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.fibaro.config.DimmerConfiguration;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
 import org.openhab.binding.fibaro.internal.model.json.ApiResponse;
+import org.openhab.binding.fibaro.internal.model.json.Arguments;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ public class DimmerThingHandler extends FibaroThingHandler {
     public static final String PROPERTY_ENERGY = "energy";
     public static final String PROPERTY_POWER = "power";
 
+    public static final String ACTION_SET_VALUE = "setValue";
     public static final String ACTION_ON = "turnOn";
     public static final String ACTION_OFF = "turnOff";
     public static final String ACTION_INCREASE = "startLevelIncrease";
@@ -85,23 +87,24 @@ public class DimmerThingHandler extends FibaroThingHandler {
     public void handleCommand(ChannelUID channelUID, Command command) {
         super.handleCommand(channelUID, command);
         try {
+            String url = "http://" + bridge.getIpAddress() + "/api/devices/action/";
             if (command instanceof OnOffType) {
-                String action = command.equals(OnOffType.ON) ? ACTION_ON : ACTION_OFF;
-                String url = "http://" + bridge.getIpAddress() + "/api/devices/action/" + action;
+                url += command.equals(OnOffType.ON) ? ACTION_ON : ACTION_OFF;
                 ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", ApiResponse.class);
                 logger.debug(apiResponse.toString());
                 // TODO: Check ApiResponse for error codes
             } else if (command instanceof IncreaseDecreaseType) {
-                String action = command.equals(IncreaseDecreaseType.INCREASE) ? ACTION_INCREASE : ACTION_DECREASE;
-                String url = "http://" + bridge.getIpAddress() + "/api/devices/action/" + action;
+                url += command.equals(IncreaseDecreaseType.INCREASE) ? ACTION_INCREASE : ACTION_DECREASE;
                 ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", ApiResponse.class);
                 logger.debug(apiResponse.toString());
                 // TODO: Check ApiResponse for error codes
             } else if (command instanceof PercentType) {
+                url += ACTION_SET_VALUE;
                 int dimmerValue = ((PercentType) command).intValue();
-                String arguments = "Arguments { args(" + dimmerValue + ") }";
-                String url = "http://" + bridge.getIpAddress() + "/api/devices/action/setValue";
-                ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, arguments, ApiResponse.class);
+                Arguments arguments = new Arguments();
+                arguments.addArgs(dimmerValue);
+                ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, gson.toJson(arguments),
+                        ApiResponse.class);
                 logger.debug(apiResponse.toString());
                 // TODO: Check ApiResponse for error codes
             } else {
