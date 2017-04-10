@@ -83,7 +83,7 @@ public class BinarySwitchThingHandler extends FibaroThingHandler {
         try {
             if (command instanceof OnOffType) {
                 String action = command.equals(OnOffType.ON) ? ACTION_ON : ACTION_OFF;
-                String url = "http://" + bridge.getIpAddress() + "/api/devices/action/" + action;
+                String url = "http://" + bridge.getIpAddress() + "/api/devices/" + getId() + "/action/" + action;
                 ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", ApiResponse.class);
                 logger.debug(apiResponse.toString());
                 // TODO: Check ApiResponse for error codes

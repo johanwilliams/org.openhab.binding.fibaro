@@ -87,7 +87,7 @@ public class DimmerThingHandler extends FibaroThingHandler {
     public void handleCommand(ChannelUID channelUID, Command command) {
         super.handleCommand(channelUID, command);
         try {
-            String url = "http://" + bridge.getIpAddress() + "/api/devices/action/";
+            String url = "http://" + bridge.getIpAddress() + "/api/devices/" + getId() + "/action/";
             if (command instanceof OnOffType) {
                 url += command.equals(OnOffType.ON) ? ACTION_ON : ACTION_OFF;
                 ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", ApiResponse.class);
@@ -103,8 +103,8 @@ public class DimmerThingHandler extends FibaroThingHandler {
                 int dimmerValue = ((PercentType) command).intValue();
                 Arguments arguments = new Arguments();
                 arguments.addArgs(dimmerValue);
-                ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, gson.toJson(arguments),
-                        ApiResponse.class);
+                String temp = gson.toJson(arguments);
+                ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, temp, ApiResponse.class);
                 logger.debug(apiResponse.toString());
                 // TODO: Check ApiResponse for error codes
             } else {

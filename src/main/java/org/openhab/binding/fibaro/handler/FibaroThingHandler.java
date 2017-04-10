@@ -7,7 +7,6 @@
  */
 package org.openhab.binding.fibaro.handler;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -142,8 +141,10 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      * @param value State value
      */
     protected void updateEnergyState(String value) {
-        if (StringUtils.isNumeric(value)) {
+        try {
             updateState(FibaroBindingConstants.CHANNEL_ID_ENERGY, new DecimalType(value));
+        } catch (NumberFormatException nfe) {
+            // Not a decimal value, don't update
         }
     }
 
@@ -153,8 +154,10 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      * @param value State value
      */
     protected void updatePowerState(String value) {
-        if (StringUtils.isNumeric(value)) {
+        try {
             updateState(FibaroBindingConstants.CHANNEL_ID_POWER, new DecimalType(value));
+        } catch (NumberFormatException nfe) {
+            // Not a decimal value, don't update
         }
     }
 

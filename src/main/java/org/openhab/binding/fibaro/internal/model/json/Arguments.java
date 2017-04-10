@@ -7,6 +7,7 @@
  */
 package org.openhab.binding.fibaro.internal.model.json;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -17,6 +18,10 @@ import java.util.Collection;
 public class Arguments {
 
     private Collection<Object> args;
+
+    public Arguments() {
+        args = new ArrayList<Object>();
+    }
 
     public void addArgs(Object a) {
         args.add(a);
