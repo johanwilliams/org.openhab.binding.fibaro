@@ -7,6 +7,7 @@
  */
 package org.openhab.binding.fibaro.handler;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -117,7 +118,7 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
     protected void updateDeadState(String value) {
         if (value.equals("true")) {
             updateState(FibaroBindingConstants.CHANNEL_ID_DEAD, OnOffType.ON);
-        } else {
+        } else if (value.equals("false")) {
             updateState(FibaroBindingConstants.CHANNEL_ID_DEAD, OnOffType.OFF);
         }
     }
@@ -130,7 +131,7 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
     protected void updateSwitchState(String value) {
         if (value.equals("1")) {
             updateState(FibaroBindingConstants.CHANNEL_ID_SWITCH, OnOffType.ON);
-        } else {
+        } else if (value.equals("0")) {
             updateState(FibaroBindingConstants.CHANNEL_ID_SWITCH, OnOffType.OFF);
         }
     }
@@ -141,7 +142,9 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      * @param value State value
      */
     protected void updateEnergyState(String value) {
-        updateState(FibaroBindingConstants.CHANNEL_ID_ENERGY, new DecimalType(value));
+        if (StringUtils.isNumeric(value)) {
+            updateState(FibaroBindingConstants.CHANNEL_ID_ENERGY, new DecimalType(value));
+        }
     }
 
     /**
@@ -150,7 +153,9 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      * @param value State value
      */
     protected void updatePowerState(String value) {
-        updateState(FibaroBindingConstants.CHANNEL_ID_POWER, new DecimalType(value));
+        if (StringUtils.isNumeric(value)) {
+            updateState(FibaroBindingConstants.CHANNEL_ID_POWER, new DecimalType(value));
+        }
     }
 
     /**
