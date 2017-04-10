@@ -5,21 +5,22 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.fibaro.config;
+package org.openhab.binding.fibaro.internal.model.json;
+
+import java.util.Arrays;
 
 /**
- * Configuration class for the Binary Switch Thing.
+ * Json pojo for arguments sent in with post requests to the Finaro api
  *
  * @author Johan Williams - Initial contribution
  */
+public class Arguments {
 
-public class BinarySwitchConfiguration {
+    private String[] args;
 
-    public static String ID = "Id";
-
-    /**
-     * The z-wave device id for this item/device on the Fibaro controller
-     */
-    public int id;
+    @Override
+    public String toString() {
+        return "Arguments [args=" + Arrays.toString(args) + "]";
+    }
 
 }

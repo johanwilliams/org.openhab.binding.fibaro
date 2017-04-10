@@ -8,13 +8,15 @@
 package org.openhab.binding.fibaro.handler;
 
 import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.smarthome.core.library.types.IncreaseDecreaseType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.types.Command;
-import org.openhab.binding.fibaro.config.BinarySwitchConfiguration;
+import org.openhab.binding.fibaro.config.DimmerConfiguration;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
 import org.openhab.binding.fibaro.internal.model.json.ApiResponse;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
@@ -22,14 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link BinarySwitchThingHandler} is responsible for handling commands, which are
+ * The {@link DimmerThingHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Johan Williams - Initial contribution
  */
-public class BinarySwitchThingHandler extends FibaroThingHandler {
+public class DimmerThingHandler extends FibaroThingHandler {
 
-    private Logger logger = LoggerFactory.getLogger(BinarySwitchThingHandler.class);
+    private Logger logger = LoggerFactory.getLogger(DimmerThingHandler.class);
 
     public static final String PROPERTY_SWITCH = "value";
     public static final String PROPERTY_DEAD = "dead";
@@ -38,8 +40,10 @@ public class BinarySwitchThingHandler extends FibaroThingHandler {
 
     public static final String ACTION_ON = "turnOn";
     public static final String ACTION_OFF = "turnOff";
+    public static final String ACTION_INCREASE = "startLevelIncrease";
+    public static final String ACTION_DECREASE = "startLevelDecrease";
 
-    public BinarySwitchThingHandler(Thing thing) {
+    public DimmerThingHandler(Thing thing) {
         super(thing);
     }
 
@@ -60,11 +64,11 @@ public class BinarySwitchThingHandler extends FibaroThingHandler {
     public void init() throws FibaroConfigurationException {
         super.init();
 
-        BinarySwitchConfiguration config = getConfigAs(BinarySwitchConfiguration.class);
-        logger.debug("Initializing the binary switch handler with id {}", config.id);
+        DimmerConfiguration config = getConfigAs(DimmerConfiguration.class);
+        logger.debug("Initializing the dimmer handler with id {}", config.id);
 
         if (config.id < 1) {
-            throw new FibaroConfigurationException(BinarySwitchConfiguration.ID + "' must be larget than 0");
+            throw new FibaroConfigurationException(DimmerConfiguration.ID + "' must be larget than 0");
         }
 
         try {
@@ -87,8 +91,21 @@ public class BinarySwitchThingHandler extends FibaroThingHandler {
                 ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", ApiResponse.class);
                 logger.debug(apiResponse.toString());
                 // TODO: Check ApiResponse for error codes
+            } else if (command instanceof IncreaseDecreaseType) {
+                String action = command.equals(IncreaseDecreaseType.INCREASE) ? ACTION_INCREASE : ACTION_DECREASE;
+                String url = "http://" + bridge.getIpAddress() + "/api/devices/action/" + action;
+                ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", ApiResponse.class);
+                logger.debug(apiResponse.toString());
+                // TODO: Check ApiResponse for error codes
+            } else if (command instanceof PercentType) {
+                int dimmerValue = ((PercentType) command).intValue();
+                String arguments = "Arguments { args(" + dimmerValue + ") }";
+                String url = "http://" + bridge.getIpAddress() + "/api/devices/action/setValue";
+                ApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, arguments, ApiResponse.class);
+                logger.debug(apiResponse.toString());
+                // TODO: Check ApiResponse for error codes
             } else {
-                logger.debug("The binary switch handler can't handle command: " + command.toString());
+                logger.debug("The dimmer handler can't handle command: " + command.toString());
             }
         } catch (Exception e) {
             logger.debug("Failed to handle command " + command.toString() + " : " + e.getMessage());
@@ -101,7 +118,7 @@ public class BinarySwitchThingHandler extends FibaroThingHandler {
      * @return Thing id
      */
     public int getId() {
-        return getConfigAs(BinarySwitchConfiguration.class).id;
+        return getConfigAs(DimmerConfiguration.class).id;
     }
 
     @Override

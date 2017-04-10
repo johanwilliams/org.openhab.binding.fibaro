@@ -82,18 +82,18 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
             logger.debug("Can't update channel {} as the device information is null", channelId);
         } else {
             switch (channelId) {
-                case FibaroBindingConstants.SWITCH:
+                case FibaroBindingConstants.CHANNEL_ID_SWITCH:
                     updateState(channelId,
                             device.getProperties().getValue().equals("true") ? OnOffType.ON : OnOffType.OFF);
                     break;
-                case FibaroBindingConstants.DEAD:
+                case FibaroBindingConstants.CHANNEL_ID_DEAD:
                     updateState(channelId,
                             device.getProperties().getDead().equals("true") ? OnOffType.ON : OnOffType.OFF);
                     break;
-                case FibaroBindingConstants.ENERGY:
+                case FibaroBindingConstants.CHANNEL_ID_ENERGY:
                     updateState(channelId, new DecimalType(device.getProperties().getEnergy()));
                     break;
-                case FibaroBindingConstants.POWER:
+                case FibaroBindingConstants.CHANNEL_ID_POWER:
                     updateState(channelId, new DecimalType(device.getProperties().getPower()));
                     break;
                 default:
@@ -110,9 +110,9 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      */
     protected void updateDeadState(String value) {
         if (value.equals("true")) {
-            updateState(FibaroBindingConstants.DEAD, OnOffType.ON);
+            updateState(FibaroBindingConstants.CHANNEL_ID_DEAD, OnOffType.ON);
         } else {
-            updateState(FibaroBindingConstants.DEAD, OnOffType.OFF);
+            updateState(FibaroBindingConstants.CHANNEL_ID_DEAD, OnOffType.OFF);
         }
     }
 
@@ -123,9 +123,9 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      */
     protected void updateSwitchState(String value) {
         if (value.equals("1")) {
-            updateState(FibaroBindingConstants.SWITCH, OnOffType.ON);
+            updateState(FibaroBindingConstants.CHANNEL_ID_SWITCH, OnOffType.ON);
         } else {
-            updateState(FibaroBindingConstants.SWITCH, OnOffType.OFF);
+            updateState(FibaroBindingConstants.CHANNEL_ID_SWITCH, OnOffType.OFF);
         }
     }
 
@@ -135,7 +135,7 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      * @param value State value
      */
     protected void updateEnergyState(String value) {
-        updateState(FibaroBindingConstants.ENERGY, new DecimalType(value));
+        updateState(FibaroBindingConstants.CHANNEL_ID_ENERGY, new DecimalType(value));
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      * @param value State value
      */
     protected void updatePowerState(String value) {
-        updateState(FibaroBindingConstants.POWER, new DecimalType(value));
+        updateState(FibaroBindingConstants.CHANNEL_ID_POWER, new DecimalType(value));
     }
 
     /**

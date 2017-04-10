@@ -23,29 +23,32 @@ public class FibaroBindingConstants {
 
     public static final String BINDING_ID = "fibaro";
 
-    // List of Fibaro bridge device types
-    public static final String FIBARO_BRIDGE = "fibaroBridge";
+    // List of Fibaro bridge types
+    public static final String BRIDGE_ID_FIBARO = "fibaroBridge";
 
-    // List of FIbaro device types
-    public static final String BINARY_SWITCH = "binarySwitch";
+    // List of Fibaro thing types
+    public static final String THING_ID_BINARY_SWITCH = "binarySwitch";
+    public static final String THING_ID_DIMMER = "dimmer";
 
     // List of all Bridge Thing Type UIDs
-    public final static ThingTypeUID FIBAROBRIDGE_THING_TYPE = new ThingTypeUID(BINDING_ID, FIBARO_BRIDGE);
+    public final static ThingTypeUID THING_TYPE_BRIDGE_FIBARO = new ThingTypeUID(BINDING_ID, BRIDGE_ID_FIBARO);
 
     // List of all Thing Type UIDs
-    public final static ThingTypeUID BINARY_SWITCH_THING_TYPE = new ThingTypeUID(BINDING_ID, BINARY_SWITCH);
+    public final static ThingTypeUID THING_TYPE_BINARY_SWITCH = new ThingTypeUID(BINDING_ID, THING_ID_BINARY_SWITCH);
+    public final static ThingTypeUID THING_TYPE_DIMMER = new ThingTypeUID(BINDING_ID, THING_ID_DIMMER);
 
     // List of all Channel ids
-    public final static String SWITCH = "switch";
-    public final static String DEAD = "dead";
-    public final static String ENERGY = "energy";
-    public final static String POWER = "power";
+    public final static String CHANNEL_ID_SWITCH = "switch";
+    public final static String CHANNEL_ID_DIMMER = "dimmer";
+    public final static String CHANNEL_ID_DEAD = "dead";
+    public final static String CHANNEL_ID_ENERGY = "energy";
+    public final static String CHANNEL_ID_POWER = "power";
 
     // Set of all supported Thing Type UIDs
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(FIBAROBRIDGE_THING_TYPE,
-            BINARY_SWITCH_THING_TYPE);
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_FIBARO,
+            THING_TYPE_BINARY_SWITCH, THING_TYPE_DIMMER);
 
     // Set of all supported Bridge Type UIDs
-    public final static Set<ThingTypeUID> SUPPORTED_BRIDGE_THING_TYPES_UIDS = ImmutableSet.of(FIBAROBRIDGE_THING_TYPE);
+    public final static Set<ThingTypeUID> SUPPORTED_BRIDGE_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_FIBARO);
 
 }

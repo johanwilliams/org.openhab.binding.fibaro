@@ -176,9 +176,17 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
         if (device == null) {
             String url = "http://" + getIpAddress() + "/api/devices/" + id;
             device = callFibaroApi(HttpMethod.GET, url, "", Device.class);
-            cache.put(id, device);
+            addToCache(id, device);
         }
         return device;
+    }
+
+    public void addToCache(int id, Device device) {
+        cache.put(id, device);
+    }
+
+    public void removeFromCache(int id) {
+        cache.remove(id);
     }
 
     /**

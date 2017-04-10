@@ -9,8 +9,8 @@
         <supported-bridge-type-refs>
             <bridge-type-ref id="fibaroBridge" />
         </supported-bridge-type-refs>
-        <label>Binary Switch Thing</label>
-        <description>Thing for a binary switch</description>
+        <label>Binary Switch</label>
+        <description>Thing used for a Fibaro binary switch</description>
 
         <channels>
             <channel id="switch" typeId="switch"/>
@@ -25,15 +25,45 @@
                 <description>The z-wave device id on the Fibaro controller</description>
             </parameter>
             
-        </config-description>
-        
-        
+        </config-description>        
     </thing-type>
+    
+    <!-- Dimmer Thing Type -->
+    <thing-type id="dimmer">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="fibaroBridge" />
+        </supported-bridge-type-refs>
+        <label>Dimmer Thing</label>
+        <description>Thing used for a Fibaro Dimmer</description>
+
+        <channels>
+            <channel id="dimmer" typeId="dimmer"/>
+            <channel id="dead" typeId="dead"/>
+            <channel id="energy" typeId="energy"/>
+            <channel id="power" typeId="power"/>
+        </channels>
+        
+        <config-description>
+            <parameter name="id" type="integer" min="1" required="true">
+                <label>Device id</label>
+                <description>The z-wave device id on the Fibaro controller</description>
+            </parameter>
+            
+        </config-description>        
+    </thing-type>
+    
 
     <channel-type id="switch">
         <item-type>Switch</item-type>
         <label>Switch</label>
         <description>Current state of the Switch</description>
+    </channel-type>
+
+    <channel-type id="dimmer">
+        <item-type>Dimmer</item-type>
+        <label>Dimmer</label>
+        <description>Current state of the Dimmer</description>
+        <category>DimmableLight</category>
     </channel-type>
 
     <channel-type id="dead">
