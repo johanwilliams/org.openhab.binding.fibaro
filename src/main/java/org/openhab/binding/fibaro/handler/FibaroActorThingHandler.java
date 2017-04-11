@@ -16,6 +16,8 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.RefreshType;
+import org.openhab.binding.fibaro.FibaroBindingConstants;
 import org.openhab.binding.fibaro.config.FibaroActorConfiguration;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
 import org.openhab.binding.fibaro.internal.model.json.FibaroApiResponse;
@@ -85,10 +87,11 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        super.handleCommand(channelUID, command);
         try {
             String url = "http://" + bridge.getIpAddress() + "/api/devices/" + getId() + "/action/";
-            if (command instanceof OnOffType) {
+            if (command instanceof RefreshType) {
+                updateChannel(channelUID.getId(), bridge.getDeviceData(id));
+            } else if (command instanceof OnOffType) {
                 url += command.equals(OnOffType.ON) ? ACTION_ON : ACTION_OFF;
                 FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", FibaroApiResponse.class);
                 logger.debug(apiResponse.toString());
@@ -109,7 +112,7 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
                 logger.debug(apiResponse.toString());
                 // TODO: Check FibaroApiResponse for error codes
             } else {
-                logger.debug("The binary switch handler can't handle command: " + command.toString());
+                logger.debug("Can't handle command: " + command.toString());
             }
         } catch (Exception e) {
             logger.debug("Failed to handle command " + command.toString() + " : " + e.getMessage());
@@ -120,17 +123,17 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
     public void update(FibaroUpdate fibaroUpdate) {
         switch (fibaroUpdate.getProperty()) {
             case PROPERTY_VALUE:
-                updateSwitchState(fibaroUpdate.getValue());
-                updateDimmerState(fibaroUpdate.getValue());
+                updateChannel(FibaroBindingConstants.CHANNEL_ID_SWITCH, stringToOnOff(fibaroUpdate.getValue()));
+                updateChannel(FibaroBindingConstants.CHANNEL_ID_DIMMER, stringToPercent(fibaroUpdate.getValue()));
                 break;
             case PROPERTY_DEAD:
-                updateDeadState(fibaroUpdate.getValue());
+                updateChannel(FibaroBindingConstants.CHANNEL_ID_DEAD, stringToOnOff(fibaroUpdate.getValue()));
                 break;
             case PROPERTY_ENERGY:
-                updateEnergyState(fibaroUpdate.getValue());
+                updateChannel(FibaroBindingConstants.CHANNEL_ID_ENERGY, stringToDecimal(fibaroUpdate.getValue()));
                 break;
             case PROPERTY_POWER:
-                updatePowerState(fibaroUpdate.getValue());
+                updateChannel(FibaroBindingConstants.CHANNEL_ID_POWER, stringToDecimal(fibaroUpdate.getValue()));
                 break;
             default:
                 logger.debug("Update received for an unknown property: {}", fibaroUpdate.getProperty());

@@ -10,11 +10,9 @@ package org.openhab.binding.fibaro.handler;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
-import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.fibaro.FibaroBindingConstants;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
 import org.openhab.binding.fibaro.internal.model.json.FibaroDevice;
@@ -66,17 +64,6 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         }
     }
 
-    @Override
-    public void handleCommand(ChannelUID channelUID, Command command) {
-        if (command instanceof RefreshType) {
-            try {
-                updateChannel(channelUID.getId(), bridge.getDeviceData(id));
-            } catch (Exception e) {
-                logger.debug("Could not refresh data for device id {}", e.getMessage());
-            }
-        }
-    }
-
     /**
      * Updates a thing channel from device data
      *
@@ -90,12 +77,17 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         } else {
             switch (channelId) {
                 case FibaroBindingConstants.CHANNEL_ID_SWITCH:
-                    updateState(channelId,
-                            device.getProperties().getValue().equals("true") ? OnOffType.ON : OnOffType.OFF);
+                    updateChannel(channelId, stringToOnOff(device.getProperties().getValue()));
+                    break;
+                case FibaroBindingConstants.CHANNEL_ID_DIMMER:
+                    PercentType dimmerPercent = stringToPercent(device.getProperties().getValue());
+                    if (dimmerPercent.intValue() > 0) {
+                        updateChannel(channelId, OnOffType.ON);
+                    }
+                    updateChannel(channelId, dimmerPercent);
                     break;
                 case FibaroBindingConstants.CHANNEL_ID_DEAD:
-                    updateState(channelId,
-                            device.getProperties().getDead().equals("true") ? OnOffType.ON : OnOffType.OFF);
+                    updateChannel(channelId, stringToOnOff(device.getProperties().getDead()));
                     break;
                 case FibaroBindingConstants.CHANNEL_ID_ENERGY:
                     updateState(channelId, new DecimalType(device.getProperties().getEnergy()));
@@ -111,70 +103,58 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     }
 
     /**
-     * Updates the Dead channel state with the specified value
+     * Tries to cast a string to a {@link OnOffType}
      *
-     * @param value State value
+     * @param str String to cast
+     * @return the OnOffType state or null if it could not be casted
      */
-    protected void updateDeadState(String value) {
-        if (value.equals("true")) {
-            updateState(FibaroBindingConstants.CHANNEL_ID_DEAD, OnOffType.ON);
-        } else if (value.equals("false")) {
-            updateState(FibaroBindingConstants.CHANNEL_ID_DEAD, OnOffType.OFF);
+    protected OnOffType stringToOnOff(String str) {
+        if (str.equals("1") || str.equalsIgnoreCase("true") || str.equalsIgnoreCase("on")) {
+            return OnOffType.ON;
         }
+        if (str.equals("0") || str.equalsIgnoreCase("false") || str.equalsIgnoreCase("off")) {
+            return OnOffType.OFF;
+        }
+        return null;
     }
 
     /**
-     * Updates the Switch state with the specified value
+     * Tries to cast a string to a {@link PercentType}
      *
-     * @param value State value
+     * @param str String to cast
+     * @return the PercentType state or null if it could not be casted or is not between 0 and 100
      */
-    protected void updateSwitchState(String value) {
-        if (value.equals("1")) {
-            updateState(FibaroBindingConstants.CHANNEL_ID_SWITCH, OnOffType.ON);
-        } else if (value.equals("0")) {
-            updateState(FibaroBindingConstants.CHANNEL_ID_SWITCH, OnOffType.OFF);
-        }
-    }
-
-    /**
-     * Updates the Dimmer state with the specified value
-     *
-     * @param value State value
-     */
-    protected void updateDimmerState(String value) {
+    protected PercentType stringToPercent(String str) {
         try {
-            int dimmerValue = Integer.valueOf(value).intValue();
-            if (dimmerValue >= 0 && dimmerValue <= 100) {
-                updateState(FibaroBindingConstants.CHANNEL_ID_DIMMER, new PercentType(dimmerValue));
+            int percent = Integer.valueOf(str).intValue();
+            if (percent >= 0 && percent <= 100) {
+                return new PercentType(percent);
             }
         } catch (NumberFormatException nfe) {
-            // Not a decimal value, don't update
+            // Not a integer
         }
+        return null;
     }
 
     /**
-     * Updates the Energy state with the specified value
+     * Tries to cast a string to a {@link DecimalType}
      *
-     * @param value State value
+     * @param str String to cast
+     * @return the DecimalType state or null if it could not be casted
      */
-    protected void updateEnergyState(String value) {
+    protected DecimalType stringToDecimal(String str) {
         try {
-            updateState(FibaroBindingConstants.CHANNEL_ID_ENERGY, new DecimalType(value));
+            double decimal = Double.valueOf(str).doubleValue();
+            return new DecimalType(decimal);
         } catch (NumberFormatException nfe) {
-            // Not a decimal value, don't update
+            // Not a double
         }
+        return null;
     }
 
-    /**
-     * Updates the Power state with the specified value
-     *
-     * @param value State value
-     */
-    protected void updatePowerState(String value) {
-        try {
-            updateState(FibaroBindingConstants.CHANNEL_ID_POWER, new DecimalType(value));
-        } catch (NumberFormatException nfe) {
-            // Not a decimal value, don't update
+    protected void updateChannel(String channelId, State state) {
+        if (state != null) {
+            updateState(channelId, state);
         }
     }
 

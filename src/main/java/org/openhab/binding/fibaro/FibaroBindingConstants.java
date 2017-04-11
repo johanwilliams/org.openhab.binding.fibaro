@@ -36,6 +36,7 @@ public class FibaroBindingConstants {
     public final static ThingTypeUID THING_TYPE_ACTOR = new ThingTypeUID(BINDING_ID, THING_ID_ACTOR);
 
     // List of all Channel ids
+    public final static String CHANNEL_ID_ALARM = "alarm";
     public final static String CHANNEL_ID_SWITCH = "switch";
     public final static String CHANNEL_ID_DIMMER = "dimmer";
     public final static String CHANNEL_ID_DEAD = "dead";

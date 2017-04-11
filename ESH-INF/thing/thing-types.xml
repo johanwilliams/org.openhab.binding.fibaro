@@ -29,12 +29,6 @@
         </config-description>        
     </thing-type>    
 
-    <channel-type id="alarm" advanced="true">
-        <item-type>Alarm</item-type>
-        <label>Alarm</label>
-        <description>Channel to control a alarm device such as a siren</description>        
-    </channel-type>
-
     <channel-type id="switch" advanced="true">
         <item-type>Switch</item-type>
         <label>Switch</label>
