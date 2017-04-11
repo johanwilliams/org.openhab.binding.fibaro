@@ -9,6 +9,7 @@ package org.openhab.binding.fibaro.handler;
 
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
@@ -16,7 +17,7 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.fibaro.FibaroBindingConstants;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
-import org.openhab.binding.fibaro.internal.model.json.Device;
+import org.openhab.binding.fibaro.internal.model.json.FibaroDevice;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,22 +25,22 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 
 /**
- * Abstract thing handler which implements all common functions the onterh thing handler need.
+ * Abstract thing handler which implements all common functions the other thing handlers may need.
  *
  * @author Johan Williams - Initial contribution
  */
-public abstract class FibaroThingHandler extends BaseThingHandler {
+public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
 
-    private Logger logger = LoggerFactory.getLogger(FibaroThingHandler.class);
+    private Logger logger = LoggerFactory.getLogger(FibaroAbstractThingHandler.class);
 
     protected Gson gson;
 
     protected int id;
 
     // Reference to the bridge which we need for communication
-    protected FibaroControllerHandler bridge = null;
+    protected FibaroControllerBridgeHandler bridge = null;
 
-    public FibaroThingHandler(Thing thing) {
+    public FibaroAbstractThingHandler(Thing thing) {
         super(thing);
     }
 
@@ -55,7 +56,7 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
             throw new FibaroConfigurationException(
                     "This thing is not connected to a Fibaro bridge. Please add a Fibaro bridge and connect it in Thing settings.");
         }
-        bridge = (FibaroControllerHandler) getBridge().getHandler();
+        bridge = (FibaroControllerBridgeHandler) getBridge().getHandler();
     }
 
     protected void setThingId(int id) {
@@ -83,7 +84,7 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
      * @param device The device carrying the update information
      * @throws Exception
      */
-    protected void updateChannel(String channelId, Device device) throws Exception {
+    protected void updateChannel(String channelId, FibaroDevice device) throws Exception {
         if (device == null) {
             logger.debug("Can't update channel {} as the device information is null", channelId);
         } else {
@@ -132,6 +133,22 @@ public abstract class FibaroThingHandler extends BaseThingHandler {
             updateState(FibaroBindingConstants.CHANNEL_ID_SWITCH, OnOffType.ON);
         } else if (value.equals("0")) {
             updateState(FibaroBindingConstants.CHANNEL_ID_SWITCH, OnOffType.OFF);
+        }
+    }
+
+    /**
+     * Updates the Dimmer state with the specified value
+     *
+     * @param value State value
+     */
+    protected void updateDimmerState(String value) {
+        try {
+            int dimmerValue = Integer.valueOf(value).intValue();
+            if (dimmerValue >= 0 && dimmerValue <= 100) {
+                updateState(FibaroBindingConstants.CHANNEL_ID_DIMMER, new PercentType(dimmerValue));
+            }
+        } catch (NumberFormatException nfe) {
+            // Not a decimal value, don't update
         }
     }
 

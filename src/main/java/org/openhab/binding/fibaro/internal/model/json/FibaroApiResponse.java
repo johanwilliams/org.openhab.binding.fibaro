@@ -12,11 +12,11 @@ package org.openhab.binding.fibaro.internal.model.json;
  *
  * @author Johan Williams - Initial contribution
  */
-public class ApiResponse {
+public class FibaroApiResponse {
 
     private String id;
     private String jsonrpc;
-    private Result result;
+    private FibaroResult result;
 
     public String getId() {
         return id;
@@ -34,17 +34,17 @@ public class ApiResponse {
         this.jsonrpc = jsonrpc;
     }
 
-    public Result getResult() {
+    public FibaroResult getResult() {
         return result;
     }
 
-    public void setResult(Result result) {
+    public void setResult(FibaroResult result) {
         this.result = result;
     }
 
     @Override
     public String toString() {
-        return "ApiResponse [id=" + id + ", jsonrpc=" + jsonrpc + ", result=" + result + "]";
+        return "FibaroApiResponse [id=" + id + ", jsonrpc=" + jsonrpc + ", result=" + result + "]";
     }
 
 }

@@ -29,9 +29,9 @@ import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.fibaro.config.FibaroControllerConfiguration;
 import org.openhab.binding.fibaro.internal.InMemoryCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
-import org.openhab.binding.fibaro.internal.model.json.Device;
+import org.openhab.binding.fibaro.internal.model.json.FibaroDevice;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
-import org.openhab.binding.fibaro.internal.model.json.Settings;
+import org.openhab.binding.fibaro.internal.model.json.FibaroSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +42,11 @@ import com.google.gson.Gson;
  *
  * @author Johan Williams - Initial Contribution
  */
-public class FibaroControllerHandler extends BaseBridgeHandler {
+public class FibaroControllerBridgeHandler extends BaseBridgeHandler {
 
-    private Logger logger = LoggerFactory.getLogger(FibaroControllerHandler.class);
+    private Logger logger = LoggerFactory.getLogger(FibaroControllerBridgeHandler.class);
 
-    private InMemoryCache<Integer, Device> cache;
+    private InMemoryCache<Integer, FibaroDevice> cache;
     private final int CACHE_EXPIRY = 10; // 10s
     private final int CACHE_SIZE = 100; // 10s
 
@@ -56,20 +56,20 @@ public class FibaroControllerHandler extends BaseBridgeHandler {
     private final String REALM = "fibaro";
     private Gson gson;
 
-    private Map<Integer, FibaroThingHandler> things;
+    private Map<Integer, FibaroAbstractThingHandler> things;
 
-    public FibaroControllerHandler(Bridge bridge) {
+    public FibaroControllerBridgeHandler(Bridge bridge) {
         super(bridge);
         httpClient = new HttpClient();
         gson = new Gson();
-        things = new HashMap<Integer, FibaroThingHandler>();
+        things = new HashMap<Integer, FibaroAbstractThingHandler>();
     }
 
     @Override
     public void initialize() {
         logger.debug("Initializing the Fibaro Bridge handler.");
 
-        cache = new InMemoryCache<Integer, Device>(CACHE_EXPIRY, 1, CACHE_SIZE);
+        cache = new InMemoryCache<Integer, FibaroDevice>(CACHE_EXPIRY, 1, CACHE_SIZE);
 
         FibaroControllerConfiguration config = getConfigAs(FibaroControllerConfiguration.class);
 
@@ -101,7 +101,7 @@ public class FibaroControllerHandler extends BaseBridgeHandler {
         // Make a call to the controller API
         String url = "http://" + getIpAddress() + "/api/settings/info";
         try {
-            Settings settings = callFibaroApi(HttpMethod.GET, url, "", Settings.class);
+            FibaroSettings settings = callFibaroApi(HttpMethod.GET, url, "", FibaroSettings.class);
             logger.debug("Successfully connected to the Fibaro controller " + settings.toString());
         } catch (Exception e1) {
             errorMsg = "Failed to connect to the Fibaro controller through api call '" + url
@@ -127,7 +127,7 @@ public class FibaroControllerHandler extends BaseBridgeHandler {
 
     public void handleFibaroUpdate(FibaroUpdate fibaroUpdate) {
         logger.debug(fibaroUpdate.toString());
-        FibaroThingHandler fibaroThingHandler = things.get(fibaroUpdate.getId());
+        FibaroAbstractThingHandler fibaroThingHandler = things.get(fibaroUpdate.getId());
         if (fibaroThingHandler == null) {
             logger.debug("No thing with id " + fibaroUpdate.getId() + " is configured");
         } else {
@@ -140,7 +140,7 @@ public class FibaroControllerHandler extends BaseBridgeHandler {
         // TODO Auto-generated method stub
     }
 
-    public void addThing(int id, FibaroThingHandler fibaroThingHandler) {
+    public void addThing(int id, FibaroAbstractThingHandler fibaroThingHandler) {
         things.put(id, fibaroThingHandler);
     }
 
@@ -148,7 +148,7 @@ public class FibaroControllerHandler extends BaseBridgeHandler {
         things.remove(id);
     }
 
-    public FibaroThingHandler getThing(int id) {
+    public FibaroAbstractThingHandler getThing(int id) {
         return things.get(id);
     }
 
@@ -171,17 +171,17 @@ public class FibaroControllerHandler extends BaseBridgeHandler {
         return getConfigAs(FibaroControllerConfiguration.class).ipAddress;
     }
 
-    public Device getDeviceData(int id) throws Exception {
-        Device device = cache.get(id);
+    public FibaroDevice getDeviceData(int id) throws Exception {
+        FibaroDevice device = cache.get(id);
         if (device == null) {
             String url = "http://" + getIpAddress() + "/api/devices/" + id;
-            device = callFibaroApi(HttpMethod.GET, url, "", Device.class);
+            device = callFibaroApi(HttpMethod.GET, url, "", FibaroDevice.class);
             addToCache(id, device);
         }
         return device;
     }
 
-    public void addToCache(int id, Device device) {
+    public void addToCache(int id, FibaroDevice device) {
         cache.put(id, device);
     }
 

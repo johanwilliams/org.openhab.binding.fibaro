@@ -12,7 +12,7 @@ package org.openhab.binding.fibaro.internal.model.json;
  *
  * @author Johan Williams - Initial contribution
  */
-public class Device {
+public class FibaroDevice {
 
     private int id;
     private String name;
@@ -21,7 +21,7 @@ public class Device {
     private String baseType;
     private boolean enabled;
     private int parentId;
-    private Properties properties;
+    private FibaroProperties properties;
     private int created;
     private int modified;
 
@@ -81,11 +81,11 @@ public class Device {
         this.parentId = parentId;
     }
 
-    public Properties getProperties() {
+    public FibaroProperties getProperties() {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(FibaroProperties properties) {
         this.properties = properties;
     }
 
@@ -107,7 +107,7 @@ public class Device {
 
     @Override
     public String toString() {
-        return "Device [id=" + id + ", name=" + name + ", roomID=" + roomID + ", type=" + type + ", baseType="
+        return "FibaroDevice [id=" + id + ", name=" + name + ", roomID=" + roomID + ", type=" + type + ", baseType="
                 + baseType + ", enabled=" + enabled + ", parentId=" + parentId + ", properties=" + properties
                 + ", created=" + created + ", modified=" + modified + "]";
     }

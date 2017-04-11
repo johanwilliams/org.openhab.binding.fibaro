@@ -8,12 +8,12 @@
 package org.openhab.binding.fibaro.config;
 
 /**
- * Configuration class for the Binary Switch Thing.
+ * Configuration class for the Fibaro Actor Thing.
  *
  * @author Johan Williams - Initial contribution
  */
 
-public class BinarySwitchConfiguration {
+public class FibaroActorConfiguration {
 
     public static String ID = "Id";
 

@@ -18,9 +18,8 @@ import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.fibaro.FibaroBindingConstants;
 import org.openhab.binding.fibaro.config.FibaroControllerConfiguration;
-import org.openhab.binding.fibaro.handler.BinarySwitchThingHandler;
-import org.openhab.binding.fibaro.handler.DimmerThingHandler;
-import org.openhab.binding.fibaro.handler.FibaroControllerHandler;
+import org.openhab.binding.fibaro.handler.FibaroActorThingHandler;
+import org.openhab.binding.fibaro.handler.FibaroControllerBridgeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,16 +41,11 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
             logger.debug("createThing(): {}: Creating an '{}' type Thing - {}",
                     FibaroBindingConstants.BRIDGE_ID_CONTROLLER, thingTypeUID, fibaroControllerUID.getId());
             return super.createThing(thingTypeUID, configuration, fibaroControllerUID, null);
-        } else if (FibaroBindingConstants.THING_TYPE_BINARY_SWITCH.equals(thingTypeUID)) {
-            ThingUID binarySwitchThingUID = getFibaroBinarySwitchUID(thingTypeUID, thingUID, configuration, bridgeUID);
-            logger.debug("createThing(): {}: Creating an '{}' type Thing - {}",
-                    FibaroBindingConstants.THING_ID_BINARY_SWITCH, thingTypeUID, binarySwitchThingUID.getId());
-            return super.createThing(thingTypeUID, configuration, binarySwitchThingUID, bridgeUID);
-        } else if (FibaroBindingConstants.THING_TYPE_DIMMER.equals(thingTypeUID)) {
-            ThingUID dimmerThingUID = getFibaroDimmerUID(thingTypeUID, thingUID, configuration, bridgeUID);
-            logger.debug("createThing(): {}: Creating an '{}' type Thing - {}", FibaroBindingConstants.THING_ID_DIMMER,
-                    thingTypeUID, dimmerThingUID.getId());
-            return super.createThing(thingTypeUID, configuration, dimmerThingUID, bridgeUID);
+        } else if (FibaroBindingConstants.THING_TYPE_ACTOR.equals(thingTypeUID)) {
+            ThingUID fibaroActorThingUID = getFibaroActorUID(thingTypeUID, thingUID, configuration, bridgeUID);
+            logger.debug("createThing(): {}: Creating an '{}' type Thing - {}", FibaroBindingConstants.THING_ID_ACTOR,
+                    thingTypeUID, fibaroActorThingUID.getId());
+            return super.createThing(thingTypeUID, configuration, fibaroActorThingUID, bridgeUID);
         }
 
         throw new IllegalArgumentException(
@@ -82,7 +76,7 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
     }
 
     /**
-     * Get the Binary Switch Thing UID.
+     * Get the Actor Thing UID.
      *
      * @param thingTypeUID
      * @param thingUID
@@ -90,27 +84,10 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
      * @param bridgeUID
      * @return thingUID
      */
-    private ThingUID getFibaroBinarySwitchUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
+    private ThingUID getFibaroActorUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
             ThingUID bridgeUID) {
         if (thingUID == null) {
-            thingUID = new ThingUID(thingTypeUID, FibaroBindingConstants.THING_ID_BINARY_SWITCH, bridgeUID.getId());
-        }
-        return thingUID;
-    }
-
-    /**
-     * Get the Binary Switch Thing UID.
-     *
-     * @param thingTypeUID
-     * @param thingUID
-     * @param configuration
-     * @param bridgeUID
-     * @return thingUID
-     */
-    private ThingUID getFibaroDimmerUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
-            ThingUID bridgeUID) {
-        if (thingUID == null) {
-            thingUID = new ThingUID(thingTypeUID, FibaroBindingConstants.THING_ID_DIMMER, bridgeUID.getId());
+            thingUID = new ThingUID(thingTypeUID, FibaroBindingConstants.THING_ID_ACTOR, bridgeUID.getId());
         }
         return thingUID;
     }
@@ -121,19 +98,15 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
         if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_BRIDGE_CONTROLLER)) {
-            FibaroControllerHandler handler = new FibaroControllerHandler((Bridge) thing);
+            FibaroControllerBridgeHandler handler = new FibaroControllerBridgeHandler((Bridge) thing);
             // registerFibaroDiscoveryService(handler);
             logger.debug("createHandler(): {}: ThingHandler created for {}",
                     FibaroBindingConstants.BRIDGE_ID_CONTROLLER, thingTypeUID);
             return handler;
-        } else if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_BINARY_SWITCH)) {
-            logger.debug("createHandler(): {}: ThingHandler created for {}",
-                    FibaroBindingConstants.THING_ID_BINARY_SWITCH, thingTypeUID);
-            return new BinarySwitchThingHandler(thing);
-        } else if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_DIMMER)) {
-            logger.debug("createHandler(): {}: ThingHandler created for {}", FibaroBindingConstants.THING_ID_DIMMER,
+        } else if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_ACTOR)) {
+            logger.debug("createHandler(): {}: ThingHandler created for {}", FibaroBindingConstants.THING_ID_ACTOR,
                     thingTypeUID);
-            return new DimmerThingHandler(thing);
+            return new FibaroActorThingHandler(thing);
         } else {
             logger.debug("createHandler(): ThingHandler not found for {}", thingTypeUID);
             return null;

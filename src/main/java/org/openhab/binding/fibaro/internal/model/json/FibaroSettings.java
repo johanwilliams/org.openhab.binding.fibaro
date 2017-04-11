@@ -12,7 +12,7 @@ package org.openhab.binding.fibaro.internal.model.json;
  *
  * @author Johan Williams - Initial contribution
  */
-public class Settings {
+public class FibaroSettings {
 
     private String serialNumber;
     private String hcName;
@@ -38,7 +38,7 @@ public class Settings {
 
     @Override
     public String toString() {
-        return "Settings [serialNumber=" + serialNumber + ", hcName=" + hcName + ", mac=" + mac + ", softVersion="
+        return "FibaroSettings [serialNumber=" + serialNumber + ", hcName=" + hcName + ", mac=" + mac + ", softVersion="
                 + softVersion + ", beta=" + beta + ", zwaveVersion=" + zwaveVersion + ", timeFormat=" + timeFormat
                 + ", zwaveRegion=" + zwaveRegion + ", serverStatus=" + serverStatus + ", defaultLanguage="
                 + defaultLanguage + ", sunsetHour=" + sunsetHour + ", sunriseHour=" + sunriseHour + ", hotelMode="

@@ -8,11 +8,11 @@
 package org.openhab.binding.fibaro.internal.model.json;
 
 /**
- * Json pojo containing the device properties for a {@link Device}
+ * Json pojo containing the device properties for a {@link FibaroDevice}
  *
  * @author Johan Williams - Initial contribution
  */
-public class Properties {
+public class FibaroProperties {
 
     private String zwaveCompany;
     private String zwaveInfo;
@@ -80,7 +80,7 @@ public class Properties {
 
     @Override
     public String toString() {
-        return "Properties [zwaveCompany=" + zwaveCompany + ", zwaveInfo=" + zwaveInfo + ", configured=" + configured
+        return "FibaroProperties [zwaveCompany=" + zwaveCompany + ", zwaveInfo=" + zwaveInfo + ", configured=" + configured
                 + ", dead=" + dead + ", energy=" + energy + ", power=" + power + ", value=" + value + "]";
     }
 

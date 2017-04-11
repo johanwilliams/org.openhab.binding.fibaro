@@ -15,11 +15,11 @@ import java.util.Collection;
  *
  * @author Johan Williams - Initial contribution
  */
-public class Arguments {
+public class FibaroArguments {
 
     private Collection<Object> args;
 
-    public Arguments() {
+    public FibaroArguments() {
         args = new ArrayList<Object>();
     }
 
@@ -29,7 +29,7 @@ public class Arguments {
 
     @Override
     public String toString() {
-        return "Arguments [args=" + args + "]";
+        return "FibaroArguments [args=" + args + "]";
     }
 
 }

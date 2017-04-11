@@ -27,15 +27,13 @@ public class FibaroBindingConstants {
     public static final String BRIDGE_ID_CONTROLLER = "controller";
 
     // List of Fibaro thing types
-    public static final String THING_ID_BINARY_SWITCH = "binarySwitch";
-    public static final String THING_ID_DIMMER = "dimmer";
+    public static final String THING_ID_ACTOR = "actor";
 
     // List of all Bridge Thing Type UIDs
     public final static ThingTypeUID THING_TYPE_BRIDGE_CONTROLLER = new ThingTypeUID(BINDING_ID, BRIDGE_ID_CONTROLLER);
 
     // List of all Thing Type UIDs
-    public final static ThingTypeUID THING_TYPE_BINARY_SWITCH = new ThingTypeUID(BINDING_ID, THING_ID_BINARY_SWITCH);
-    public final static ThingTypeUID THING_TYPE_DIMMER = new ThingTypeUID(BINDING_ID, THING_ID_DIMMER);
+    public final static ThingTypeUID THING_TYPE_ACTOR = new ThingTypeUID(BINDING_ID, THING_ID_ACTOR);
 
     // List of all Channel ids
     public final static String CHANNEL_ID_SWITCH = "switch";
@@ -46,7 +44,7 @@ public class FibaroBindingConstants {
 
     // Set of all supported Thing Type UIDs
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_CONTROLLER,
-            THING_TYPE_BINARY_SWITCH, THING_TYPE_DIMMER);
+            THING_TYPE_ACTOR);
 
     // Set of all supported Bridge Type UIDs
     public final static Set<ThingTypeUID> SUPPORTED_BRIDGE_THING_TYPES_UIDS = ImmutableSet

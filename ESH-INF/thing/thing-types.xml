@@ -4,39 +4,16 @@
         xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
         xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
-    <!-- Binary Switch Thing Type -->
-    <thing-type id="binarySwitch">
+    <!-- Actor Thing Type -->
+    <thing-type id="actor">
         <supported-bridge-type-refs>
             <bridge-type-ref id="controller" />
         </supported-bridge-type-refs>
-        <label>Binary Switch</label>
-        <description>Thing used for a Fibaro binary switch</description>
+        <label>Actor</label>
+        <description>A Fibaro Actor device i.e. a device which supports altering its value/state. This could for example be a switch, a dimmer or a thermostat. The Actor thing supports a variety of channels. If this is a switch, enable the switch channel. By default only the dead channel is active indicating id this z-wave device is marked dead by the controller.</description>
 
         <channels>
             <channel id="switch" typeId="switch"/>
-            <channel id="dead" typeId="dead"/>
-            <channel id="energy" typeId="energy"/>
-            <channel id="power" typeId="power"/>
-        </channels>
-        
-        <config-description>
-            <parameter name="id" type="integer" min="1" required="true">
-                <label>Device id</label>
-                <description>The z-wave device id on the Fibaro controller</description>
-            </parameter>
-            
-        </config-description>        
-    </thing-type>
-    
-    <!-- Dimmer Thing Type -->
-    <thing-type id="dimmer">
-        <supported-bridge-type-refs>
-            <bridge-type-ref id="controller" />
-        </supported-bridge-type-refs>
-        <label>Dimmer Thing</label>
-        <description>Thing used for a Fibaro Dimmer</description>
-
-        <channels>
             <channel id="dimmer" typeId="dimmer"/>
             <channel id="dead" typeId="dead"/>
             <channel id="energy" typeId="energy"/>
@@ -50,47 +27,51 @@
             </parameter>
             
         </config-description>        
-    </thing-type>
-    
+    </thing-type>    
 
-    <channel-type id="switch">
-        <item-type>Switch</item-type>
-        <label>Switch</label>
-        <description>Current state of the Switch</description>
+    <channel-type id="alarm" advanced="true">
+        <item-type>Alarm</item-type>
+        <label>Alarm</label>
+        <description>Channel to control a alarm device such as a siren</description>        
     </channel-type>
 
-    <channel-type id="dimmer">
+    <channel-type id="switch" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Switch</label>
+        <description>Channel to control a binday switch</description>        
+    </channel-type>
+
+    <channel-type id="dimmer" advanced="true">
         <item-type>Dimmer</item-type>
         <label>Dimmer</label>
-        <description>Current state of the Dimmer</description>
+        <description>Channel to control a dimmer</description>
         <category>DimmableLight</category>
     </channel-type>
 
     <channel-type id="dead">
         <item-type>Switch</item-type>
         <label>Dead</label>
-        <description>Holds information if the device is dead or not</description>
+        <description>Channel which holds a z-wave device dead status (i.e. configured but not connected to the controller)</description>
         <state readOnly="true">
         </state>
     </channel-type>
 
-    <channel-type id="energy">
+    <channel-type id="energy" advanced="true">
         <item-type>Number</item-type>
         <label>Energy</label>
-        <description>Total energy consumption by this device in kWh</description>
+        <description>Channel which reads the total energy consumption of this device in kWh</description>
         <category>Energy</category>
         <state readOnly="true" pattern="%.2f kWh">
         </state>
     </channel-type>
     
-    <channel-type id="power">
+    <channel-type id="power" advanced="true">
         <item-type>Number</item-type>
         <label>Power</label>
-        <description>Current device power usage in W</description>
+        <description>Channel which reads the current power usage of this device in W</description>
         <category>Energy</category>
         <state readOnly="true" pattern="%.2f W">
-        </state>
-        
+        </state>        
     </channel-type>
 
 </thing:thing-descriptions>

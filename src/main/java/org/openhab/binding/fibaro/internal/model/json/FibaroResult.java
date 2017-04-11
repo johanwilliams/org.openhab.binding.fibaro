@@ -9,11 +9,11 @@ package org.openhab.binding.fibaro.internal.model.json;
 
 /**
  * Json pojo representing the result of a call to the Fibaro API. The result is nested in other json pojos such as the
- * {@link ApiResponse}
+ * {@link FibaroApiResponse}
  *
  * @author Johan Williams - Initial contribution
  */
-public class Result {
+public class FibaroResult {
 
     private int result;
 
@@ -27,7 +27,7 @@ public class Result {
 
     @Override
     public String toString() {
-        return "Result [result=" + result + "]";
+        return "FibaroResult [result=" + result + "]";
     }
 
 }
