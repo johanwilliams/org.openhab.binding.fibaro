@@ -13,9 +13,9 @@
         <description>A Fibaro Actor device i.e. a device which supports altering its value/state. This could for example be a switch, a dimmer or a thermostat. The Actor thing supports a variety of channels. If this is a switch, enable the switch channel. By default only the dead channel is active indicating id this z-wave device is marked dead by the controller.</description>
 
         <channels>
-            <channel id="switch" typeId="switch"/>
-            <channel id="dimmer" typeId="dimmer"/>
             <channel id="dead" typeId="dead"/>
+            <channel id="switch" typeId="switch"/>
+            <channel id="dimmer" typeId="dimmer"/>            
             <channel id="energy" typeId="energy"/>
             <channel id="power" typeId="power"/>
         </channels>
@@ -27,7 +27,30 @@
             </parameter>
             
         </config-description>        
+    </thing-type>
+    
+    <!-- Sensor Thing Type -->
+    <thing-type id="sensor">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="controller" />
+        </supported-bridge-type-refs>
+        <label>Sensor</label>
+        <description>A Fibaro sensor i.e. a read only device. This could for example be a motion, temperature or door/window sensor. The Sensor thing supports a variety of channels. If this is a temperature sensor, enable the temperature channel. By default only the dead channel is active indicating id this z-wave device is marked dead by the controller.</description>
+
+        <channels>
+            <channel id="dead" typeId="dead"/>
+            <channel id="temperature" typeId="temperature"/>
+        </channels>
+        
+        <config-description>
+            <parameter name="id" type="integer" min="1" required="true">
+                <label>Device id</label>
+                <description>The z-wave device id on the Fibaro controller</description>
+            </parameter>
+            
+        </config-description>        
     </thing-type>    
+        
 
     <channel-type id="switch" advanced="true">
         <item-type>Switch</item-type>
@@ -65,6 +88,15 @@
         <description>Channel which reads the current power usage of this device in W</description>
         <category>Energy</category>
         <state readOnly="true" pattern="%.2f W">
+        </state>        
+    </channel-type>
+    
+    <channel-type id="temperature" advanced="true">
+        <item-type>Number</item-type>
+        <label>Temperature</label>
+        <description>Channel which reads the current temperature of this device in °C</description>
+        <category>Temperature</category>
+        <state readOnly="true" pattern="%.1f °C">
         </state>        
     </channel-type>
 

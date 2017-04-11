@@ -8,12 +8,12 @@
 package org.openhab.binding.fibaro.config;
 
 /**
- * Configuration class for the Dimmer Thing
+ * Configuration class for the Fibaro Things.
  *
  * @author Johan Williams - Initial contribution
  */
 
-public class DimmerConfiguration {
+public class FibaroThingConfiguration {
 
     public static String ID = "Id";
 

@@ -71,7 +71,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
      * @param device The device carrying the update information
      * @throws Exception
      */
-    protected void updateChannel(String channelId, FibaroDevice device) throws Exception {
+    protected void updateChannel(String channelId, FibaroDevice device) {
         if (device == null) {
             logger.debug("Can't update channel {} as the device information is null", channelId);
         } else {
@@ -94,6 +94,9 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                     break;
                 case FibaroBindingConstants.CHANNEL_ID_POWER:
                     updateState(channelId, new DecimalType(device.getProperties().getPower()));
+                    break;
+                case FibaroBindingConstants.CHANNEL_ID_TEMPERATURE:
+                    updateState(channelId, stringToDecimal(device.getProperties().getValue()));
                     break;
                 default:
                     logger.debug("Unknown channel: {}", channelId);

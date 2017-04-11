@@ -20,6 +20,7 @@ import org.openhab.binding.fibaro.FibaroBindingConstants;
 import org.openhab.binding.fibaro.config.FibaroControllerConfiguration;
 import org.openhab.binding.fibaro.handler.FibaroActorThingHandler;
 import org.openhab.binding.fibaro.handler.FibaroControllerBridgeHandler;
+import org.openhab.binding.fibaro.handler.FibaroSensorThingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +47,12 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
             logger.debug("createThing(): {}: Creating an '{}' type Thing - {}", FibaroBindingConstants.THING_ID_ACTOR,
                     thingTypeUID, fibaroActorThingUID.getId());
             return super.createThing(thingTypeUID, configuration, fibaroActorThingUID, bridgeUID);
+        } else if (FibaroBindingConstants.THING_TYPE_SENSOR.equals(thingTypeUID)) {
+            ThingUID fibaroSensorThingUID = getFibaroSensorUID(thingTypeUID, thingUID, configuration, bridgeUID);
+            logger.debug("createThing(): {}: Creating an '{}' type Thing - {}", FibaroBindingConstants.THING_ID_ACTOR,
+                    thingTypeUID, fibaroSensorThingUID.getId());
+            return super.createThing(thingTypeUID, configuration, fibaroSensorThingUID, bridgeUID);
         }
-
         throw new IllegalArgumentException(
                 "createThing(): The thing type " + thingTypeUID + " is not supported by the Fibaro binding.");
     }
@@ -92,6 +97,23 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
         return thingUID;
     }
 
+    /**
+     * Get the Sensor Thing UID.
+     *
+     * @param thingTypeUID
+     * @param thingUID
+     * @param configuration
+     * @param bridgeUID
+     * @return thingUID
+     */
+    private ThingUID getFibaroSensorUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
+            ThingUID bridgeUID) {
+        if (thingUID == null) {
+            thingUID = new ThingUID(thingTypeUID, FibaroBindingConstants.THING_ID_SENSOR, bridgeUID.getId());
+        }
+        return thingUID;
+    }
+
     @Override
     protected ThingHandler createHandler(Thing thing) {
 
@@ -107,6 +129,10 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
             logger.debug("createHandler(): {}: ThingHandler created for {}", FibaroBindingConstants.THING_ID_ACTOR,
                     thingTypeUID);
             return new FibaroActorThingHandler(thing);
+        } else if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_SENSOR)) {
+            logger.debug("createHandler(): {}: ThingHandler created for {}", FibaroBindingConstants.THING_ID_SENSOR,
+                    thingTypeUID);
+            return new FibaroSensorThingHandler(thing);
         } else {
             logger.debug("createHandler(): ThingHandler not found for {}", thingTypeUID);
             return null;
