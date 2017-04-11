@@ -90,13 +90,13 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                     updateChannel(channelId, stringToOnOff(device.getProperties().getDead()));
                     break;
                 case FibaroBindingConstants.CHANNEL_ID_ENERGY:
-                    updateState(channelId, new DecimalType(device.getProperties().getEnergy()));
+                    updateChannel(channelId, new DecimalType(device.getProperties().getEnergy()));
                     break;
                 case FibaroBindingConstants.CHANNEL_ID_POWER:
-                    updateState(channelId, new DecimalType(device.getProperties().getPower()));
+                    updateChannel(channelId, new DecimalType(device.getProperties().getPower()));
                     break;
                 case FibaroBindingConstants.CHANNEL_ID_TEMPERATURE:
-                    updateState(channelId, stringToDecimal(device.getProperties().getValue()));
+                    updateChannel(channelId, stringToDecimal(device.getProperties().getValue()));
                     break;
                 default:
                     logger.debug("Unknown channel: {}", channelId);
