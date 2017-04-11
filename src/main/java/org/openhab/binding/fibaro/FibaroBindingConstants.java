@@ -14,7 +14,7 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * The {@link FibaroBinding} class defines common constants, which are
+ * The {@link FibaroBindingConstants} class defines common constants, which are
  * used across the whole binding.
  *
  * @author Johan Williams - Initial contribution
@@ -24,14 +24,14 @@ public class FibaroBindingConstants {
     public static final String BINDING_ID = "fibaro";
 
     // List of Fibaro bridge types
-    public static final String BRIDGE_ID_FIBARO = "fibaroBridge";
+    public static final String BRIDGE_ID_CONTROLLER = "controller";
 
     // List of Fibaro thing types
     public static final String THING_ID_BINARY_SWITCH = "binarySwitch";
     public static final String THING_ID_DIMMER = "dimmer";
 
     // List of all Bridge Thing Type UIDs
-    public final static ThingTypeUID THING_TYPE_BRIDGE_FIBARO = new ThingTypeUID(BINDING_ID, BRIDGE_ID_FIBARO);
+    public final static ThingTypeUID THING_TYPE_BRIDGE_CONTROLLER = new ThingTypeUID(BINDING_ID, BRIDGE_ID_CONTROLLER);
 
     // List of all Thing Type UIDs
     public final static ThingTypeUID THING_TYPE_BINARY_SWITCH = new ThingTypeUID(BINDING_ID, THING_ID_BINARY_SWITCH);
@@ -45,10 +45,11 @@ public class FibaroBindingConstants {
     public final static String CHANNEL_ID_POWER = "power";
 
     // Set of all supported Thing Type UIDs
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_FIBARO,
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_CONTROLLER,
             THING_TYPE_BINARY_SWITCH, THING_TYPE_DIMMER);
 
     // Set of all supported Bridge Type UIDs
-    public final static Set<ThingTypeUID> SUPPORTED_BRIDGE_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_FIBARO);
+    public final static Set<ThingTypeUID> SUPPORTED_BRIDGE_THING_TYPES_UIDS = ImmutableSet
+            .of(THING_TYPE_BRIDGE_CONTROLLER);
 
 }

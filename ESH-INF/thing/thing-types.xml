@@ -7,7 +7,7 @@
     <!-- Binary Switch Thing Type -->
     <thing-type id="binarySwitch">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="fibaroBridge" />
+            <bridge-type-ref id="controller" />
         </supported-bridge-type-refs>
         <label>Binary Switch</label>
         <description>Thing used for a Fibaro binary switch</description>
@@ -31,7 +31,7 @@
     <!-- Dimmer Thing Type -->
     <thing-type id="dimmer">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="fibaroBridge" />
+            <bridge-type-ref id="controller" />
         </supported-bridge-type-refs>
         <label>Dimmer Thing</label>
         <description>Thing used for a Fibaro Dimmer</description>

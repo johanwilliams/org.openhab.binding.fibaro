@@ -29,10 +29,10 @@ public class FibaroServerHandler extends AbstractHandler {
 
     // private Logger logger = LoggerFactory.getLogger(FibaroServerHandler.class);
 
-    protected FibaroBridgeHandler fibaroBridgeHandler;
+    protected FibaroControllerHandler fibaroBridgeHandler;
     private Gson gson;
 
-    public FibaroServerHandler(FibaroBridgeHandler fibaroBridgeHandler) {
+    public FibaroServerHandler(FibaroControllerHandler fibaroBridgeHandler) {
         super();
         this.fibaroBridgeHandler = fibaroBridgeHandler;
         gson = new Gson();

@@ -17,10 +17,10 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.fibaro.FibaroBindingConstants;
-import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
+import org.openhab.binding.fibaro.config.FibaroControllerConfiguration;
 import org.openhab.binding.fibaro.handler.BinarySwitchThingHandler;
 import org.openhab.binding.fibaro.handler.DimmerThingHandler;
-import org.openhab.binding.fibaro.handler.FibaroBridgeHandler;
+import org.openhab.binding.fibaro.handler.FibaroControllerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +37,11 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
     @Override
     public Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
             ThingUID bridgeUID) {
-        if (FibaroBindingConstants.THING_TYPE_BRIDGE_FIBARO.equals(thingTypeUID)) {
-            ThingUID fibaroBridgeUID = getFibaroBridgeThingUID(thingTypeUID, thingUID, configuration);
-            logger.debug("createThing(): {}: Creating an '{}' type Thing - {}", FibaroBindingConstants.BRIDGE_ID_FIBARO,
-                    thingTypeUID, fibaroBridgeUID.getId());
-            return super.createThing(thingTypeUID, configuration, fibaroBridgeUID, null);
+        if (FibaroBindingConstants.THING_TYPE_BRIDGE_CONTROLLER.equals(thingTypeUID)) {
+            ThingUID fibaroControllerUID = getFibaroControllerThingUID(thingTypeUID, thingUID, configuration);
+            logger.debug("createThing(): {}: Creating an '{}' type Thing - {}",
+                    FibaroBindingConstants.BRIDGE_ID_CONTROLLER, thingTypeUID, fibaroControllerUID.getId());
+            return super.createThing(thingTypeUID, configuration, fibaroControllerUID, null);
         } else if (FibaroBindingConstants.THING_TYPE_BINARY_SWITCH.equals(thingTypeUID)) {
             ThingUID binarySwitchThingUID = getFibaroBinarySwitchUID(thingTypeUID, thingUID, configuration, bridgeUID);
             logger.debug("createThing(): {}: Creating an '{}' type Thing - {}",
@@ -64,17 +64,17 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
     }
 
     /**
-     * Get the Fibaro Bridge Thing UID.
+     * Get the Fibaro Controller Thing UID.
      *
      * @param thingTypeUID
      * @param thingUID
      * @param configuration
      * @return thingUID
      */
-    private ThingUID getFibaroBridgeThingUID(ThingTypeUID thingTypeUID, ThingUID thingUID,
+    private ThingUID getFibaroControllerThingUID(ThingTypeUID thingTypeUID, ThingUID thingUID,
             Configuration configuration) {
         if (thingUID == null) {
-            String ipAddress = (String) configuration.get(FibaroBridgeConfiguration.IP_ADDRESS);
+            String ipAddress = (String) configuration.get(FibaroControllerConfiguration.IP_ADDRESS);
             String bridgeID = ipAddress.replace('.', '_');
             thingUID = new ThingUID(thingTypeUID, bridgeID);
         }
@@ -120,11 +120,11 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
 
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-        if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_BRIDGE_FIBARO)) {
-            FibaroBridgeHandler handler = new FibaroBridgeHandler((Bridge) thing);
+        if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_BRIDGE_CONTROLLER)) {
+            FibaroControllerHandler handler = new FibaroControllerHandler((Bridge) thing);
             // registerFibaroDiscoveryService(handler);
-            logger.debug("createHandler(): {}: ThingHandler created for {}", FibaroBindingConstants.BRIDGE_ID_FIBARO,
-                    thingTypeUID);
+            logger.debug("createHandler(): {}: ThingHandler created for {}",
+                    FibaroBindingConstants.BRIDGE_ID_CONTROLLER, thingTypeUID);
             return handler;
         } else if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_BINARY_SWITCH)) {
             logger.debug("createHandler(): {}: ThingHandler created for {}",

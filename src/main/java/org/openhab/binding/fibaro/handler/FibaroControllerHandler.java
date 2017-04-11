@@ -26,7 +26,7 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
-import org.openhab.binding.fibaro.config.FibaroBridgeConfiguration;
+import org.openhab.binding.fibaro.config.FibaroControllerConfiguration;
 import org.openhab.binding.fibaro.internal.InMemoryCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
 import org.openhab.binding.fibaro.internal.model.json.Device;
@@ -42,9 +42,9 @@ import com.google.gson.Gson;
  *
  * @author Johan Williams - Initial Contribution
  */
-public class FibaroBridgeHandler extends BaseBridgeHandler {
+public class FibaroControllerHandler extends BaseBridgeHandler {
 
-    private Logger logger = LoggerFactory.getLogger(FibaroBridgeHandler.class);
+    private Logger logger = LoggerFactory.getLogger(FibaroControllerHandler.class);
 
     private InMemoryCache<Integer, Device> cache;
     private final int CACHE_EXPIRY = 10; // 10s
@@ -58,7 +58,7 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
 
     private Map<Integer, FibaroThingHandler> things;
 
-    public FibaroBridgeHandler(Bridge bridge) {
+    public FibaroControllerHandler(Bridge bridge) {
         super(bridge);
         httpClient = new HttpClient();
         gson = new Gson();
@@ -71,7 +71,7 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
 
         cache = new InMemoryCache<Integer, Device>(CACHE_EXPIRY, 1, CACHE_SIZE);
 
-        FibaroBridgeConfiguration config = getConfigAs(FibaroBridgeConfiguration.class);
+        FibaroControllerConfiguration config = getConfigAs(FibaroControllerConfiguration.class);
 
         logger.debug("config ipAddress = {}", config.ipAddress);
         logger.debug("config id = {}", config.port);
@@ -82,19 +82,19 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
         String errorMsg = null;
 
         if (StringUtils.trimToNull(config.ipAddress) == null) {
-            errorMsg = "Parameter '" + FibaroBridgeConfiguration.IP_ADDRESS + "' is mandatory and must be configured";
+            errorMsg = "Parameter '" + FibaroControllerConfiguration.IP_ADDRESS + "' is mandatory and must be configured";
             validConfig = false;
         }
         if (config.port <= 1024 || config.port > 65535) {
-            errorMsg = "Parameter '" + FibaroBridgeConfiguration.PORT + "' must be between 1025 and 65535";
+            errorMsg = "Parameter '" + FibaroControllerConfiguration.PORT + "' must be between 1025 and 65535";
             validConfig = false;
         }
         if (StringUtils.trimToNull(config.username) == null) {
-            errorMsg = "Parameter '" + FibaroBridgeConfiguration.USERNAME + "' is mandatory and must be configured";
+            errorMsg = "Parameter '" + FibaroControllerConfiguration.USERNAME + "' is mandatory and must be configured";
             validConfig = false;
         }
         if (StringUtils.trimToNull(config.password) == null) {
-            errorMsg = "Parameter '" + FibaroBridgeConfiguration.PASSWORD + "' is mandatory and must be configured";
+            errorMsg = "Parameter '" + FibaroControllerConfiguration.PASSWORD + "' is mandatory and must be configured";
             validConfig = false;
         }
 
@@ -168,7 +168,7 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
     }
 
     public String getIpAddress() {
-        return getConfigAs(FibaroBridgeConfiguration.class).ipAddress;
+        return getConfigAs(FibaroControllerConfiguration.class).ipAddress;
     }
 
     public Device getDeviceData(int id) throws Exception {
@@ -204,7 +204,7 @@ public class FibaroBridgeHandler extends BaseBridgeHandler {
         if (!httpClient.isStarted()) {
             httpClient.start();
         }
-        FibaroBridgeConfiguration config = getConfigAs(FibaroBridgeConfiguration.class);
+        FibaroControllerConfiguration config = getConfigAs(FibaroControllerConfiguration.class);
 
         // Add authentication credentials
         AuthenticationStore auth = httpClient.getAuthenticationStore();

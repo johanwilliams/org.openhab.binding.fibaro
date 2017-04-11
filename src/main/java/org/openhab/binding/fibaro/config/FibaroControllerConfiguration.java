@@ -8,12 +8,12 @@
 package org.openhab.binding.fibaro.config;
 
 /**
- * Configuration class for the Fibaro bridge, used to connect to the Fibaro controller.
+ * Configuration class for the Fibaro controller, used to connect to the Fibaro controller.
  *
  * @author Johan Williams - Initial contribution
  */
 
-public class FibaroBridgeConfiguration {
+public class FibaroControllerConfiguration {
 
     public static String IP_ADDRESS = "Ip address";
     public static String PORT = "Port";
