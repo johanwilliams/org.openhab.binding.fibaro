@@ -49,7 +49,6 @@ end
 -- HTTP requests
 local function request(requestUrl, deviceData)
   local http = net.HTTPClient() 
-  log(requestUrl .. " : " .. jsonString, "blue")
   
   http:request(requestUrl, {
       options = {
