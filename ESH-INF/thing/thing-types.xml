@@ -7,7 +7,7 @@
     <!-- Actor Thing Type -->
     <thing-type id="actor">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="controller" />
+            <bridge-type-ref id="gateway" />
         </supported-bridge-type-refs>
         <label>Actor</label>
         <description>A Fibaro Actor device i.e. a device which supports altering its value/state. This could for example be a switch, a dimmer or a thermostat. The Actor thing supports a variety of channels. If this is a switch, enable the switch channel. By default only the dead channel is active indicating id this z-wave device is marked dead by the controller.</description>
@@ -32,7 +32,7 @@
     <!-- Sensor Thing Type -->
     <thing-type id="sensor">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="controller" />
+            <bridge-type-ref id="gateway" />
         </supported-bridge-type-refs>
         <label>Sensor</label>
         <description>A Fibaro sensor i.e. a read only device. This could for example be a motion, temperature or door/window sensor. The Sensor thing supports a variety of channels. If this is a temperature sensor, enable the temperature channel. By default only the dead channel is active indicating id this z-wave device is marked dead by the controller.</description>
@@ -51,7 +51,7 @@
         </config-description>        
     </thing-type>    
         
-    <channel-type id="alarm" advanced="true">
+    <!--  <channel-type id="alarm" advanced="true">
         <item-type>Alarm</item-type>
         <label>Switch</label>
         <description>Channel to control an alarm such as a siren</description>
@@ -87,7 +87,7 @@
         <category>Energy</category>
         <state readOnly="true" pattern="%.2f A">
         </state>        
-    </channel-type>    
+    </channel-type>-->    
 
     <channel-type id="switch" advanced="true">
         <item-type>Switch</item-type>
