@@ -17,9 +17,11 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
-import org.openhab.binding.fibaro.FibaroBindingConstants;
+import org.openhab.binding.fibaro.FibaroChannel;
 import org.openhab.binding.fibaro.config.FibaroThingConfiguration;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
+import org.openhab.binding.fibaro.internal.model.FibaroAction;
+import org.openhab.binding.fibaro.internal.model.PropertyName;
 import org.openhab.binding.fibaro.internal.model.json.FibaroApiResponse;
 import org.openhab.binding.fibaro.internal.model.json.FibaroArguments;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
@@ -35,17 +37,6 @@ import org.slf4j.LoggerFactory;
 public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroActorThingHandler.class);
-
-    public static final String PROPERTY_VALUE = "value";
-    public static final String PROPERTY_DEAD = "dead";
-    public static final String PROPERTY_ENERGY = "energy";
-    public static final String PROPERTY_POWER = "power";
-
-    public static final String ACTION_SET_VALUE = "setValue";
-    public static final String ACTION_ON = "turnOn";
-    public static final String ACTION_OFF = "turnOff";
-    public static final String ACTION_INCREASE = "startLevelIncrease";
-    public static final String ACTION_DECREASE = "startLevelDecrease";
 
     public FibaroActorThingHandler(Thing thing) {
         super(thing);
@@ -92,17 +83,19 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
             if (command instanceof RefreshType) {
                 updateChannel(channelUID.getId(), bridge.getDeviceData(id));
             } else if (command instanceof OnOffType) {
-                url += command.equals(OnOffType.ON) ? ACTION_ON : ACTION_OFF;
+                url += command.equals(OnOffType.ON) ? FibaroAction.TURN_ON.getAction()
+                        : FibaroAction.TURN_OFF.getAction();
                 FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", FibaroApiResponse.class);
                 logger.debug(apiResponse.toString());
                 // TODO: Check FibaroApiResponse for error codes
             } else if (command instanceof IncreaseDecreaseType) {
-                url += command.equals(IncreaseDecreaseType.INCREASE) ? ACTION_INCREASE : ACTION_DECREASE;
+                url += command.equals(IncreaseDecreaseType.INCREASE) ? FibaroAction.LEVEL_INCREASE.getAction()
+                        : FibaroAction.LEVEL_DECREASE.getAction();
                 FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", FibaroApiResponse.class);
                 logger.debug(apiResponse.toString());
                 // TODO: Check FibaroApiResponse for error codes
             } else if (command instanceof PercentType) {
-                url += ACTION_SET_VALUE;
+                url += FibaroAction.SET_VALUE.getAction();
                 int dimmerValue = ((PercentType) command).intValue();
                 FibaroArguments arguments = new FibaroArguments();
                 arguments.addArgs(dimmerValue);
@@ -121,19 +114,20 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
 
     @Override
     public void update(FibaroUpdate fibaroUpdate) {
-        switch (fibaroUpdate.getProperty()) {
-            case PROPERTY_VALUE:
-                updateChannel(FibaroBindingConstants.CHANNEL_ID_SWITCH, stringToOnOff(fibaroUpdate.getValue()));
-                updateChannel(FibaroBindingConstants.CHANNEL_ID_DIMMER, stringToPercent(fibaroUpdate.getValue()));
+        PropertyName property = PropertyName.valueOf(fibaroUpdate.getProperty());
+        switch (property) {
+            case VALUE:
+                updateChannel(FibaroChannel.SWITCH, stringToOnOff(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.DIMMER, stringToPercent(fibaroUpdate.getValue()));
                 break;
-            case PROPERTY_DEAD:
-                updateChannel(FibaroBindingConstants.CHANNEL_ID_DEAD, stringToOnOff(fibaroUpdate.getValue()));
+            case DEAD:
+                updateChannel(FibaroChannel.DEAD, stringToOnOff(fibaroUpdate.getValue()));
                 break;
-            case PROPERTY_ENERGY:
-                updateChannel(FibaroBindingConstants.CHANNEL_ID_ENERGY, stringToDecimal(fibaroUpdate.getValue()));
+            case ENERGY:
+                updateChannel(FibaroChannel.ENERGY, stringToDecimal(fibaroUpdate.getValue()));
                 break;
-            case PROPERTY_POWER:
-                updateChannel(FibaroBindingConstants.CHANNEL_ID_POWER, stringToDecimal(fibaroUpdate.getValue()));
+            case POWER:
+                updateChannel(FibaroChannel.POWER, stringToDecimal(fibaroUpdate.getValue()));
                 break;
             default:
                 logger.debug("Update received for an unknown property: {}", fibaroUpdate.getProperty());

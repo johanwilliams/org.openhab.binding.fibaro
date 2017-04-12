@@ -37,19 +37,6 @@ public class FibaroBindingConstants {
     public final static ThingTypeUID THING_TYPE_ACTOR = new ThingTypeUID(BINDING_ID, THING_ID_ACTOR);
     public final static ThingTypeUID THING_TYPE_SENSOR = new ThingTypeUID(BINDING_ID, THING_ID_SENSOR);
 
-    // List of all Channel ids
-    public final static String CHANNEL_ID_ALARM = "alarm";
-    public final static String CHANNEL_ID_BATTERY = "battery";
-    public final static String CHANNEL_ID_BLINDS = "blinds";
-    public final static String CHANNEL_ID_COLOR_LIGHT = "colorLight";
-    public final static String CHANNEL_ID_CURRENT = "current";
-    public final static String CHANNEL_ID_SWITCH = "switch";
-    public final static String CHANNEL_ID_DIMMER = "dimmer";
-    public final static String CHANNEL_ID_DEAD = "dead";
-    public final static String CHANNEL_ID_ENERGY = "energy";
-    public final static String CHANNEL_ID_POWER = "power";
-    public final static String CHANNEL_ID_TEMPERATURE = "temperature";
-
     // Set of all supported Thing Type UIDs
     public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_GATEWAY,
             THING_TYPE_ACTOR, THING_TYPE_SENSOR);

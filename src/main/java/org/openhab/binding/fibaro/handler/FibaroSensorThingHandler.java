@@ -13,9 +13,10 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
-import org.openhab.binding.fibaro.FibaroBindingConstants;
+import org.openhab.binding.fibaro.FibaroChannel;
 import org.openhab.binding.fibaro.config.FibaroThingConfiguration;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
+import org.openhab.binding.fibaro.internal.model.PropertyName;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,6 @@ import org.slf4j.LoggerFactory;
 public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroSensorThingHandler.class);
-
-    public static final String PROPERTY_VALUE = "value";
-    public static final String PROPERTY_DEAD = "dead";
 
     public FibaroSensorThingHandler(Thing thing) {
         super(thing);
@@ -87,12 +85,13 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
 
     @Override
     public void update(FibaroUpdate fibaroUpdate) {
-        switch (fibaroUpdate.getProperty()) {
-            case PROPERTY_VALUE:
-                updateChannel(FibaroBindingConstants.CHANNEL_ID_TEMPERATURE, stringToDecimal(fibaroUpdate.getValue()));
+        PropertyName property = PropertyName.valueOf(fibaroUpdate.getProperty());
+        switch (property) {
+            case VALUE:
+                updateChannel(FibaroChannel.TEMPERATURE, stringToDecimal(fibaroUpdate.getValue()));
                 break;
-            case PROPERTY_DEAD:
-                updateChannel(FibaroBindingConstants.CHANNEL_ID_DEAD, stringToOnOff(fibaroUpdate.getValue()));
+            case DEAD:
+                updateChannel(FibaroChannel.DEAD, stringToOnOff(fibaroUpdate.getValue()));
                 break;
             default:
                 logger.debug("Update received for an unknown property: {}", fibaroUpdate.getProperty());

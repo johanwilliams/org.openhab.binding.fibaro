@@ -13,7 +13,7 @@ import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.State;
-import org.openhab.binding.fibaro.FibaroBindingConstants;
+import org.openhab.binding.fibaro.FibaroChannel;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
 import org.openhab.binding.fibaro.internal.model.json.FibaroDevice;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
@@ -75,28 +75,29 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         if (device == null) {
             logger.debug("Can't update channel {} as the device information is null", channelId);
         } else {
-            switch (channelId) {
-                case FibaroBindingConstants.CHANNEL_ID_SWITCH:
-                    updateChannel(channelId, stringToOnOff(device.getProperties().getValue()));
+            FibaroChannel channel = FibaroChannel.valueOf(channelId);
+            switch (channel) {
+                case SWITCH:
+                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;
-                case FibaroBindingConstants.CHANNEL_ID_DIMMER:
+                case DIMMER:
                     PercentType dimmerPercent = stringToPercent(device.getProperties().getValue());
                     if (dimmerPercent.intValue() > 0) {
-                        updateChannel(channelId, OnOffType.ON);
+                        updateChannel(channel, OnOffType.ON);
                     }
-                    updateChannel(channelId, dimmerPercent);
+                    updateChannel(channel, dimmerPercent);
                     break;
-                case FibaroBindingConstants.CHANNEL_ID_DEAD:
-                    updateChannel(channelId, stringToOnOff(device.getProperties().getDead()));
+                case DEAD:
+                    updateChannel(channel, stringToOnOff(device.getProperties().getDead()));
                     break;
-                case FibaroBindingConstants.CHANNEL_ID_ENERGY:
-                    updateChannel(channelId, new DecimalType(device.getProperties().getEnergy()));
+                case ENERGY:
+                    updateChannel(channel, new DecimalType(device.getProperties().getEnergy()));
                     break;
-                case FibaroBindingConstants.CHANNEL_ID_POWER:
-                    updateChannel(channelId, new DecimalType(device.getProperties().getPower()));
+                case POWER:
+                    updateChannel(channel, new DecimalType(device.getProperties().getPower()));
                     break;
-                case FibaroBindingConstants.CHANNEL_ID_TEMPERATURE:
-                    updateChannel(channelId, stringToDecimal(device.getProperties().getValue()));
+                case TEMPERATURE:
+                    updateChannel(channel, stringToDecimal(device.getProperties().getValue()));
                     break;
                 default:
                     logger.debug("Unknown channel: {}", channelId);
@@ -155,9 +156,9 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         return null;
     }
 
-    protected void updateChannel(String channelId, State state) {
+    protected void updateChannel(FibaroChannel channel, State state) {
         if (state != null) {
-            updateState(channelId, state);
+            updateState(channel.getId(), state);
         }
     }
 
