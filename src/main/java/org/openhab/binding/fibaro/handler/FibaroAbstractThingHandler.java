@@ -89,11 +89,8 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                 case BATTERY:
                     updateChannel(channel, new DecimalType(device.getProperties().getBatteryLevel()));
                     break;
-                case ELECTRIC_CURRENT:
-                    updateChannel(channel, new DecimalType(device.getProperties().getValue()));
-                    break;
-                case SWITCH:
-                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
+                case DEAD:
+                    updateChannel(channel, stringToOnOff(device.getProperties().getDead()));
                     break;
                 case DIMMER:
                     PercentType dimmerPercent = stringToPercent(device.getProperties().getValue());
@@ -102,8 +99,14 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                     }
                     updateChannel(channel, dimmerPercent);
                     break;
-                case DEAD:
-                    updateChannel(channel, stringToOnOff(device.getProperties().getDead()));
+                case DOOR:
+                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
+                    break;
+                case ELECTRIC_CURRENT:
+                    updateChannel(channel, new DecimalType(device.getProperties().getValue()));
+                    break;
+                case SWITCH:
+                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;
                 case ENERGY:
                     updateChannel(channel, new DecimalType(device.getProperties().getEnergy()));
@@ -113,6 +116,9 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                     break;
                 case TEMPERATURE:
                     updateChannel(channel, stringToDecimal(device.getProperties().getValue()));
+                    break;
+                case WINDOW:
+                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;
                 default:
                     logger.debug("Unknown channel: {}", channelId);

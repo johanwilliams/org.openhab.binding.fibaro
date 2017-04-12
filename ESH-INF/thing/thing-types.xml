@@ -42,8 +42,10 @@
         <channels>
             <channel id="battery" typeId="battery"/>
             <channel id="dead" typeId="dead"/>
+            <channel id="door" typeId="door"/>
             <channel id="electric-current" typeId="electric-current"/>
             <channel id="temperature" typeId="temperature"/>
+            <channel id="window" typeId="window"/>
         </channels>
         
         <config-description>
@@ -70,6 +72,29 @@
         <state readOnly="true" min="1" max="100" pattern="%d %%"></state>  
     </channel-type>
 
+    <channel-type id="dead">
+        <item-type>Switch</item-type>
+        <label>Dead</label>
+        <description>Channel which holds a z-wave device dead status (i.e. configured but not connected to the controller)</description>
+        <state readOnly="true">
+        </state>
+    </channel-type>
+
+    <channel-type id="dimmer" advanced="true">
+        <item-type>Dimmer</item-type>
+        <label>Dimmer</label>
+        <description>Channel to control a dimmer</description>
+        <category>DimmableLight</category>
+    </channel-type>
+
+    <channel-type id="door" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Door</label>
+        <description>Reads door sensor value</description>
+        <category>Door</category>
+        <state readOnly="true"></state>
+    </channel-type>
+
     <channel-type id="electric-current" advanced="true">
         <item-type>Number</item-type>
         <label>Electrical current</label>
@@ -83,21 +108,6 @@
         <item-type>Switch</item-type>
         <label>Switch</label>
         <description>Channel to control a binday switch</description>        
-    </channel-type>
-
-    <channel-type id="dimmer" advanced="true">
-        <item-type>Dimmer</item-type>
-        <label>Dimmer</label>
-        <description>Channel to control a dimmer</description>
-        <category>DimmableLight</category>
-    </channel-type>
-
-    <channel-type id="dead">
-        <item-type>Switch</item-type>
-        <label>Dead</label>
-        <description>Channel which holds a z-wave device dead status (i.e. configured but not connected to the controller)</description>
-        <state readOnly="true">
-        </state>
     </channel-type>
 
     <channel-type id="energy" advanced="true">
@@ -126,5 +136,13 @@
         <state readOnly="true" pattern="%.1f °C">
         </state>        
     </channel-type>
-
+    
+    <channel-type id="window" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Window</label>
+        <description>Reads window sensor value</description>
+        <category>Window</category>
+        <state readOnly="true"></state>
+    </channel-type>
+    
 </thing:thing-descriptions>

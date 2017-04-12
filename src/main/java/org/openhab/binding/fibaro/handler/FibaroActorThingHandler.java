@@ -118,11 +118,6 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
         switch (property) {
             case BATTERY:
                 updateChannel(FibaroChannel.BATTERY, stringToDecimal(fibaroUpdate.getValue()));
-            case VALUE:
-                updateChannel(FibaroChannel.ALARM, stringToOnOff(fibaroUpdate.getValue()));
-                updateChannel(FibaroChannel.SWITCH, stringToOnOff(fibaroUpdate.getValue()));
-                updateChannel(FibaroChannel.DIMMER, stringToPercent(fibaroUpdate.getValue()));
-                break;
             case DEAD:
                 updateChannel(FibaroChannel.DEAD, stringToOnOff(fibaroUpdate.getValue()));
                 break;
@@ -131,6 +126,11 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
                 break;
             case POWER:
                 updateChannel(FibaroChannel.POWER, stringToDecimal(fibaroUpdate.getValue()));
+                break;
+            case VALUE:
+                updateChannel(FibaroChannel.ALARM, stringToOnOff(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.SWITCH, stringToOnOff(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.DIMMER, stringToPercent(fibaroUpdate.getValue()));
                 break;
             default:
                 logger.debug("Update received for an unknown property: {}", fibaroUpdate.getProperty());
