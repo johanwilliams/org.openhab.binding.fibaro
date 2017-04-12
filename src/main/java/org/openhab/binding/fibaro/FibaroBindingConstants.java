@@ -24,14 +24,14 @@ public class FibaroBindingConstants {
     public static final String BINDING_ID = "fibaro";
 
     // List of Fibaro bridge types
-    public static final String BRIDGE_ID_CONTROLLER = "controller";
+    public static final String BRIDGE_ID_GATEWAY = "gateway";
 
     // List of Fibaro thing types
     public static final String THING_ID_ACTOR = "actor";
     public static final String THING_ID_SENSOR = "sensor";
 
     // List of all Bridge Thing Type UIDs
-    public final static ThingTypeUID THING_TYPE_BRIDGE_CONTROLLER = new ThingTypeUID(BINDING_ID, BRIDGE_ID_CONTROLLER);
+    public final static ThingTypeUID THING_TYPE_BRIDGE_GATEWAY = new ThingTypeUID(BINDING_ID, BRIDGE_ID_GATEWAY);
 
     // List of all Thing Type UIDs
     public final static ThingTypeUID THING_TYPE_ACTOR = new ThingTypeUID(BINDING_ID, THING_ID_ACTOR);
@@ -39,6 +39,10 @@ public class FibaroBindingConstants {
 
     // List of all Channel ids
     public final static String CHANNEL_ID_ALARM = "alarm";
+    public final static String CHANNEL_ID_BATTERY = "battery";
+    public final static String CHANNEL_ID_BLINDS = "blinds";
+    public final static String CHANNEL_ID_COLOR_LIGHT = "colorLight";
+    public final static String CHANNEL_ID_CURRENT = "current";
     public final static String CHANNEL_ID_SWITCH = "switch";
     public final static String CHANNEL_ID_DIMMER = "dimmer";
     public final static String CHANNEL_ID_DEAD = "dead";
@@ -47,11 +51,11 @@ public class FibaroBindingConstants {
     public final static String CHANNEL_ID_TEMPERATURE = "temperature";
 
     // Set of all supported Thing Type UIDs
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_CONTROLLER,
+    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_GATEWAY,
             THING_TYPE_ACTOR, THING_TYPE_SENSOR);
 
     // Set of all supported Bridge Type UIDs
     public final static Set<ThingTypeUID> SUPPORTED_BRIDGE_THING_TYPES_UIDS = ImmutableSet
-            .of(THING_TYPE_BRIDGE_CONTROLLER);
+            .of(THING_TYPE_BRIDGE_GATEWAY);
 
 }

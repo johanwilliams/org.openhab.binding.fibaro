@@ -13,7 +13,7 @@ package org.openhab.binding.fibaro.config;
  * @author Johan Williams - Initial contribution
  */
 
-public class FibaroControllerConfiguration {
+public class FibaroGatewayConfiguration {
 
     public static String IP_ADDRESS = "Ip address";
     public static String PORT = "Port";

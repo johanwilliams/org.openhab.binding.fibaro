@@ -4,9 +4,9 @@
         xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
         xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
-    <bridge-type id="controller">
-        <label>Controller</label>
-        <description>The controller is needed for the other things to be able to communicate. It deals with the integration between this binding and the Fibaro controller. Add this prior to other things.</description>
+    <bridge-type id="gateway">
+        <label>Gateway</label>
+        <description>The gateway is needed for the other things to be able to communicate. It deals with the integration between this binding and the Fibaro gateway. Add this prior to other things.</description>
         
         <config-description>
             <parameter name="ipAddress" type="text" required="true">

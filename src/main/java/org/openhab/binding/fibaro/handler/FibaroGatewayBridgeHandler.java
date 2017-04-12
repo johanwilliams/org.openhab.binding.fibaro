@@ -26,25 +26,26 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
-import org.openhab.binding.fibaro.config.FibaroControllerConfiguration;
+import org.openhab.binding.fibaro.config.FibaroGatewayConfiguration;
 import org.openhab.binding.fibaro.internal.InMemoryCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
 import org.openhab.binding.fibaro.internal.model.json.FibaroDevice;
-import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.openhab.binding.fibaro.internal.model.json.FibaroSettings;
+import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
 /**
- * Abstract class for a Fibaro Bridge Handler.
+ * The {@link FibaroGatewayThingHandler} is responsible for the communication between this binding and the Fibaro
+ * gateway.
  *
  * @author Johan Williams - Initial Contribution
  */
-public class FibaroControllerBridgeHandler extends BaseBridgeHandler {
+public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
-    private Logger logger = LoggerFactory.getLogger(FibaroControllerBridgeHandler.class);
+    private Logger logger = LoggerFactory.getLogger(FibaroGatewayBridgeHandler.class);
 
     private InMemoryCache<Integer, FibaroDevice> cache;
     private final int CACHE_EXPIRY = 10; // 10s
@@ -58,7 +59,7 @@ public class FibaroControllerBridgeHandler extends BaseBridgeHandler {
 
     private Map<Integer, FibaroAbstractThingHandler> things;
 
-    public FibaroControllerBridgeHandler(Bridge bridge) {
+    public FibaroGatewayBridgeHandler(Bridge bridge) {
         super(bridge);
         httpClient = new HttpClient();
         gson = new Gson();
@@ -71,7 +72,7 @@ public class FibaroControllerBridgeHandler extends BaseBridgeHandler {
 
         cache = new InMemoryCache<Integer, FibaroDevice>(CACHE_EXPIRY, 1, CACHE_SIZE);
 
-        FibaroControllerConfiguration config = getConfigAs(FibaroControllerConfiguration.class);
+        FibaroGatewayConfiguration config = getConfigAs(FibaroGatewayConfiguration.class);
 
         logger.debug("config ipAddress = {}", config.ipAddress);
         logger.debug("config id = {}", config.port);
@@ -82,19 +83,19 @@ public class FibaroControllerBridgeHandler extends BaseBridgeHandler {
         String errorMsg = null;
 
         if (StringUtils.trimToNull(config.ipAddress) == null) {
-            errorMsg = "Parameter '" + FibaroControllerConfiguration.IP_ADDRESS + "' is mandatory and must be configured";
+            errorMsg = "Parameter '" + FibaroGatewayConfiguration.IP_ADDRESS + "' is mandatory and must be configured";
             validConfig = false;
         }
         if (config.port <= 1024 || config.port > 65535) {
-            errorMsg = "Parameter '" + FibaroControllerConfiguration.PORT + "' must be between 1025 and 65535";
+            errorMsg = "Parameter '" + FibaroGatewayConfiguration.PORT + "' must be between 1025 and 65535";
             validConfig = false;
         }
         if (StringUtils.trimToNull(config.username) == null) {
-            errorMsg = "Parameter '" + FibaroControllerConfiguration.USERNAME + "' is mandatory and must be configured";
+            errorMsg = "Parameter '" + FibaroGatewayConfiguration.USERNAME + "' is mandatory and must be configured";
             validConfig = false;
         }
         if (StringUtils.trimToNull(config.password) == null) {
-            errorMsg = "Parameter '" + FibaroControllerConfiguration.PASSWORD + "' is mandatory and must be configured";
+            errorMsg = "Parameter '" + FibaroGatewayConfiguration.PASSWORD + "' is mandatory and must be configured";
             validConfig = false;
         }
 
@@ -102,9 +103,9 @@ public class FibaroControllerBridgeHandler extends BaseBridgeHandler {
         String url = "http://" + getIpAddress() + "/api/settings/info";
         try {
             FibaroSettings settings = callFibaroApi(HttpMethod.GET, url, "", FibaroSettings.class);
-            logger.debug("Successfully connected to the Fibaro controller " + settings.toString());
+            logger.debug("Successfully connected to the Fibaro gateway " + settings.toString());
         } catch (Exception e1) {
-            errorMsg = "Failed to connect to the Fibaro controller through api call '" + url
+            errorMsg = "Failed to connect to the Fibaro gateway through api call '" + url
                     + "'. Please check that username, password and ip is correctly configured.";
             validConfig = false;
         }
@@ -168,7 +169,7 @@ public class FibaroControllerBridgeHandler extends BaseBridgeHandler {
     }
 
     public String getIpAddress() {
-        return getConfigAs(FibaroControllerConfiguration.class).ipAddress;
+        return getConfigAs(FibaroGatewayConfiguration.class).ipAddress;
     }
 
     public FibaroDevice getDeviceData(int id) throws Exception {
@@ -190,7 +191,7 @@ public class FibaroControllerBridgeHandler extends BaseBridgeHandler {
     }
 
     /**
-     * Calls the Finaro API and returns a pojo of type passed in as result parameter
+     * Calls the Fibaro API and returns a pojo of type passed in as result parameter
      *
      * @param method The http method to send the request with
      * @param url Url to the api
@@ -204,7 +205,7 @@ public class FibaroControllerBridgeHandler extends BaseBridgeHandler {
         if (!httpClient.isStarted()) {
             httpClient.start();
         }
-        FibaroControllerConfiguration config = getConfigAs(FibaroControllerConfiguration.class);
+        FibaroGatewayConfiguration config = getConfigAs(FibaroGatewayConfiguration.class);
 
         // Add authentication credentials
         AuthenticationStore auth = httpClient.getAuthenticationStore();

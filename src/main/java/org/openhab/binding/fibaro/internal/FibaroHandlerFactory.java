@@ -17,9 +17,9 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.fibaro.FibaroBindingConstants;
-import org.openhab.binding.fibaro.config.FibaroControllerConfiguration;
+import org.openhab.binding.fibaro.config.FibaroGatewayConfiguration;
 import org.openhab.binding.fibaro.handler.FibaroActorThingHandler;
-import org.openhab.binding.fibaro.handler.FibaroControllerBridgeHandler;
+import org.openhab.binding.fibaro.handler.FibaroGatewayBridgeHandler;
 import org.openhab.binding.fibaro.handler.FibaroSensorThingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +37,11 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
     @Override
     public Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
             ThingUID bridgeUID) {
-        if (FibaroBindingConstants.THING_TYPE_BRIDGE_CONTROLLER.equals(thingTypeUID)) {
-            ThingUID fibaroControllerUID = getFibaroControllerThingUID(thingTypeUID, thingUID, configuration);
+        if (FibaroBindingConstants.THING_TYPE_BRIDGE_GATEWAY.equals(thingTypeUID)) {
+            ThingUID fibaroGatewayUID = getFibaroGatewayThingUID(thingTypeUID, thingUID, configuration);
             logger.debug("createThing(): {}: Creating an '{}' type Thing - {}",
-                    FibaroBindingConstants.BRIDGE_ID_CONTROLLER, thingTypeUID, fibaroControllerUID.getId());
-            return super.createThing(thingTypeUID, configuration, fibaroControllerUID, null);
+                    FibaroBindingConstants.BRIDGE_ID_GATEWAY, thingTypeUID, fibaroGatewayUID.getId());
+            return super.createThing(thingTypeUID, configuration, fibaroGatewayUID, null);
         } else if (FibaroBindingConstants.THING_TYPE_ACTOR.equals(thingTypeUID)) {
             ThingUID fibaroActorThingUID = getFibaroActorUID(thingTypeUID, thingUID, configuration, bridgeUID);
             logger.debug("createThing(): {}: Creating an '{}' type Thing - {}", FibaroBindingConstants.THING_ID_ACTOR,
@@ -63,17 +63,17 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
     }
 
     /**
-     * Get the Fibaro Controller Thing UID.
+     * Get the Fibaro Gateway Thing UID.
      *
      * @param thingTypeUID
      * @param thingUID
      * @param configuration
      * @return thingUID
      */
-    private ThingUID getFibaroControllerThingUID(ThingTypeUID thingTypeUID, ThingUID thingUID,
+    private ThingUID getFibaroGatewayThingUID(ThingTypeUID thingTypeUID, ThingUID thingUID,
             Configuration configuration) {
         if (thingUID == null) {
-            String ipAddress = (String) configuration.get(FibaroControllerConfiguration.IP_ADDRESS);
+            String ipAddress = (String) configuration.get(FibaroGatewayConfiguration.IP_ADDRESS);
             String bridgeID = ipAddress.replace('.', '_');
             thingUID = new ThingUID(thingTypeUID, bridgeID);
         }
@@ -119,11 +119,11 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
 
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-        if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_BRIDGE_CONTROLLER)) {
-            FibaroControllerBridgeHandler handler = new FibaroControllerBridgeHandler((Bridge) thing);
+        if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_BRIDGE_GATEWAY)) {
+            FibaroGatewayBridgeHandler handler = new FibaroGatewayBridgeHandler((Bridge) thing);
             // registerFibaroDiscoveryService(handler);
-            logger.debug("createHandler(): {}: ThingHandler created for {}",
-                    FibaroBindingConstants.BRIDGE_ID_CONTROLLER, thingTypeUID);
+            logger.debug("createHandler(): {}: ThingHandler created for {}", FibaroBindingConstants.BRIDGE_ID_GATEWAY,
+                    thingTypeUID);
             return handler;
         } else if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_ACTOR)) {
             logger.debug("createHandler(): {}: ThingHandler created for {}", FibaroBindingConstants.THING_ID_ACTOR,

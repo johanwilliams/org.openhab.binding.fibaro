@@ -36,7 +36,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     protected int id;
 
     // Reference to the bridge which we need for communication
-    protected FibaroControllerBridgeHandler bridge = null;
+    protected FibaroGatewayBridgeHandler bridge = null;
 
     public FibaroAbstractThingHandler(Thing thing) {
         super(thing);
@@ -54,7 +54,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
             throw new FibaroConfigurationException(
                     "This thing is not connected to a Fibaro bridge. Please add a Fibaro bridge and connect it in Thing settings.");
         }
-        bridge = (FibaroControllerBridgeHandler) getBridge().getHandler();
+        bridge = (FibaroGatewayBridgeHandler) getBridge().getHandler();
     }
 
     protected void setThingId(int id) {

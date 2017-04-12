@@ -51,6 +51,43 @@
         </config-description>        
     </thing-type>    
         
+    <channel-type id="alarm" advanced="true">
+        <item-type>Alarm</item-type>
+        <label>Switch</label>
+        <description>Channel to control an alarm such as a siren</description>
+        <category>Alarm</category>        
+    </channel-type>
+
+    <channel-type id="battery" advanced="true">
+        <item-type>Number</item-type>
+        <label>Battery level</label>
+        <description>Channel to read current battery level (in %) of a device</description>
+        <category>Battery</category>     
+        <state readOnly="true" pattern="%.0f °C"></state>  
+    </channel-type>
+
+    <channel-type id="blinds" advanced="true">
+        <item-type>RollerShutter</item-type>
+        <label>Blinds</label>
+        <description>Channel to control a motorized roller shutter</description>
+        <category>Blinds</category>        
+    </channel-type>
+    
+    <channel-type id="colorLight" advanced="true">
+        <item-type>Color</item-type>
+        <label>Color lights</label>
+        <description>Channel to control a RGBW color light</description>
+        <category>ColorLight</category>        
+    </channel-type>
+
+    <channel-type id="current" advanced="true">
+        <item-type>Number</item-type>
+        <label>Electrical current</label>
+        <description>Channel to read the electrical current (in A) of a device</description>
+        <category>Energy</category>
+        <state readOnly="true" pattern="%.2f A">
+        </state>        
+    </channel-type>    
 
     <channel-type id="switch" advanced="true">
         <item-type>Switch</item-type>
