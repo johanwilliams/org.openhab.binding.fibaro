@@ -44,6 +44,8 @@
             <channel id="dead" typeId="dead"/>
             <channel id="door" typeId="door"/>
             <channel id="electric-current" typeId="electric-current"/>
+            <channel id="heat" typeId="heat"/>
+            <channel id="smoke" typeId="smoke"/>
             <channel id="temperature" typeId="temperature"/>
             <channel id="window" typeId="window"/>
         </channels>
@@ -104,12 +106,6 @@
         </state>        
     </channel-type>    
 
-    <channel-type id="switch" advanced="true">
-        <item-type>Switch</item-type>
-        <label>Switch</label>
-        <description>Channel to control a binday switch</description>        
-    </channel-type>
-
     <channel-type id="energy" advanced="true">
         <item-type>Number</item-type>
         <label>Energy</label>
@@ -119,6 +115,14 @@
         </state>
     </channel-type>
     
+    <channel-type id="heat" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Heat</label>
+        <description>Reads heat sensor value</description>
+        <category>Fire</category>
+        <state readOnly="true"></state>
+    </channel-type>
+
     <channel-type id="power" advanced="true">
         <item-type>Number</item-type>
         <label>Power</label>
@@ -128,6 +132,20 @@
         </state>        
     </channel-type>
     
+    <channel-type id="smoke" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Smoke</label>
+        <description>Reads smoke sensor value</description>
+        <category>Fire</category>
+        <state readOnly="true"></state>
+    </channel-type>
+    
+    <channel-type id="switch" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Switch</label>
+        <description>Channel to control a binday switch</description>        
+    </channel-type>
+
     <channel-type id="temperature" advanced="true">
         <item-type>Number</item-type>
         <label>Temperature</label>
