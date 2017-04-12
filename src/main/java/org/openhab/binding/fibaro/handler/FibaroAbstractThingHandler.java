@@ -165,6 +165,13 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         return null;
     }
 
+    /**
+     * Tries to update the specified channel with the specified state. Will however check that the state is not null and
+     * that the channel is linked (in use)
+     * 
+     * @param channel Channel to update
+     * @param state State to update the channel with
+     */
     protected void updateChannel(FibaroChannel channel, State state) {
         if (state != null && linkedChannels.contains(channel)) {
             updateState(channel.getId(), state);
