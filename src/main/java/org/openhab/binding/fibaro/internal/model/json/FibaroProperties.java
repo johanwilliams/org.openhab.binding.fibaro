@@ -21,6 +21,7 @@ public class FibaroProperties {
     private double energy;
     private double power;
     private String value;
+    private int batteryLevel;
 
     public String getZwaveCompany() {
         return zwaveCompany;
@@ -78,10 +79,19 @@ public class FibaroProperties {
         this.value = value;
     }
 
+    public int getBatteryLevel() {
+        return batteryLevel;
+    }
+
+    public void setBatteryLevel(int batteryLevel) {
+        this.batteryLevel = batteryLevel;
+    }
+
     @Override
     public String toString() {
-        return "FibaroProperties [zwaveCompany=" + zwaveCompany + ", zwaveInfo=" + zwaveInfo + ", configured=" + configured
-                + ", dead=" + dead + ", energy=" + energy + ", power=" + power + ", value=" + value + "]";
+        return "FibaroProperties [zwaveCompany=" + zwaveCompany + ", zwaveInfo=" + zwaveInfo + ", configured="
+                + configured + ", dead=" + dead + ", energy=" + energy + ", power=" + power + ", value=" + value
+                + ", batteryLevel=" + batteryLevel + "]";
     }
 
 }

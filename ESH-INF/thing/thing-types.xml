@@ -14,6 +14,7 @@
 
         <channels>
             <channel id="alarm" typeId="alarm"/>
+            <channel id="battery" typeId="battery"/>            
             <channel id="dead" typeId="dead"/>
             <channel id="switch" typeId="switch"/>
             <channel id="dimmer" typeId="dimmer"/>            
@@ -39,6 +40,7 @@
         <description>A Fibaro sensor i.e. a read only device. This could for example be a motion, temperature or door/window sensor. The Sensor thing supports a variety of channels. If this is a temperature sensor, enable the temperature channel. By default only the dead channel is active indicating id this z-wave device is marked dead by the controller.</description>
 
         <channels>
+            <channel id="battery" typeId="battery"/>
             <channel id="dead" typeId="dead"/>
             <channel id="temperature" typeId="temperature"/>
         </channels>
@@ -59,15 +61,15 @@
         <category>Alarm</category>        
     </channel-type>
 
-    <!--<channel-type id="battery" advanced="true">
+    <channel-type id="battery" advanced="true">
         <item-type>Number</item-type>
         <label>Battery level</label>
         <description>Channel to read current battery level (in %) of a device</description>
         <category>Battery</category>     
-        <state readOnly="true" pattern="%.0f °C"></state>  
+        <state readOnly="true" min="1" max="100" pattern="%d %%"></state>  
     </channel-type>
 
-    <channel-type id="blinds" advanced="true">
+    <!-- <channel-type id="blinds" advanced="true">
         <item-type>RollerShutter</item-type>
         <label>Blinds</label>
         <description>Channel to control a motorized roller shutter</description>

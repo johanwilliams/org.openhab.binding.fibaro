@@ -86,6 +86,8 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
     public void update(FibaroUpdate fibaroUpdate) {
         PropertyName property = PropertyName.fromName(fibaroUpdate.getProperty());
         switch (property) {
+            case BATTERY:
+                updateChannel(FibaroChannel.BATTERY, stringToDecimal(fibaroUpdate.getValue()));
             case VALUE:
                 updateChannel(FibaroChannel.TEMPERATURE, stringToDecimal(fibaroUpdate.getValue()));
                 break;

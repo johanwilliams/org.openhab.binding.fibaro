@@ -86,6 +86,9 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                 case ALARM:
                     updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;
+                case BATTERY:
+                    updateChannel(channel, new DecimalType(device.getProperties().getBatteryLevel()));
+                    break;
                 case SWITCH:
                     updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;
@@ -168,7 +171,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     /**
      * Tries to update the specified channel with the specified state. Will however check that the state is not null and
      * that the channel is linked (in use)
-     * 
+     *
      * @param channel Channel to update
      * @param state State to update the channel with
      */

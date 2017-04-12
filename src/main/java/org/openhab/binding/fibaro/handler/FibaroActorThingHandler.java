@@ -116,6 +116,8 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
     public void update(FibaroUpdate fibaroUpdate) {
         PropertyName property = PropertyName.fromName(fibaroUpdate.getProperty());
         switch (property) {
+            case BATTERY:
+                updateChannel(FibaroChannel.BATTERY, stringToDecimal(fibaroUpdate.getValue()));
             case VALUE:
                 updateChannel(FibaroChannel.ALARM, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.SWITCH, stringToOnOff(fibaroUpdate.getValue()));
