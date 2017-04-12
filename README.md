@@ -24,6 +24,75 @@ To setup the Fibaro Gateway bridge you need the configure the following:
 
 Before you start to add other things (actores and/or sensors) make sure the gateway gets initialised and `ONLINE`. Otherwise your other devices will not be able to communicate from/to the Fibaro Home center 2.
 
+## Fibaro Home Center 2 configuration
+We need to add a lua scene in the Fibaro Home Center 2 in order to send updates to the biding. This enables us to push instant device updates to the binging and avoids constant pulling of the Fibaro api. 
+In the scene you need add your openHab ip address as well as the port number you configured for the gateway. You also need to list all your device id:s you wish to include as well as the properties to "listen" to. Most devices use `value`to hold the device value but there are also other proprties such as `energy`, `power`, `batteryLevel` etc. Please read the documentation for the Fibaro api for more information. 
+
+```lua
+--[[
+%% properties
+31 value
+31 dead
+149 dead
+149 value
+149 power
+149 energy
+%% events
+%% globals
+--]]
+
+-- Give debug a fancy color
+function log(message, color)
+  fibaro:debug(string.format('<span style="color:%s;">%s</span>', color, message)) 
+end
+
+-- HTTP requests
+local function request(requestUrl, deviceData)
+  local http = net.HTTPClient() 
+  log(requestUrl .. " : " .. jsonString, "blue")
+  
+  http:request(requestUrl, {
+      options = {
+        method = "PUT",
+        headers = {},
+        data = deviceData
+      },      
+      success = function (response)        
+        log("OK: " .. requestUrl .. " - " .. deviceData, "green")
+      end,
+      error = function (err)        
+        log("FAIL: " .. requestUrl .. " - " .. deviceData ". Error: " .. err, "red")
+      end
+    })
+end
+
+-- MAIN
+
+-- Server settings
+local openhabIp = "192.168.1.198"
+local openhabPort = 9000
+local openhabUrl = "http://" .. openhabIp .. ":" .. openhabPort
+
+-- Info needed in the json request
+local trigger = fibaro:getSourceTrigger()
+local deviceID = trigger['deviceID']
+local deviceName = fibaro:getName(deviceID)
+local propertyName = trigger['propertyName']
+local propertyValue = fibaro:getValue(deviceID, propertyName)
+
+-- Assemble the json string
+jsonTable = {}
+jsonTable.id = deviceID
+jsonTable.name = deviceName
+jsonTable.property = propertyName
+jsonTable.value = propertyValue
+jsonString = json.encode(jsonTable)
+
+-- Send it!
+request(openhabUrl, jsonString)
+```
+In future releases of this binding this step will not be needed as lua scenes can be created thought the Fibaro api. This will enable the binding itself to create the needed lua scene for all configured things.
+
 ## Configure Things
 
 To setup your z-wave devices you add them as things. Actors are all z-wave devices that support sending them an action (such as turning on/off a switch or dimming a light). Sensors are all read-only devices that only sends data (such as temperature readings, motion detection information etc).
@@ -47,10 +116,30 @@ Since the thing types are very generic (actor or sensor) the binding instead sup
 Other channels needs to be enabled based on what type of device it is. So for a temperature sensor you will need to enable the `temperature` channel. Some devices may also support several channels. An example is the Fibaro switch which can measure power and energy consumption. In this example you can (besides the `dead`channel) enable `switch`, `power`and `energy` channels.
 
 ### Supported channels
-| Name     | id    | Description                                                                                           | Actor | Sensor |
-| ---------|-------|-------------------------------------------------------------------------------------------------------|-------|--------|
-| Dead     | dead  | Channel which holds a z-wave device dead status (i.e. configured but not connected to the controller) |   X   |   X    |
- 
+|Name          |Id           |Description                                                                             |Item type     |Actor | Sensor |
+|--------------|-------------|----------------------------------------------------------------------------------------|--------------|------|--------|
+|Alarm         |alarm        |Controls an alarm device such as a siren                                                |Switch        | X    |        | 
+|Blinds        |blinds       |Controls a motorized roller blind                                                       |RollerShutter | X    |        | 
+|Color Light   |colorLight   |Controls a RGBW color light                                                             |Color         | X    |        |
+|Dimmer        |dimmer       |Controls a dimmer                                                                       |Dimmer        | X    |        |
+|Switch        |switch       |Controls a binary switch                                                                |Switch        | X    |        |
+|Power Outlet  |powerOutlet  |Controls a power outlet                                                                 |Switch        | X    |        |
+|Battery Level |battery      |Reads device battery level                                                              |Number        | X    | X      |
+|Dead          |dead         |Reads device dead status (i.e. device is configured but not reachable from the gateway) |Switch        | X    | X      |
+|Energy        |energy       |Reads total energy consumption of device in kWh                                         |Number        | X    | X      |
+|Power         |power        |Reads current power consumption of device in W                                          |Number        | X    | X      |
+|Temperature   |temperature  |Controls and/or reads the temperature                                                   |Number        | X    | X      |
+|Last Breached |lastBreached |Reads the timestamp for when the device was last breached                               |DateTime      |      | X      |
+|Motion        |motion       |Reads motion sensor value                                                               |Switch        |      | X      |
+|Illuminance   |illuminance  |Reads illuminance sensor value                                                          |Number        |      | X      |
+|Smoke         |smoke        |Reads smoke sensor value                                                                |Switch        |      | X      |
+|Heat          |heat         |Reads heat sensor value                                                                 |Switch        |      | X      |
+|Door          |door         |Reads door sensor value                                                                 |Switch        |      | X      |
+|Voltage       |voltage      |Reads current voltage of device in V                                                    |Number        |      | X      |
+|Ampere        |ampere       |Reads current ampere of device in A                                                     |Number        |      | X      |
+|Window        |window       |Reads window sensor value                                                               |Switch        |      | X      |
+
+
 
 ## Configuration examples
 Todo
