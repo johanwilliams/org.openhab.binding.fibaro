@@ -42,6 +42,7 @@
         <channels>
             <channel id="battery" typeId="battery"/>
             <channel id="dead" typeId="dead"/>
+            <channel id="electric-current" typeId="electric-current"/>
             <channel id="temperature" typeId="temperature"/>
         </channels>
         
@@ -69,28 +70,14 @@
         <state readOnly="true" min="1" max="100" pattern="%d %%"></state>  
     </channel-type>
 
-    <!-- <channel-type id="blinds" advanced="true">
-        <item-type>RollerShutter</item-type>
-        <label>Blinds</label>
-        <description>Channel to control a motorized roller shutter</description>
-        <category>Blinds</category>        
-    </channel-type>
-    
-    <channel-type id="colorLight" advanced="true">
-        <item-type>Color</item-type>
-        <label>Color lights</label>
-        <description>Channel to control a RGBW color light</description>
-        <category>ColorLight</category>        
-    </channel-type>
-
-    <channel-type id="current" advanced="true">
+    <channel-type id="electric-current" advanced="true">
         <item-type>Number</item-type>
         <label>Electrical current</label>
         <description>Channel to read the electrical current (in A) of a device</description>
         <category>Energy</category>
         <state readOnly="true" pattern="%.2f A">
         </state>        
-    </channel-type>-->    
+    </channel-type>    
 
     <channel-type id="switch" advanced="true">
         <item-type>Switch</item-type>

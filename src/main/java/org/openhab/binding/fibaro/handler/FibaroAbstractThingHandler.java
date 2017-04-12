@@ -89,6 +89,9 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                 case BATTERY:
                     updateChannel(channel, new DecimalType(device.getProperties().getBatteryLevel()));
                     break;
+                case ELECTRIC_CURRENT:
+                    updateChannel(channel, new DecimalType(device.getProperties().getValue()));
+                    break;
                 case SWITCH:
                     updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;

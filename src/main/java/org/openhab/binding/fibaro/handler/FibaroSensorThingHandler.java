@@ -90,6 +90,7 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
                 updateChannel(FibaroChannel.BATTERY, stringToDecimal(fibaroUpdate.getValue()));
             case VALUE:
                 updateChannel(FibaroChannel.TEMPERATURE, stringToDecimal(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.ELECTRIC_CURRENT, stringToDecimal(fibaroUpdate.getValue()));
                 break;
             case DEAD:
                 updateChannel(FibaroChannel.DEAD, stringToOnOff(fibaroUpdate.getValue()));
