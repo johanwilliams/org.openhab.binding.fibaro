@@ -31,4 +31,13 @@ public enum PropertyName {
         return name;
     }
 
+    public static PropertyName fromName(String name) {
+        for (PropertyName property : PropertyName.values()) {
+            if (property.name.equalsIgnoreCase(name)) {
+                return property;
+            }
+        }
+        throw new IllegalArgumentException("No property with name " + name + " found");
+    }
+
 }

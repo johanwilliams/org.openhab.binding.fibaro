@@ -43,7 +43,6 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
             init();
             updateStatus(ThingStatus.ONLINE);
         } catch (FibaroConfigurationException e) {
-            // TODO Auto-generated catch block
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, e.getMessage());
         }
     }
@@ -85,7 +84,7 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
 
     @Override
     public void update(FibaroUpdate fibaroUpdate) {
-        PropertyName property = PropertyName.valueOf(fibaroUpdate.getProperty());
+        PropertyName property = PropertyName.fromName(fibaroUpdate.getProperty());
         switch (property) {
             case VALUE:
                 updateChannel(FibaroChannel.TEMPERATURE, stringToDecimal(fibaroUpdate.getValue()));

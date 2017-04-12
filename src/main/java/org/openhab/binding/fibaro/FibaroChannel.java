@@ -46,4 +46,13 @@ public enum FibaroChannel {
     public String getId() {
         return id;
     }
+
+    public static FibaroChannel fromId(String id) {
+        for (FibaroChannel channel : FibaroChannel.values()) {
+            if (channel.id.equalsIgnoreCase(id)) {
+                return channel;
+            }
+        }
+        throw new IllegalArgumentException("No channel with id " + id + " found");
+    }
 }

@@ -7,9 +7,13 @@
  */
 package org.openhab.binding.fibaro.handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
+import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.State;
@@ -34,6 +38,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     protected Gson gson;
 
     protected int id;
+    protected List<FibaroChannel> linkedChannels;
 
     // Reference to the bridge which we need for communication
     protected FibaroGatewayBridgeHandler bridge = null;
@@ -49,6 +54,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
      */
     protected void init() throws FibaroConfigurationException {
         gson = new Gson();
+        linkedChannels = new ArrayList<FibaroChannel>();
 
         if (getBridge() == null) {
             throw new FibaroConfigurationException(
@@ -75,8 +81,11 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         if (device == null) {
             logger.debug("Can't update channel {} as the device information is null", channelId);
         } else {
-            FibaroChannel channel = FibaroChannel.valueOf(channelId);
+            FibaroChannel channel = FibaroChannel.fromId(channelId);
             switch (channel) {
+                case ALARM:
+                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
+                    break;
                 case SWITCH:
                     updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;
@@ -157,9 +166,25 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     }
 
     protected void updateChannel(FibaroChannel channel, State state) {
-        if (state != null) {
+        if (state != null && linkedChannels.contains(channel)) {
             updateState(channel.getId(), state);
         }
+    }
+
+    @Override
+    public void channelLinked(ChannelUID channelUID) {
+        FibaroChannel channel = FibaroChannel.fromId(channelUID.getId());
+        linkedChannels.add(channel);
+        logger.debug("Channel " + channel.toString() + " was linked");
+        super.channelLinked(channelUID);
+    }
+
+    @Override
+    public void channelUnlinked(ChannelUID channelUID) {
+        FibaroChannel channel = FibaroChannel.fromId(channelUID.getId());
+        linkedChannels.remove(channel);
+        logger.debug("Channel " + channel.toString() + " was unlinked");
+        super.channelUnlinked(channelUID);
     }
 
     /**

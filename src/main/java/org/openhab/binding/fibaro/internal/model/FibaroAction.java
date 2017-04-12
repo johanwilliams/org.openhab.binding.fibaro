@@ -31,4 +31,13 @@ public enum FibaroAction {
         return action;
     }
 
+    public static FibaroAction fromAction(String name) {
+        for (FibaroAction action : FibaroAction.values()) {
+            if (action.action.equalsIgnoreCase(name)) {
+                return action;
+            }
+        }
+        throw new IllegalArgumentException("No action with name " + name + " found");
+    }
+
 }

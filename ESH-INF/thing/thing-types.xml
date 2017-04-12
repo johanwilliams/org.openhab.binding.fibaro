@@ -13,6 +13,7 @@
         <description>A Fibaro Actor device i.e. a device which supports altering its value/state. This could for example be a switch, a dimmer or a thermostat. The Actor thing supports a variety of channels. If this is a switch, enable the switch channel. By default only the dead channel is active indicating id this z-wave device is marked dead by the controller.</description>
 
         <channels>
+            <channel id="alarm" typeId="alarm"/>
             <channel id="dead" typeId="dead"/>
             <channel id="switch" typeId="switch"/>
             <channel id="dimmer" typeId="dimmer"/>            
@@ -51,14 +52,14 @@
         </config-description>        
     </thing-type>    
         
-    <!--  <channel-type id="alarm" advanced="true">
+    <channel-type id="alarm" advanced="true">
         <item-type>Alarm</item-type>
         <label>Switch</label>
         <description>Channel to control an alarm such as a siren</description>
         <category>Alarm</category>        
     </channel-type>
 
-    <channel-type id="battery" advanced="true">
+    <!--<channel-type id="battery" advanced="true">
         <item-type>Number</item-type>
         <label>Battery level</label>
         <description>Channel to read current battery level (in %) of a device</description>

@@ -114,9 +114,10 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
 
     @Override
     public void update(FibaroUpdate fibaroUpdate) {
-        PropertyName property = PropertyName.valueOf(fibaroUpdate.getProperty());
+        PropertyName property = PropertyName.fromName(fibaroUpdate.getProperty());
         switch (property) {
             case VALUE:
+                updateChannel(FibaroChannel.ALARM, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.SWITCH, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.DIMMER, stringToPercent(fibaroUpdate.getValue()));
                 break;
