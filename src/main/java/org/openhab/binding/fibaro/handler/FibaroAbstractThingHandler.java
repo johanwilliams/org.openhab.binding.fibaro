@@ -140,6 +140,9 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                 case SMOKE:
                     updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;
+                case VOLTAGE:
+                    updateChannel(channel, stringToDecimal(device.getProperties().getValue()));
+                    break;
                 case WINDOW:
                     updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;

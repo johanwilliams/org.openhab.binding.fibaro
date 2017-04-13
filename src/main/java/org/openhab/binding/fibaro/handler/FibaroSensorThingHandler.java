@@ -99,6 +99,7 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
                 updateChannel(FibaroChannel.MOTION, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.SMOKE, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.TEMPERATURE, stringToDecimal(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.VOLTAGE, stringToDecimal(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.WINDOW, stringToOnOff(fibaroUpdate.getValue()));
                 break;
             default:

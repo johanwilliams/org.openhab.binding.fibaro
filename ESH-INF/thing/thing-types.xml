@@ -50,6 +50,7 @@
             <channel id="motion" typeId="motion"/>
             <channel id="smoke" typeId="smoke"/>
             <channel id="temperature" typeId="temperature"/>
+            <channel id="voltage" typeId="voltage"/>
             <channel id="window" typeId="window"/>            
         </channels>
         
@@ -188,6 +189,15 @@
         <description>Channel to control the temperature in a thermostat device</description>
         <category>Temperature</category>
         <state pattern="%.1f °C">
+        </state>        
+    </channel-type>
+
+    <channel-type id="voltage" advanced="true">
+        <item-type>Number</item-type>
+        <label>Voltage</label>
+        <description>Channel which reads the current voltage of this device in V</description>
+        <category>Energy</category>
+        <state readOnly="true" pattern="%.2f V">
         </state>        
     </channel-type>
 
