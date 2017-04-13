@@ -98,6 +98,7 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
                 updateChannel(FibaroChannel.HEAT, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.SMOKE, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.WINDOW, stringToOnOff(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.ILLUMINANCE, stringToDecimal(fibaroUpdate.getValue()));
                 break;
             default:
                 logger.debug("Update received for an unknown property: {}", fibaroUpdate.getProperty());

@@ -45,6 +45,7 @@
             <channel id="door" typeId="door"/>
             <channel id="electric-current" typeId="electric-current"/>
             <channel id="heat" typeId="heat"/>
+            <channel id="illuminance" typeId="illuminance"/>
             <channel id="smoke" typeId="smoke"/>
             <channel id="temperature" typeId="temperature"/>
             <channel id="window" typeId="window"/>
@@ -121,6 +122,14 @@
         <description>Reads heat sensor value</description>
         <category>Fire</category>
         <state readOnly="true"></state>
+    </channel-type>
+
+    <channel-type id="illuminance" advanced="true">
+        <item-type>Number</item-type>
+        <label>Illuminance</label>
+        <description>Reads sensor illuminance value in lux</description>
+        <category>Light</category>
+        <state readOnly="true" min="0" pattern="%.0f lux"></state>
     </channel-type>
 
     <channel-type id="power" advanced="true">
