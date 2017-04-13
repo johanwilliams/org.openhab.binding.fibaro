@@ -15,11 +15,11 @@ package org.openhab.binding.fibaro.internal.model;
  */
 public enum PropertyName {
 
-    VALUE("value"),
+    BATTERY("batteryLevel"),
     DEAD("dead"),
     ENERGY("energy"),
     POWER("power"),
-    BATTERY("batteryLevel");
+    VALUE("value");
 
     private final String name;
 

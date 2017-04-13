@@ -46,9 +46,10 @@
             <channel id="electric-current" typeId="electric-current"/>
             <channel id="heat" typeId="heat"/>
             <channel id="illuminance" typeId="illuminance"/>
+            <channel id="motion" typeId="motion"/>
             <channel id="smoke" typeId="smoke"/>
             <channel id="temperature" typeId="temperature"/>
-            <channel id="window" typeId="window"/>
+            <channel id="window" typeId="window"/>            
         </channels>
         
         <config-description>
@@ -130,6 +131,14 @@
         <description>Reads sensor illuminance value in lux</description>
         <category>Light</category>
         <state readOnly="true" min="0" pattern="%.0f lux"></state>
+    </channel-type>
+
+    <channel-type id="motion" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Motion</label>
+        <description>Reads motion sensor value</description>
+        <category>Motion</category>
+        <state readOnly="true"></state>
     </channel-type>
 
     <channel-type id="power" advanced="true">

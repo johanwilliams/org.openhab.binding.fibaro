@@ -7,9 +7,12 @@
  */
 package org.openhab.binding.fibaro.handler;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import org.eclipse.smarthome.core.library.types.DateTimeType;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
@@ -36,6 +39,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     private Logger logger = LoggerFactory.getLogger(FibaroAbstractThingHandler.class);
 
     protected Gson gson;
+    SimpleDateFormat formatter;
 
     protected int id;
     protected List<FibaroChannel> linkedChannels;
@@ -55,6 +59,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     protected void init() throws FibaroConfigurationException {
         gson = new Gson();
         linkedChannels = new ArrayList<FibaroChannel>();
+        formatter = new SimpleDateFormat(DateTimeType.DATE_PATTERN_WITH_TZ_AND_MS);
 
         if (getBridge() == null) {
             throw new FibaroConfigurationException(
@@ -113,6 +118,9 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                     break;
                 case ILLUMINANCE:
                     updateChannel(channel, stringToDecimal(device.getProperties().getValue()));
+                    break;
+                case MOTION:
+                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;
                 case POWER:
                     updateChannel(channel, new DecimalType(device.getProperties().getPower()));
@@ -184,6 +192,24 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
             // Not a double
         }
         return null;
+    }
+
+    /**
+     * Tries to cast a string to a {@link DateTimeType}
+     *
+     * @param str String to cast
+     * @return the DateTimeType state or null if it could not be casted
+     */
+    protected DateTimeType stringToDateTime(String timeInMs) {
+        try {
+            Calendar time = Calendar.getInstance();
+            time.setTimeInMillis(Long.valueOf(timeInMs).longValue());
+            return new DateTimeType(formatter.format(time.getTime()));
+        } catch (NumberFormatException nfe) {
+            // Not a double
+        }
+        return null;
+
     }
 
     /**

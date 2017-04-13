@@ -93,5 +93,4 @@ public class FibaroProperties {
                 + configured + ", dead=" + dead + ", energy=" + energy + ", power=" + power + ", value=" + value
                 + ", batteryLevel=" + batteryLevel + "]";
     }
-
 }

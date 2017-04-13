@@ -26,7 +26,6 @@ public enum FibaroChannel {
     ENERGY("energy"),
     HEAT("heat"),
     ILLUMINANCE("illuminance"),
-    LAST_BREACHED("last-breached"),
     MOTION("motion"),
     POWER("power"),
     POWER_OUTLET("power-outlet"),
