@@ -130,8 +130,7 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
             case VALUE:
                 updateChannel(FibaroChannel.ALARM, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.DIMMER, stringToPercent(fibaroUpdate.getValue()));
-                updateChannel(FibaroChannel.HEAT, stringToOnOff(fibaroUpdate.getValue()));
-                updateChannel(FibaroChannel.SMOKE, stringToOnOff(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.POWER_OUTLET, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.SWITCH, stringToOnOff(fibaroUpdate.getValue()));
                 break;
             default:

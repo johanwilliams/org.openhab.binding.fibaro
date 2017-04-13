@@ -125,6 +125,9 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                 case POWER:
                     updateChannel(channel, new DecimalType(device.getProperties().getPower()));
                     break;
+                case POWER_OUTLET:
+                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
+                    break;
                 case SWITCH:
                     updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;

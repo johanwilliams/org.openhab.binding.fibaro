@@ -16,10 +16,11 @@
             <channel id="alarm" typeId="alarm"/>
             <channel id="battery" typeId="battery"/>            
             <channel id="dead" typeId="dead"/>
-            <channel id="switch" typeId="switch"/>
-            <channel id="dimmer" typeId="dimmer"/>            
+            <channel id="dimmer" typeId="dimmer"/>
             <channel id="energy" typeId="energy"/>
             <channel id="power" typeId="power"/>
+            <channel id="power-outlet" typeId="power-outlet"/>
+            <channel id="switch" typeId="switch"/>                                               
         </channels>
         
         <config-description>
@@ -150,6 +151,13 @@
         </state>        
     </channel-type>
     
+    <channel-type id="power-outlet" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Power outlet</label>
+        <description>Channel to control a power outlet</description>
+        <category>PowerOutlet</category>        
+    </channel-type>
+
     <channel-type id="smoke" advanced="true">
         <item-type>Switch</item-type>
         <label>Smoke</label>
@@ -161,7 +169,8 @@
     <channel-type id="switch" advanced="true">
         <item-type>Switch</item-type>
         <label>Switch</label>
-        <description>Channel to control a binday switch</description>        
+        <description>Channel to control a binday switch</description>
+        <category>Switch</category>        
     </channel-type>
 
     <channel-type id="temperature" advanced="true">
