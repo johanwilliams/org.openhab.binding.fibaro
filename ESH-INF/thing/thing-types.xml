@@ -169,7 +169,7 @@
     <channel-type id="switch" advanced="true">
         <item-type>Switch</item-type>
         <label>Switch</label>
-        <description>Channel to control a binday switch</description>
+        <description>Channel to control a binary switch</description>
         <category>Switch</category>        
     </channel-type>
 
@@ -182,6 +182,15 @@
         </state>        
     </channel-type>
     
+    <channel-type id="thermostat" advanced="true">
+        <item-type>Number</item-type>
+        <label>Thermostat</label>
+        <description>Channel to control the temperature in a thermostat device</description>
+        <category>Temperature</category>
+        <state pattern="%.1f °C">
+        </state>        
+    </channel-type>
+
     <channel-type id="window" advanced="true">
         <item-type>Switch</item-type>
         <label>Window</label>

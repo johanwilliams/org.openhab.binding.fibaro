@@ -8,6 +8,7 @@
 package org.openhab.binding.fibaro.handler;
 
 import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.IncreaseDecreaseType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
@@ -96,11 +97,21 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
                 // TODO: Check FibaroApiResponse for error codes
             } else if (command instanceof PercentType) {
                 url += FibaroAction.SET_VALUE.getAction();
-                int dimmerValue = ((PercentType) command).intValue();
+                int percentValue = ((PercentType) command).intValue();
                 FibaroArguments arguments = new FibaroArguments();
-                arguments.addArgs(dimmerValue);
-                String temp = gson.toJson(arguments);
-                FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, temp,
+                arguments.addArgs(percentValue);
+                String content = gson.toJson(arguments);
+                FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, content,
+                        FibaroApiResponse.class);
+                logger.debug(apiResponse.toString());
+                // TODO: Check FibaroApiResponse for error codes
+            } else if (command instanceof DecimalType) {
+                url += FibaroAction.SET_VALUE.getAction();
+                double decimalValue = ((DecimalType) command).doubleValue();
+                FibaroArguments arguments = new FibaroArguments();
+                arguments.addArgs(decimalValue);
+                String content = gson.toJson(arguments);
+                FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, content,
                         FibaroApiResponse.class);
                 logger.debug(apiResponse.toString());
                 // TODO: Check FibaroApiResponse for error codes
@@ -132,6 +143,7 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
                 updateChannel(FibaroChannel.DIMMER, stringToPercent(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.POWER_OUTLET, stringToOnOff(fibaroUpdate.getValue()));
                 updateChannel(FibaroChannel.SWITCH, stringToOnOff(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.THERMOSTAT, stringToDecimal(fibaroUpdate.getValue()));
                 break;
             default:
                 logger.debug("Update received for an unknown property: {}", fibaroUpdate.getProperty());

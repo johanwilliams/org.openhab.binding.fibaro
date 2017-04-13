@@ -134,6 +134,9 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                 case TEMPERATURE:
                     updateChannel(channel, stringToDecimal(device.getProperties().getValue()));
                     break;
+                case THERMOSTAT:
+                    updateChannel(channel, stringToDecimal(device.getProperties().getValue()));
+                    break;
                 case SMOKE:
                     updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
                     break;
