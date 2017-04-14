@@ -47,6 +47,11 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroGatewayBridgeHandler.class);
 
+    protected String ipAddress;
+    protected String username;
+    protected String password;
+    protected int port;
+
     private InMemoryCache<Integer, FibaroDevice> cache;
     private final int CACHE_EXPIRY = 10; // 10s
     private final int CACHE_SIZE = 100; // 10s
@@ -69,32 +74,26 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
     @Override
     public void initialize() {
         logger.debug("Initializing the Fibaro Bridge handler.");
+        loadConfiguration();
 
         cache = new InMemoryCache<Integer, FibaroDevice>(CACHE_EXPIRY, 1, CACHE_SIZE);
-
-        FibaroGatewayConfiguration config = getConfigAs(FibaroGatewayConfiguration.class);
-
-        logger.debug("config ipAddress = {}", config.ipAddress);
-        logger.debug("config id = {}", config.port);
-        logger.debug("config id = {}", config.username);
-        logger.debug("config id = (omitted from logging)");
 
         boolean validConfig = true;
         String errorMsg = null;
 
-        if (StringUtils.trimToNull(config.ipAddress) == null) {
+        if (StringUtils.trimToNull(ipAddress) == null) {
             errorMsg = "Parameter '" + FibaroGatewayConfiguration.IP_ADDRESS + "' is mandatory and must be configured";
             validConfig = false;
         }
-        if (config.port <= 1024 || config.port > 65535) {
+        if (port <= 1024 || port > 65535) {
             errorMsg = "Parameter '" + FibaroGatewayConfiguration.PORT + "' must be between 1025 and 65535";
             validConfig = false;
         }
-        if (StringUtils.trimToNull(config.username) == null) {
+        if (StringUtils.trimToNull(username) == null) {
             errorMsg = "Parameter '" + FibaroGatewayConfiguration.USERNAME + "' is mandatory and must be configured";
             validConfig = false;
         }
-        if (StringUtils.trimToNull(config.password) == null) {
+        if (StringUtils.trimToNull(password) == null) {
             errorMsg = "Parameter '" + FibaroGatewayConfiguration.PASSWORD + "' is mandatory and must be configured";
             validConfig = false;
         }
@@ -112,9 +111,9 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
         // Start our http server to listen for device updates
         try {
-            server = new FibaroServer(config.port, new FibaroServerHandler(this));
+            server = new FibaroServer(port, new FibaroServerHandler(this));
         } catch (Exception e) {
-            errorMsg = "Failed to start the server communicating with Fibaro on port " + config.port;
+            errorMsg = "Failed to start the server communicating with Fibaro on port " + port;
             validConfig = false;
         }
 
@@ -124,6 +123,19 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
         } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, errorMsg);
         }
+    }
+
+    private void loadConfiguration() {
+        FibaroGatewayConfiguration config = getConfigAs(FibaroGatewayConfiguration.class);
+        ipAddress = config.ipAddress;
+        username = config.username;
+        password = config.password;
+        port = config.port;
+
+        logger.debug("config ipAddress = {}", ipAddress);
+        logger.debug("config id = {}", port);
+        logger.debug("config id = {}", username);
+        logger.debug("config id = (omitted from logging)");
     }
 
     public void handleFibaroUpdate(FibaroUpdate fibaroUpdate) {
@@ -169,7 +181,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
     }
 
     public String getIpAddress() {
-        return getConfigAs(FibaroGatewayConfiguration.class).ipAddress;
+        return ipAddress;
     }
 
     public FibaroDevice getDeviceData(int id) throws Exception {
@@ -205,14 +217,12 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
         if (!httpClient.isStarted()) {
             httpClient.start();
         }
-        FibaroGatewayConfiguration config = getConfigAs(FibaroGatewayConfiguration.class);
-
         logger.debug("Calling the Fibaro api on url: {} with content: {}", url, content);
 
         // Add authentication credentials
         AuthenticationStore auth = httpClient.getAuthenticationStore();
         URI uri = new URI(url);
-        auth.addAuthentication(new BasicAuthentication(uri, REALM, config.username, config.password));
+        auth.addAuthentication(new BasicAuthentication(uri, REALM, username, password));
 
         // @formatter:off
         ContentResponse response = httpClient.newRequest(uri)

@@ -20,6 +20,7 @@ import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.State;
+import org.openhab.binding.fibaro.FibaroBindingConstants;
 import org.openhab.binding.fibaro.FibaroChannel;
 import org.openhab.binding.fibaro.config.FibaroThingConfiguration;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
@@ -39,6 +40,8 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroAbstractThingHandler.class);
 
+    protected int id;
+
     protected Gson gson;
     SimpleDateFormat formatter;
 
@@ -57,25 +60,35 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
      * @throws FibaroConfigurationException Thrown if a configuration error is encountered
      */
     protected void init() throws FibaroConfigurationException {
+        loadConfiguration();
         gson = new Gson();
         linkedChannels = new ArrayList<FibaroChannel>();
         formatter = new SimpleDateFormat(DateTimeType.DATE_PATTERN_WITH_TZ_AND_MS);
 
         if (getBridge() == null) {
-            throw new FibaroConfigurationException(
-                    "This thing is not connected to a Fibaro bridge. Please add a Fibaro bridge and connect it in Thing settings.");
+            throw new FibaroConfigurationException("This thing needs to be associated with a bridge of type: "
+                    + FibaroBindingConstants.BRIDGE_ID_GATEWAY);
         }
         bridge = (FibaroGatewayBridgeHandler) getBridge().getHandler();
     }
 
-    protected void setThingId(int id) {
+    private void loadConfiguration() {
+        FibaroThingConfiguration config = getConfigAs(FibaroThingConfiguration.class);
+        id = config.id;
+
+        logger.debug("config id = {}", id);
+    }
+
+    /**
+     * Calls the bridge so it can add this thing (with our id). This so the bridge later on can find the corresponding
+     * thing to update when it receives an update from the Fibaro controller for a device.
+     *
+     * @param id Our device id
+     */
+    protected void reportThingIdToBridge(int id) {
         if (bridge != null) {
             bridge.addThing(id, this);
         }
-    }
-
-    protected int getThingId() {
-        return getConfigAs(FibaroThingConfiguration.class).id;
     }
 
     /**
@@ -83,7 +96,6 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
      *
      * @param channelId Id of channel to update
      * @param device The device carrying the update information
-     * @throws Exception
      */
     protected void updateChannel(String channelId, FibaroDevice device) {
         if (device == null) {

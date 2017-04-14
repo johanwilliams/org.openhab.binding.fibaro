@@ -51,7 +51,6 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
     public void init() throws FibaroConfigurationException {
         super.init();
 
-        int id = getThingId();
         logger.debug("Initializing the binary switch handler with id {}", id);
 
         if (id < 1) {
@@ -65,14 +64,14 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
                     "Could not get device data from the Fibaro api for id " + id + ". Does this id exist?", e);
         }
 
-        setThingId(id);
+        reportThingIdToBridge(id);
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         try {
             if (command instanceof RefreshType) {
-                updateChannel(channelUID.getId(), bridge.getDeviceData(getThingId()));
+                updateChannel(channelUID.getId(), bridge.getDeviceData(id));
             } else {
                 logger.debug("Can't handle command: " + command.toString());
             }
@@ -110,14 +109,4 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
         // Remove this device from the cache as it has been updated
         bridge.removeFromCache(fibaroUpdate.getId());
     }
-
-    /**
-     * Returns the configured id
-     *
-     * @return Thing id
-     */
-    public int getId() {
-        return getConfigAs(FibaroThingConfiguration.class).id;
-    }
-
 }

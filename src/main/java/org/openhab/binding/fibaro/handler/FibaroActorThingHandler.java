@@ -51,7 +51,6 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
             init();
             updateStatus(ThingStatus.ONLINE);
         } catch (FibaroConfigurationException e) {
-            // TODO Auto-generated catch block
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, e.getMessage());
         }
     }
@@ -60,8 +59,7 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
     public void init() throws FibaroConfigurationException {
         super.init();
 
-        int id = getThingId();
-        logger.debug("Initializing the binary switch handler with id {}", id);
+        logger.debug("Initializing the actor handler with id {}", id);
 
         if (id < 1) {
             throw new FibaroConfigurationException(FibaroThingConfiguration.ID + "' must be larget than 0");
@@ -74,15 +72,15 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
                     "Could not get device data from the Fibaro api for id " + id + ". Does this id exist?", e);
         }
 
-        setThingId(id);
+        reportThingIdToBridge(id);
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         try {
-            String url = "http://" + bridge.getIpAddress() + "/api/devices/" + getId() + "/action/";
+            String url = "http://" + bridge.getIpAddress() + "/api/devices/" + id + "/action/";
             if (command instanceof RefreshType) {
-                updateChannel(channelUID.getId(), bridge.getDeviceData(getThingId()));
+                updateChannel(channelUID.getId(), bridge.getDeviceData(id));
             } else if (command instanceof OnOffType) {
                 url += command.equals(OnOffType.ON) ? FibaroAction.TURN_ON.getAction()
                         : FibaroAction.TURN_OFF.getAction();
@@ -152,15 +150,6 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
 
         // Remove this device from the cache as it has been updated
         bridge.removeFromCache(fibaroUpdate.getId());
-    }
-
-    /**
-     * Returns the configured id
-     *
-     * @return Thing id
-     */
-    public int getId() {
-        return getConfigAs(FibaroThingConfiguration.class).id;
     }
 
 }
