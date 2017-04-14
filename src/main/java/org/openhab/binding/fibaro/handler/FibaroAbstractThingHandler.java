@@ -21,6 +21,7 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.fibaro.FibaroChannel;
+import org.openhab.binding.fibaro.config.FibaroThingConfiguration;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
 import org.openhab.binding.fibaro.internal.model.json.FibaroDevice;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
@@ -41,7 +42,6 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     protected Gson gson;
     SimpleDateFormat formatter;
 
-    protected int id;
     protected List<FibaroChannel> linkedChannels;
 
     // Reference to the bridge which we need for communication
@@ -69,10 +69,13 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     }
 
     protected void setThingId(int id) {
-        this.id = id;
         if (bridge != null) {
             bridge.addThing(id, this);
         }
+    }
+
+    protected int getThingId() {
+        return getConfigAs(FibaroThingConfiguration.class).id;
     }
 
     /**

@@ -207,6 +207,8 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
         }
         FibaroGatewayConfiguration config = getConfigAs(FibaroGatewayConfiguration.class);
 
+        logger.debug("Calling the Fibaro api on url: {} with content: {}", url, content);
+
         // Add authentication credentials
         AuthenticationStore auth = httpClient.getAuthenticationStore();
         URI uri = new URI(url);
@@ -223,7 +225,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
         if (statusCode != HttpStatus.OK_200 && statusCode != HttpStatus.ACCEPTED_202) {
             String statusLine = response.getStatus() + " " + response.getReason();
-            logger.error("Method failed: {}", statusLine);
+            logger.debug("Method failed: {}", statusLine);
             throw new Exception("Method failed: " + statusLine);
         }
 

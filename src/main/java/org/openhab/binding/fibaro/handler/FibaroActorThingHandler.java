@@ -60,21 +60,21 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
     public void init() throws FibaroConfigurationException {
         super.init();
 
-        FibaroThingConfiguration config = getConfigAs(FibaroThingConfiguration.class);
-        logger.debug("Initializing the binary switch handler with id {}", config.id);
+        int id = getThingId();
+        logger.debug("Initializing the binary switch handler with id {}", id);
 
-        if (config.id < 1) {
+        if (id < 1) {
             throw new FibaroConfigurationException(FibaroThingConfiguration.ID + "' must be larget than 0");
         }
 
         try {
-            bridge.getDeviceData(config.id);
+            bridge.getDeviceData(id);
         } catch (Exception e) {
             throw new FibaroConfigurationException(
-                    "Could not get device data from the Fibaro api for id " + config.id + ". Does this id exist?", e);
+                    "Could not get device data from the Fibaro api for id " + id + ". Does this id exist?", e);
         }
 
-        setThingId(config.id);
+        setThingId(id);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
         try {
             String url = "http://" + bridge.getIpAddress() + "/api/devices/" + getId() + "/action/";
             if (command instanceof RefreshType) {
-                updateChannel(channelUID.getId(), bridge.getDeviceData(id));
+                updateChannel(channelUID.getId(), bridge.getDeviceData(getThingId()));
             } else if (command instanceof OnOffType) {
                 url += command.equals(OnOffType.ON) ? FibaroAction.TURN_ON.getAction()
                         : FibaroAction.TURN_OFF.getAction();
