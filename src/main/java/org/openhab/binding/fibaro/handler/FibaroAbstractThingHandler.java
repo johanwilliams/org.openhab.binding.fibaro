@@ -113,11 +113,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                     updateChannel(channel, stringToOnOff(device.getProperties().getDead()));
                     break;
                 case DIMMER:
-                    PercentType dimmerPercent = stringToPercent(device.getProperties().getValue());
-                    if (dimmerPercent.intValue() > 0) {
-                        updateChannel(channel, OnOffType.ON);
-                    }
-                    updateChannel(channel, dimmerPercent);
+                    updateChannel(channel, stringToPercent(device.getProperties().getValue()));
                     break;
                 case DOOR:
                     updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
