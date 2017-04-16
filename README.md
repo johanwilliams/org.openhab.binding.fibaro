@@ -115,30 +115,80 @@ Since the thing types are very generic (actor or sensor) the binding instead sup
 Other channels needs to be enabled based on what type of device it is. So for a temperature sensor you will need to enable the `temperature` channel. Some devices may also support several channels. An example is the Fibaro switch which can measure power and energy consumption. In this example you can (besides the `dead`channel) enable `switch`, `power`and `energy` channels.
 
 ### Supported channels
-|Name          |Id           |Description                                                                             |Item type     |Actor | Sensor |
-|--------------|-------------|----------------------------------------------------------------------------------------|--------------|------|--------|
-|Alarm         |alarm        |Controls an alarm device such as a siren                                                |Switch        | X    |        | 
-|Blinds        |blinds       |Controls a motorized roller blind                                                       |RollerShutter | X    |        | 
-|Color Light   |colorLight   |Controls a RGBW color light                                                             |Color         | X    |        |
-|Dimmer        |dimmer       |Controls a dimmer                                                                       |Dimmer        | X    |        |
-|Switch        |switch       |Controls a binary switch                                                                |Switch        | X    |        |
-|Power Outlet  |powerOutlet  |Controls a power outlet                                                                 |Switch        | X    |        |
-|Battery Level |battery      |Reads device battery level                                                              |Number        | X    | X      |
-|Dead          |dead         |Reads device dead status (i.e. device is configured but not reachable from the gateway) |Switch        | X    | X      |
-|Energy        |energy       |Reads total energy consumption of device in kWh                                         |Number        | X    | X      |
-|Power         |power        |Reads current power consumption of device in W                                          |Number        | X    | X      |
-|Temperature   |temperature  |Controls and/or reads the temperature                                                   |Number        | X    | X      |
-|Last Breached |lastBreached |Reads the timestamp for when the device was last breached                               |DateTime      |      | X      |
-|Motion        |motion       |Reads motion sensor value                                                               |Switch        |      | X      |
-|Illuminance   |illuminance  |Reads illuminance sensor value                                                          |Number        |      | X      |
-|Smoke         |smoke        |Reads smoke sensor value                                                                |Switch        |      | X      |
-|Heat          |heat         |Reads heat sensor value                                                                 |Switch        |      | X      |
-|Door          |door         |Reads door sensor value                                                                 |Switch        |      | X      |
-|Voltage       |voltage      |Reads current voltage of device in V                                                    |Number        |      | X      |
-|Ampere        |ampere       |Reads current ampere of device in A                                                     |Number        |      | X      |
-|Window        |window       |Reads window sensor value                                                               |Switch        |      | X      |
+|Name             |Id               |Description                                                                             |Item type     |Actor | Sensor |
+|-----------------|-----------------|----------------------------------------------------------------------------------------|--------------|------|--------|
+|Alarm            |alarm            |Controls an alarm such as a siren                                                       |Switch        | X    |        | 
+|Battery level    |battery          |Reads current battery level (in %) of a device                                          |Number        | X    | X      |
+|Dead             |dead             |Reads device dead status (i.e. device is configured but not reachable from the gateway) |Switch        | X    | X      |
+|Dimmer           |dimmer           |Controls a dimmer                                                                       |Dimmer        | X    |        |
+|Door             |door             |Reads door sensor value                                                                 |Switch        |      | X      |
+|Electric current |electric-current |Reads the electric current (in A) of a device                                           |Number        |      | X      |
+|Energy           |energy           |Reads the total energy consumption (in kWh) of this device                              |Number        | X    | X      |
+|Heat             |heat             |Reads heat sensor value (from a smoke sensor for example)                               |Switch        |      | X      |
+|Illuminance      |illuminance      |Reads the illuminance (in lux) of this device                                           |Number        |      | X      |
+|Motion           |motion           |Reads motion sensor value                                                               |Switch        |      | X      |
+|Power            |power            |Reads the current power usage (in W) of this device                                     |Number        | X    | X      |
+|Power outlet     |power-outlet     |Controls a power outlet                                                                 |Switch        | X    |        |
+|Smoke            |smoke            |Reads smoke sensor value                                                                |Switch        |      | X      |
+|Switch           |switch           |Controls a binary switch                                                                |Switch        | X    |        |
+|Temperature      |temperature      |Reads the current temperature (in °C) of this device                                    |Number        |      | X      |
+|Thermostat       |thermostat       |Channel to control the temperature in a thermostat device                               |Number        | X    |        |
+|Voltage          |voltage          |Reads the current voltage (in V) of this device                                         |Number        |      | X      |
+|Window           |window           |Reads window sensor value                                                               |Switch        |      | X      |
 
+### Not yet supported channels
+|Name             |Id               |Description                                                                             |Item type     |Actor | Sensor |
+|-----------------|-----------------|----------------------------------------------------------------------------------------|--------------|------|--------|
+|Blinds           |blinds           |Controls a motorized roller blind                                                       |RollerShutter | X    |        | 
+|Color light      |color-light      |Controls a RGBW color light                                                             |Color         | X    |        |
+
+The above channels are easy to add. Information about possible actions and some testing would be needed however.
 
 
 ## Configuration examples
-Todo
+.things file configuration
+```
+Bridge  fibaro:gateway:hc2      [ ipAddress="192.168.1.4", username="admin", password="admin", port=9000 ] {
+    
+    // Temperature sensors
+    Thing   fibaro:sensor:15    [ id=15 ]
+    Thing   fibaro:sensor:20    [ id=20 ]
+    
+    // Motion sensors
+    Thing   fibaro:sensor:14    [ id=14 ]
+    Thing   fibaro:sensor:19    [ id=19 ]
+
+    // Illuminance sensors
+    Thing   fibaro:sensor:16    [ id=16 ]
+    Thing   fibaro:sensor:21    [ id=21 ]
+
+    // Dimmers
+    Thing   fibaro:actor:141    [ id=141 ]
+    Thing   fibaro:actor:145    [ id=145 ]
+
+    // Door sensors
+    Thing   fibaro:sensor:102    [ id=102 ]
+    Thing   fibaro:sensor:104    [ id=104 ]
+}
+
+
+.items file configuration
+```
+Number  Temperature_Entrance        "Entrance [%.1f °C]"      <temperature>      { channel="fibaro:sensor:15:temperature" }
+Number  Temperature_Hallway         "Hallway [%.1f °C]"       <temperature>      { channel="fibaro:sensor:20:temperature" }
+
+Switch  Motion_Entrance             "Entrance [%s]"           <camera>           { channel="fibaro:sensor:14:motion" }
+Switch  Motion_Hallway              "Hallway [%s]"            <camera>           { channel="fibaro:sensor:19:motion" }
+
+Number  Illuminance_Entrance        "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:16:illuminance" }
+Number  Illuminance_Hallway         "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:21:illuminance" }
+
+Dimmer  Dimmer_Entrance             "Entrance [%s]"           <dimmablelight>    { channel="fibaro:actor:141:dimmer" }
+Number  DimmerE_Entrance            "Entrance [%.2f kWh]"     <energy>           { channel="fibaro:actor:141:energy" }
+Number  DimmerP_Entrance            "Entrance [%.2f W]"       <energy>           { channel="fibaro:actor:141:power" }
+
+Dimmer  Dimmer_Hallway              "Hallway [%s]"            <dimmablelight>    { channel="fibaro:actor:145:dimmer" }
+Number  DimmerE_Hallway             "Hallway [%.2f kWh]"      <energy>           { channel="fibaro:actor:145:energy" }
+Number  DimmerP_Hallway             "Hallway [%.2f W]"        <energy>           { channel="fibaro:actor:145:power" }
+
+

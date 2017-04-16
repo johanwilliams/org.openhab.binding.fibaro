@@ -20,7 +20,8 @@
             <channel id="energy" typeId="energy"/>
             <channel id="power" typeId="power"/>
             <channel id="power-outlet" typeId="power-outlet"/>
-            <channel id="switch" typeId="switch"/>                                               
+            <channel id="switch" typeId="switch"/>            
+            <channel id="thermostat" typeId="thermostat"/>                                   
         </channels>
         
         <config-description>
@@ -45,9 +46,11 @@
             <channel id="dead" typeId="dead"/>
             <channel id="door" typeId="door"/>
             <channel id="electric-current" typeId="electric-current"/>
+            <channel id="energy" typeId="energy"/>
             <channel id="heat" typeId="heat"/>
             <channel id="illuminance" typeId="illuminance"/>
             <channel id="motion" typeId="motion"/>
+            <channel id="power" typeId="power"/>
             <channel id="smoke" typeId="smoke"/>
             <channel id="temperature" typeId="temperature"/>
             <channel id="voltage" typeId="voltage"/>
@@ -66,29 +69,29 @@
     <channel-type id="alarm" advanced="true">
         <item-type>Switch</item-type>
         <label>Alarm</label>
-        <description>Channel to control an alarm such as a siren</description>
+        <description>Controls an alarm such as a siren</description>
         <category>Alarm</category>        
     </channel-type>
 
     <channel-type id="battery" advanced="true">
         <item-type>Number</item-type>
         <label>Battery level</label>
-        <description>Channel to read current battery level (in %) of a device</description>
+        <description>Reads current battery level (in %) of a device</description>
         <category>Battery</category>     
-        <state readOnly="true" min="1" max="100" pattern="%d %%"></state>  
+        <state readOnly="true" min="1" max="100" pattern="%d %%"/>  
     </channel-type>
 
     <channel-type id="dead">
         <item-type>Switch</item-type>
         <label>Dead</label>
-        <description>Channel which holds a z-wave device dead status (i.e. configured but not connected to the controller)</description>
+        <description>Reads device dead status (i.e. device is configured but not reachable from the gateway)</description>
         <state readOnly="true"/>
     </channel-type>
 
     <channel-type id="dimmer" advanced="true">
         <item-type>Dimmer</item-type>
         <label>Dimmer</label>
-        <description>Channel to control a dimmer</description>
+        <description>Controls a dimmer</description>
         <category>DimmableLight</category>
     </channel-type>
 
@@ -102,8 +105,8 @@
 
     <channel-type id="electric-current" advanced="true">
         <item-type>Number</item-type>
-        <label>Electrical current</label>
-        <description>Channel to read the electrical current (in A) of a device</description>
+        <label>Electric current</label>
+        <description>Reads the electric current (in A) of a device</description>
         <category>Energy</category>
         <state readOnly="true" pattern="%.2f A"/>
     </channel-type>    
@@ -111,7 +114,7 @@
     <channel-type id="energy" advanced="true">
         <item-type>Number</item-type>
         <label>Energy</label>
-        <description>Channel which reads the total energy consumption of this device in kWh</description>
+        <description>Reads the total energy consumption (in kWh) of this device</description>
         <category>Energy</category>
         <state readOnly="true" pattern="%.2f kWh"/>
     </channel-type>
@@ -119,7 +122,7 @@
     <channel-type id="heat" advanced="true">
         <item-type>Switch</item-type>
         <label>Heat</label>
-        <description>Reads heat sensor value</description>
+        <description>Reads heat sensor value (from a smoke sensor for example)</description>
         <category>Fire</category>
         <state readOnly="true"/>
     </channel-type>
@@ -127,7 +130,7 @@
     <channel-type id="illuminance" advanced="true">
         <item-type>Number</item-type>
         <label>Illuminance</label>
-        <description>Reads sensor illuminance value in lux</description>
+        <description>Reads the illuminance (in lux) of this device</description>
         <category>Light</category>
         <state readOnly="true" min="0" pattern="%.0f lux"/>
     </channel-type>
@@ -143,7 +146,7 @@
     <channel-type id="power" advanced="true">
         <item-type>Number</item-type>
         <label>Power</label>
-        <description>Channel which reads the current power usage of this device in W</description>
+        <description>Reads the current power usage (in W) of this device</description>
         <category>Energy</category>
         <state readOnly="true" pattern="%.2f W"/>
     </channel-type>
@@ -151,7 +154,7 @@
     <channel-type id="power-outlet" advanced="true">
         <item-type>Switch</item-type>
         <label>Power outlet</label>
-        <description>Channel to control a power outlet</description>
+        <description>Controls a power outlet</description>
         <category>PowerOutlet</category>        
     </channel-type>
 
@@ -166,14 +169,14 @@
     <channel-type id="switch" advanced="true">
         <item-type>Switch</item-type>
         <label>Switch</label>
-        <description>Channel to control a binary switch</description>
+        <description>Controls a binary switch</description>
         <category>Switch</category>        
     </channel-type>
 
     <channel-type id="temperature" advanced="true">
         <item-type>Number</item-type>
         <label>Temperature</label>
-        <description>Channel which reads the current temperature of this device in °C</description>
+        <description>Reads the current temperature (in °C) of this device</description>
         <category>Temperature</category>
         <state readOnly="true" pattern="%.1f °C"/>
     </channel-type>
@@ -189,7 +192,7 @@
     <channel-type id="voltage" advanced="true">
         <item-type>Number</item-type>
         <label>Voltage</label>
-        <description>Channel which reads the current voltage of this device in V</description>
+        <description>Reads the current voltage (in V) of this device</description>
         <category>Energy</category>
         <state readOnly="true" pattern="%.2f V"/>
     </channel-type>
