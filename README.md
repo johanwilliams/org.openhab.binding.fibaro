@@ -170,7 +170,7 @@ Bridge  fibaro:gateway:hc2      [ ipAddress="192.168.1.4", username="admin", pas
     Thing   fibaro:sensor:102    [ id=102 ]
     Thing   fibaro:sensor:104    [ id=104 ]
 }
-
+```
 
 .items file configuration
 ```
@@ -190,5 +190,5 @@ Number  DimmerP_Entrance            "Entrance [%.2f W]"       <energy>          
 Dimmer  Dimmer_Hallway              "Hallway [%s]"            <dimmablelight>    { channel="fibaro:actor:145:dimmer" }
 Number  DimmerE_Hallway             "Hallway [%.2f kWh]"      <energy>           { channel="fibaro:actor:145:energy" }
 Number  DimmerP_Hallway             "Hallway [%.2f W]"        <energy>           { channel="fibaro:actor:145:power" }
-
+```
 
