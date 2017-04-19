@@ -151,24 +151,24 @@ The above channels are easy to add. Information about possible actions and some 
 Bridge  fibaro:gateway:hc2      [ ipAddress="192.168.1.4", username="admin", password="admin", port=9000 ] {
     
     // Temperature sensors
-    Thing   fibaro:sensor:15    [ id=15 ]
-    Thing   fibaro:sensor:20    [ id=20 ]
+    Thing   sensor  15  [ id=15 ]
+    Thing   sensor  20  [ id=20 ]
     
     // Motion sensors
-    Thing   fibaro:sensor:14    [ id=14 ]
-    Thing   fibaro:sensor:19    [ id=19 ]
+    Thing   sensor  14  [ id=14 ]
+    Thing   sensor  19  [ id=19 ]
 
     // Illuminance sensors
-    Thing   fibaro:sensor:16    [ id=16 ]
-    Thing   fibaro:sensor:21    [ id=21 ]
+    Thing   sensor  16  [ id=16 ]
+    Thing   sensor  21  [ id=21 ]
 
     // Dimmers
-    Thing   fibaro:actor:141    [ id=141 ]
-    Thing   fibaro:actor:145    [ id=145 ]
+    Thing   actor   141 [ id=141 ]
+    Thing   actor   145 [ id=145 ]
 
     // Door sensors
-    Thing   fibaro:sensor:102    [ id=102 ]
-    Thing   fibaro:sensor:104    [ id=104 ]
+    Thing   sensor  102 [ id=102 ]
+    Thing   sensor  104 [ id=104 ]
 }
 ```
 
