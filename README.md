@@ -174,21 +174,21 @@ Bridge  fibaro:gateway:hc2      [ ipAddress="192.168.1.4", username="admin", pas
 
 .items file configuration
 ```
-Number  Temperature_Entrance        "Entrance [%.1f °C]"      <temperature>      { channel="fibaro:sensor:15:temperature" }
-Number  Temperature_Hallway         "Hallway [%.1f °C]"       <temperature>      { channel="fibaro:sensor:20:temperature" }
+Number  Temperature_Entrance        "Entrance [%.1f °C]"      <temperature>      { channel="fibaro:sensor:hc2:15:temperature" }
+Number  Temperature_Hallway         "Hallway [%.1f °C]"       <temperature>      { channel="fibaro:sensor:hc2:20:temperature" }
 
-Switch  Motion_Entrance             "Entrance [%s]"           <camera>           { channel="fibaro:sensor:14:motion" }
-Switch  Motion_Hallway              "Hallway [%s]"            <camera>           { channel="fibaro:sensor:19:motion" }
+Switch  Motion_Entrance             "Entrance [%s]"           <camera>           { channel="fibaro:sensor:hc2:14:motion" }
+Switch  Motion_Hallway              "Hallway [%s]"            <camera>           { channel="fibaro:sensor:hc2:19:motion" }
 
-Number  Illuminance_Entrance        "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:16:illuminance" }
-Number  Illuminance_Hallway         "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:21:illuminance" }
+Number  Illuminance_Entrance        "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:hc2:16:illuminance" }
+Number  Illuminance_Hallway         "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:hc2:21:illuminance" }
 
-Dimmer  Dimmer_Entrance             "Entrance [%s]"           <dimmablelight>    { channel="fibaro:actor:141:dimmer" }
-Number  DimmerE_Entrance            "Entrance [%.2f kWh]"     <energy>           { channel="fibaro:actor:141:energy" }
-Number  DimmerP_Entrance            "Entrance [%.2f W]"       <energy>           { channel="fibaro:actor:141:power" }
+Dimmer  Dimmer_Entrance             "Entrance [%s]"           <dimmablelight>    { channel="fibaro:actor:hc2:141:dimmer" }
+Number  DimmerE_Entrance            "Entrance [%.2f kWh]"     <energy>           { channel="fibaro:actor:hc2:141:energy" }
+Number  DimmerP_Entrance            "Entrance [%.2f W]"       <energy>           { channel="fibaro:actor:hc2:141:power" }
 
-Dimmer  Dimmer_Hallway              "Hallway [%s]"            <dimmablelight>    { channel="fibaro:actor:145:dimmer" }
-Number  DimmerE_Hallway             "Hallway [%.2f kWh]"      <energy>           { channel="fibaro:actor:145:energy" }
-Number  DimmerP_Hallway             "Hallway [%.2f W]"        <energy>           { channel="fibaro:actor:145:power" }
+Dimmer  Dimmer_Hallway              "Hallway [%s]"            <dimmablelight>    { channel="fibaro:actor:hc2:145:dimmer" }
+Number  DimmerE_Hallway             "Hallway [%.2f kWh]"      <energy>           { channel="fibaro:actor:hc2:145:energy" }
+Number  DimmerP_Hallway             "Hallway [%.2f W]"        <energy>           { channel="fibaro:actor:hc2:145:power" }
 ```
 
