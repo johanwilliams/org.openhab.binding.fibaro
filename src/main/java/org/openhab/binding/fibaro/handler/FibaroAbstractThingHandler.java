@@ -21,6 +21,7 @@ import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.State;
+import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.fibaro.FibaroBindingConstants;
 import org.openhab.binding.fibaro.FibaroChannel;
 import org.openhab.binding.fibaro.config.FibaroThingConfiguration;
@@ -171,14 +172,14 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
      * @param str String to cast
      * @return the OnOffType state or null if it could not be casted
      */
-    protected OnOffType stringToOnOff(String str) {
+    protected State stringToOnOff(String str) {
         if (str.equals("1") || str.equalsIgnoreCase("true") || str.equalsIgnoreCase("on")) {
             return OnOffType.ON;
         }
         if (str.equals("0") || str.equalsIgnoreCase("false") || str.equalsIgnoreCase("off")) {
             return OnOffType.OFF;
         }
-        return null;
+        return UnDefType.UNDEF;
     }
 
     /**
@@ -187,14 +188,14 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
      * @param str String to cast
      * @return the OpenClosedType state or null if it could not be casted
      */
-    protected OpenClosedType stringToOpenClosed(String str) {
+    protected State stringToOpenClosed(String str) {
         if (str.equals("1") || str.equalsIgnoreCase("true") || str.equalsIgnoreCase("on")) {
             return OpenClosedType.OPEN;
         }
         if (str.equals("0") || str.equalsIgnoreCase("false") || str.equalsIgnoreCase("off")) {
             return OpenClosedType.CLOSED;
         }
-        return null;
+        return UnDefType.UNDEF;
     }
 
     /**
@@ -203,7 +204,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
      * @param str String to cast
      * @return the PercentType state or null if it could not be casted or is not between 0 and 100
      */
-    protected PercentType stringToPercent(String str) {
+    protected State stringToPercent(String str) {
         try {
             int percent = Integer.valueOf(str).intValue();
             if (percent >= 0 && percent <= 100) {
@@ -212,7 +213,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         } catch (NumberFormatException nfe) {
             // Not a integer
         }
-        return null;
+        return UnDefType.UNDEF;
     }
 
     /**
@@ -221,14 +222,14 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
      * @param str String to cast
      * @return the DecimalType state or null if it could not be casted
      */
-    protected DecimalType stringToDecimal(String str) {
+    protected State stringToDecimal(String str) {
         try {
             double decimal = Double.valueOf(str).doubleValue();
             return new DecimalType(decimal);
         } catch (NumberFormatException nfe) {
             // Not a double
         }
-        return null;
+        return UnDefType.UNDEF;
     }
 
     /**
@@ -237,7 +238,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
      * @param str String to cast
      * @return the DateTimeType state or null if it could not be casted
      */
-    protected DateTimeType stringToDateTime(String timeInMs) {
+    protected State stringToDateTime(String timeInMs) {
         try {
             Calendar time = Calendar.getInstance();
             time.setTimeInMillis(Long.valueOf(timeInMs).longValue());
@@ -245,7 +246,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         } catch (NumberFormatException nfe) {
             // Not a double
         }
-        return null;
+        return UnDefType.UNDEF;
 
     }
 
