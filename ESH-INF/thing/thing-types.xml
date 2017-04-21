@@ -96,10 +96,9 @@
     </channel-type>
 
     <channel-type id="door" advanced="true">
-        <item-type>Switch</item-type>
+        <item-type>Contact</item-type>
         <label>Door</label>
         <description>Reads door sensor value</description>
-        <category>Door</category>
         <state readOnly="true"/>
     </channel-type>
 
@@ -198,10 +197,9 @@
     </channel-type>
 
     <channel-type id="window" advanced="true">
-        <item-type>Switch</item-type>
+        <item-type>Contact</item-type>
         <label>Window</label>
         <description>Reads window sensor value</description>
-        <category>Window</category>
         <state readOnly="true"/>
     </channel-type>
     

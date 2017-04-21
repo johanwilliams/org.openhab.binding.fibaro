@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.smarthome.core.library.types.DateTimeType;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.OpenClosedType;
 import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -116,7 +117,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                     updateChannel(channel, stringToPercent(device.getProperties().getValue()));
                     break;
                 case DOOR:
-                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
+                    updateChannel(channel, stringToOpenClosed(device.getProperties().getValue()));
                     break;
                 case ELECTRIC_CURRENT:
                     updateChannel(channel, stringToDecimal(device.getProperties().getValue()));
@@ -155,7 +156,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
                     updateChannel(channel, stringToDecimal(device.getProperties().getValue()));
                     break;
                 case WINDOW:
-                    updateChannel(channel, stringToOnOff(device.getProperties().getValue()));
+                    updateChannel(channel, stringToOpenClosed(device.getProperties().getValue()));
                     break;
                 default:
                     logger.debug("Unknown channel: {}", channelId);
@@ -176,6 +177,22 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         }
         if (str.equals("0") || str.equalsIgnoreCase("false") || str.equalsIgnoreCase("off")) {
             return OnOffType.OFF;
+        }
+        return null;
+    }
+
+    /**
+     * Tries to cast a string to a {@link OpenClosedType}
+     *
+     * @param str String to cast
+     * @return the OpenClosedType state or null if it could not be casted
+     */
+    protected OpenClosedType stringToOpenClosed(String str) {
+        if (str.equals("1") || str.equalsIgnoreCase("true") || str.equalsIgnoreCase("on")) {
+            return OpenClosedType.OPEN;
+        }
+        if (str.equals("0") || str.equalsIgnoreCase("false") || str.equalsIgnoreCase("off")) {
+            return OpenClosedType.CLOSED;
         }
         return null;
     }
