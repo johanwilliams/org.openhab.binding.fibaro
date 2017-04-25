@@ -151,44 +151,44 @@ The above channels are easy to add. Information about possible actions and some 
 Bridge  fibaro:gateway:hc2      [ ipAddress="192.168.1.4", username="admin", password="admin", port=9000 ] {
     
     // Temperature sensors
-    Thing   fibaro:sensor:15    [ id=15 ]
-    Thing   fibaro:sensor:20    [ id=20 ]
+    Thing   sensor  15  [ id=15 ]
+    Thing   sensor  20  [ id=20 ]
     
     // Motion sensors
-    Thing   fibaro:sensor:14    [ id=14 ]
-    Thing   fibaro:sensor:19    [ id=19 ]
+    Thing   sensor  14  [ id=14 ]
+    Thing   sensor  19  [ id=19 ]
 
     // Illuminance sensors
-    Thing   fibaro:sensor:16    [ id=16 ]
-    Thing   fibaro:sensor:21    [ id=21 ]
+    Thing   sensor  16  [ id=16 ]
+    Thing   sensor  21  [ id=21 ]
 
     // Dimmers
-    Thing   fibaro:actor:141    [ id=141 ]
-    Thing   fibaro:actor:145    [ id=145 ]
+    Thing   actor   141 [ id=141 ]
+    Thing   actor   145 [ id=145 ]
 
     // Door sensors
-    Thing   fibaro:sensor:102    [ id=102 ]
-    Thing   fibaro:sensor:104    [ id=104 ]
+    Thing   sensor  102 [ id=102 ]
+    Thing   sensor  104 [ id=104 ]
 }
 ```
 
 .items file configuration
 ```
-Number  Temperature_Entrance        "Entrance [%.1f °C]"      <temperature>      { channel="fibaro:sensor:15:temperature" }
-Number  Temperature_Hallway         "Hallway [%.1f °C]"       <temperature>      { channel="fibaro:sensor:20:temperature" }
+Number  Temperature_Entrance        "Entrance [%.1f °C]"      <temperature>      { channel="fibaro:sensor:hc2:15:temperature" }
+Number  Temperature_Hallway         "Hallway [%.1f °C]"       <temperature>      { channel="fibaro:sensor:hc2:20:temperature" }
 
-Switch  Motion_Entrance             "Entrance [%s]"           <camera>           { channel="fibaro:sensor:14:motion" }
-Switch  Motion_Hallway              "Hallway [%s]"            <camera>           { channel="fibaro:sensor:19:motion" }
+Switch  Motion_Entrance             "Entrance [%s]"           <camera>           { channel="fibaro:sensor:hc2:14:motion" }
+Switch  Motion_Hallway              "Hallway [%s]"            <camera>           { channel="fibaro:sensor:hc2:19:motion" }
 
-Number  Illuminance_Entrance        "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:16:illuminance" }
-Number  Illuminance_Hallway         "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:21:illuminance" }
+Number  Illuminance_Entrance        "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:hc2:16:illuminance" }
+Number  Illuminance_Hallway         "Entrance [%.0f lux]"     <sun>              { channel="fibaro:sensor:hc2:21:illuminance" }
 
-Dimmer  Dimmer_Entrance             "Entrance [%s]"           <dimmablelight>    { channel="fibaro:actor:141:dimmer" }
-Number  DimmerE_Entrance            "Entrance [%.2f kWh]"     <energy>           { channel="fibaro:actor:141:energy" }
-Number  DimmerP_Entrance            "Entrance [%.2f W]"       <energy>           { channel="fibaro:actor:141:power" }
+Dimmer  Dimmer_Entrance             "Entrance [%s]"           <dimmablelight>    { channel="fibaro:actor:hc2:141:dimmer" }
+Number  DimmerE_Entrance            "Entrance [%.2f kWh]"     <energy>           { channel="fibaro:actor:hc2:141:energy" }
+Number  DimmerP_Entrance            "Entrance [%.2f W]"       <energy>           { channel="fibaro:actor:hc2:141:power" }
 
-Dimmer  Dimmer_Hallway              "Hallway [%s]"            <dimmablelight>    { channel="fibaro:actor:145:dimmer" }
-Number  DimmerE_Hallway             "Hallway [%.2f kWh]"      <energy>           { channel="fibaro:actor:145:energy" }
-Number  DimmerP_Hallway             "Hallway [%.2f W]"        <energy>           { channel="fibaro:actor:145:power" }
+Dimmer  Dimmer_Hallway              "Hallway [%s]"            <dimmablelight>    { channel="fibaro:actor:hc2:145:dimmer" }
+Number  DimmerE_Hallway             "Hallway [%.2f kWh]"      <energy>           { channel="fibaro:actor:hc2:145:energy" }
+Number  DimmerP_Hallway             "Hallway [%.2f W]"        <energy>           { channel="fibaro:actor:hc2:145:power" }
 ```
 
