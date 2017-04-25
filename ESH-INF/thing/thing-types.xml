@@ -78,7 +78,7 @@
         <label>Battery level</label>
         <description>Reads current battery level (in %) of a device</description>
         <category>Battery</category>     
-        <state readOnly="true" min="1" max="100" pattern="%d %%"></state>  
+        <state readOnly="true" min="1" max="100" pattern="%d %%"/>  
     </channel-type>
 
     <channel-type id="dead">
