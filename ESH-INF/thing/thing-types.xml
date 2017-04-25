@@ -78,14 +78,14 @@
         <label>Battery level</label>
         <description>Reads current battery level (in %) of a device</description>
         <category>Battery</category>     
-        <state readOnly="true" min="1" max="100" pattern="%d %%"/>  
+        <state readOnly="true" min="1" max="100" pattern="%d %%"></state>  
     </channel-type>
 
     <channel-type id="dead">
         <item-type>Switch</item-type>
         <label>Dead</label>
         <description>Reads device dead status (i.e. device is configured but not reachable from the gateway)</description>
-        <state readOnly="true"/>
+        <state readOnly="true"></state>
     </channel-type>
 
     <channel-type id="dimmer" advanced="true">
@@ -100,7 +100,7 @@
         <label>Door</label>
         <description>Reads door sensor value</description>
         <category>Door</category>
-        <state readOnly="true"/>
+        <state readOnly="true"></state>
     </channel-type>
 
     <channel-type id="electric-current" advanced="true">
@@ -108,7 +108,7 @@
         <label>Electric current</label>
         <description>Reads the electric current (in A) of a device</description>
         <category>Energy</category>
-        <state readOnly="true" pattern="%.2f A"/>
+        <state readOnly="true" pattern="%.2f A"></state>
     </channel-type>    
 
     <channel-type id="energy" advanced="true">
@@ -116,7 +116,7 @@
         <label>Energy</label>
         <description>Reads the total energy consumption (in kWh) of this device</description>
         <category>Energy</category>
-        <state readOnly="true" pattern="%.2f kWh"/>
+        <state readOnly="true" pattern="%.2f kWh"></state>
     </channel-type>
     
     <channel-type id="heat" advanced="true">
@@ -124,7 +124,7 @@
         <label>Heat</label>
         <description>Reads heat sensor value (from a smoke sensor for example)</description>
         <category>Fire</category>
-        <state readOnly="true"/>
+        <state readOnly="true"></state>
     </channel-type>
 
     <channel-type id="illuminance" advanced="true">
@@ -132,7 +132,7 @@
         <label>Illuminance</label>
         <description>Reads the illuminance (in lux) of this device</description>
         <category>Light</category>
-        <state readOnly="true" min="0" pattern="%.0f lux"/>
+        <state readOnly="true" min="0" pattern="%.0f lux"></state>
     </channel-type>
 
     <channel-type id="motion" advanced="true">
@@ -140,7 +140,7 @@
         <label>Motion</label>
         <description>Reads motion sensor value</description>
         <category>Motion</category>
-        <state readOnly="true"/>
+        <state readOnly="true"></state>
     </channel-type>
 
     <channel-type id="power" advanced="true">
@@ -148,7 +148,7 @@
         <label>Power</label>
         <description>Reads the current power usage (in W) of this device</description>
         <category>Energy</category>
-        <state readOnly="true" pattern="%.2f W"/>
+        <state readOnly="true" pattern="%.2f W"></state>
     </channel-type>
     
     <channel-type id="power-outlet" advanced="true">
@@ -163,7 +163,7 @@
         <label>Smoke</label>
         <description>Reads smoke sensor value</description>
         <category>Fire</category>
-        <state readOnly="true"/>
+        <state readOnly="true"></state>
     </channel-type>
     
     <channel-type id="switch" advanced="true">
@@ -178,7 +178,7 @@
         <label>Temperature</label>
         <description>Reads the current temperature (in °C) of this device</description>
         <category>Temperature</category>
-        <state readOnly="true" pattern="%.1f °C"/>
+        <state readOnly="true" pattern="%.1f °C"></state>
     </channel-type>
     
     <channel-type id="thermostat" advanced="true">
@@ -186,7 +186,7 @@
         <label>Thermostat</label>
         <description>Channel to control the temperature in a thermostat device</description>
         <category>Temperature</category>
-        <state pattern="%.1f °C"/>
+        <state pattern="%.1f °C"></state>
     </channel-type>
 
     <channel-type id="voltage" advanced="true">
@@ -194,7 +194,7 @@
         <label>Voltage</label>
         <description>Reads the current voltage (in V) of this device</description>
         <category>Energy</category>
-        <state readOnly="true" pattern="%.2f V"/>
+        <state readOnly="true" pattern="%.2f V"></state>
     </channel-type>
 
     <channel-type id="window" advanced="true">
@@ -202,7 +202,7 @@
         <label>Window</label>
         <description>Reads window sensor value</description>
         <category>Window</category>
-        <state readOnly="true"/>
+        <state readOnly="true"></state>
     </channel-type>
     
 </thing:thing-descriptions>

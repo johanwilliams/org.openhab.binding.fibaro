@@ -124,24 +124,25 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
     @Override
     public void update(FibaroUpdate fibaroUpdate) {
         PropertyName property = PropertyName.fromName(fibaroUpdate.getProperty());
+        String value = fibaroUpdate.getValue();
         switch (property) {
             case BATTERY:
-                updateChannel(FibaroChannel.BATTERY, stringToDecimal(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.BATTERY, stringToDecimal(value));
             case DEAD:
-                updateChannel(FibaroChannel.DEAD, stringToOnOff(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.DEAD, stringToOnOff(value));
                 break;
             case ENERGY:
-                updateChannel(FibaroChannel.ENERGY, stringToDecimal(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.ENERGY, stringToDecimal(value));
                 break;
             case POWER:
-                updateChannel(FibaroChannel.POWER, stringToDecimal(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.POWER, stringToDecimal(value));
                 break;
             case VALUE:
-                updateChannel(FibaroChannel.ALARM, stringToOnOff(fibaroUpdate.getValue()));
-                updateChannel(FibaroChannel.DIMMER, stringToPercent(fibaroUpdate.getValue()));
-                updateChannel(FibaroChannel.POWER_OUTLET, stringToOnOff(fibaroUpdate.getValue()));
-                updateChannel(FibaroChannel.SWITCH, stringToOnOff(fibaroUpdate.getValue()));
-                updateChannel(FibaroChannel.THERMOSTAT, stringToDecimal(fibaroUpdate.getValue()));
+                updateChannel(FibaroChannel.ALARM, stringToOnOff(value));
+                updateChannel(FibaroChannel.DIMMER, stringToPercent(value));
+                updateChannel(FibaroChannel.POWER_OUTLET, stringToOnOff(value));
+                updateChannel(FibaroChannel.SWITCH, stringToOnOff(value));
+                updateChannel(FibaroChannel.THERMOSTAT, stringToDecimal(value));
                 break;
             default:
                 logger.debug("Update received for an unknown property: {}", fibaroUpdate.getProperty());
