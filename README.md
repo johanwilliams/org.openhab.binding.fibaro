@@ -121,7 +121,7 @@ Other channels needs to be enabled based on what type of device it is. So for a 
 |Battery level    |battery          |Reads current battery level (in %) of a device                                          |Number        | X    | X      |
 |Dead             |dead             |Reads device dead status (i.e. device is configured but not reachable from the gateway) |Switch        | X    | X      |
 |Dimmer           |dimmer           |Controls a dimmer                                                                       |Dimmer        | X    |        |
-|Door             |door             |Reads door sensor value                                                                 |Switch        |      | X      |
+|Door             |door             |Reads door sensor value                                                                 |Contact       |      | X      |
 |Electric current |electric-current |Reads the electric current (in A) of a device                                           |Number        |      | X      |
 |Energy           |energy           |Reads the total energy consumption (in kWh) of this device                              |Number        | X    | X      |
 |Heat             |heat             |Reads heat sensor value (from a smoke sensor for example)                               |Switch        |      | X      |
@@ -134,7 +134,7 @@ Other channels needs to be enabled based on what type of device it is. So for a 
 |Temperature      |temperature      |Reads the current temperature (in °C) of this device                                    |Number        |      | X      |
 |Thermostat       |thermostat       |Channel to control the temperature in a thermostat device                               |Number        | X    |        |
 |Voltage          |voltage          |Reads the current voltage (in V) of this device                                         |Number        |      | X      |
-|Window           |window           |Reads window sensor value                                                               |Switch        |      | X      |
+|Window           |window           |Reads window sensor value                                                               |Contact       |      | X      |
 
 ### Not yet supported channels
 |Name             |Id               |Description                                                                             |Item type     |Actor | Sensor |
@@ -190,5 +190,8 @@ Number  DimmerP_Entrance            "Entrance [%.2f W]"       <energy>          
 Dimmer  Dimmer_Hallway              "Hallway [%s]"            <dimmablelight>    { channel="fibaro:actor:hc2:145:dimmer" }
 Number  DimmerE_Hallway             "Hallway [%.2f kWh]"      <energy>           { channel="fibaro:actor:hc2:145:energy" }
 Number  DimmerP_Hallway             "Hallway [%.2f W]"        <energy>           { channel="fibaro:actor:hc2:145:power" }
+
+Contact Door_Entrance               "Entrance [%s]"           <frontdoor>        { channel="fibaro:sensor:hc2:102:door" }
+Contact Door_Garage                 "Garage [%s]"             <garagedoor>       { channel="fibaro:sensor:hc2:104:door" }
 ```
 
