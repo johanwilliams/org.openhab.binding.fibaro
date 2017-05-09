@@ -16,10 +16,10 @@ When the gateway bridge is configured and online your z-wave devices can be adde
  
 ## Gateway Configuration
 
-To setup the Fibaro Gateway bridge you need the configure the following:
+To setup the Fibaro Gateway bridge you need to configure the following:
 * Ip address: The ip address of your Fibaro Home Center 2.
 * Username: Admin username of your Fibaro Home Center 2.
-* Password: Admin username of your Fibaro Home Center 2.
+* Password: Admin password of your Fibaro Home Center 2.
 * Port: Port number to use for the Fibaro communication to push device update to openHab.
 
 Before you start to add other things (actores and/or sensors) make sure the gateway gets initialised and `ONLINE`. Otherwise your other devices will not be able to communicate from/to the Fibaro Home center 2.
@@ -111,7 +111,7 @@ Each device with a unique z-wave id needs to be configured as a thing in the bin
 Not implemented yet
  
 ## Channels
-Since the thing types are very generic (actor or sensor) the binding instead supports a variety of channels to configure for each thing. By default only the `dead` channel is enabled (all devices has this property indicating id the device is accessable from the Fibaro Home Center 2 gateway).
+Since the thing types are very generic (actor or sensor) the binding instead supports a variety of channels to configure for each thing. By default only the `dead` channel is enabled (all devices has this property indicating if the device is accessable from the Fibaro Home Center 2 gateway).
 Other channels needs to be enabled based on what type of device it is. So for a temperature sensor you will need to enable the `temperature` channel. Some devices may also support several channels. An example is the Fibaro switch which can measure power and energy consumption. In this example you can (besides the `dead`channel) enable `switch`, `power`and `energy` channels.
 
 ### Supported channels
@@ -132,7 +132,7 @@ Other channels needs to be enabled based on what type of device it is. So for a 
 |Smoke            |smoke            |Reads smoke sensor value                                                                |Switch        |      | X      |
 |Switch           |switch           |Controls a binary switch                                                                |Switch        | X    |        |
 |Temperature      |temperature      |Reads the current temperature (in °C) of this device                                    |Number        |      | X      |
-|Thermostat       |thermostat       |Channel to control the temperature in a thermostat device                               |Number        | X    |        |
+|Thermostat       |thermostat       |Control the temperature in a thermostat device                                          |Number        | X    |        |
 |Voltage          |voltage          |Reads the current voltage (in V) of this device                                         |Number        |      | X      |
 |Window           |window           |Reads window sensor value                                                               |Contact       |      | X      |
 
