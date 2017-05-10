@@ -30,7 +30,6 @@ import org.openhab.binding.fibaro.config.FibaroGatewayConfiguration;
 import org.openhab.binding.fibaro.internal.InMemoryCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
 import org.openhab.binding.fibaro.internal.model.json.FibaroDevice;
-import org.openhab.binding.fibaro.internal.model.json.FibaroSettings;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
     private InMemoryCache<Integer, FibaroDevice> cache;
     private final int CACHE_EXPIRY = 10; // 10s
-    private final int CACHE_SIZE = 100; // 10s
+    private final int CACHE_SIZE = 500;
 
     private static int TIMEOUT = 5;
     private static HttpClient httpClient = new HttpClient();
@@ -98,11 +97,13 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
             validConfig = false;
         }
 
-        // Make a call to the controller API
-        String url = "http://" + getIpAddress() + "/api/settings/info";
+        // Populate the cache with all devices to avoid spamming the api when all things refresh
+        String url = "http://" + getIpAddress() + "/api/devices";
         try {
-            FibaroSettings settings = callFibaroApi(HttpMethod.GET, url, "", FibaroSettings.class);
-            logger.debug("Successfully connected to the Fibaro gateway " + settings.toString());
+            FibaroDevice[] devices = callFibaroApi(HttpMethod.GET, url, "", FibaroDevice[].class);
+            for (FibaroDevice device : devices) {
+                addToCache(device.getId(), device);
+            }
         } catch (Exception e1) {
             errorMsg = "Failed to connect to the Fibaro gateway through api call '" + url
                     + "'. Please check that username, password and ip is correctly configured.";
