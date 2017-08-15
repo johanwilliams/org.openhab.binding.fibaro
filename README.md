@@ -16,10 +16,10 @@ When the gateway bridge is configured and online your z-wave devices can be adde
  
 ## Gateway Configuration
 
-To setup the Fibaro Gateway bridge you need the configure the following:
+To setup the Fibaro Gateway bridge you need to configure the following:
 * Ip address: The ip address of your Fibaro Home Center 2.
 * Username: Admin username of your Fibaro Home Center 2.
-* Password: Admin username of your Fibaro Home Center 2.
+* Password: Admin password of your Fibaro Home Center 2.
 * Port: Port number to use for the Fibaro communication to push device update to openHab.
 
 Before you start to add other things (actores and/or sensors) make sure the gateway gets initialised and `ONLINE`. Otherwise your other devices will not be able to communicate from/to the Fibaro Home center 2.
@@ -111,7 +111,7 @@ Each device with a unique z-wave id needs to be configured as a thing in the bin
 Not implemented yet
  
 ## Channels
-Since the thing types are very generic (actor or sensor) the binding instead supports a variety of channels to configure for each thing. By default only the `dead` channel is enabled (all devices has this property indicating id the device is accessable from the Fibaro Home Center 2 gateway).
+Since the thing types are very generic (actor or sensor) the binding instead supports a variety of channels to configure for each thing. By default only the `dead` channel is enabled (all devices has this property indicating if the device is accessable from the Fibaro Home Center 2 gateway).
 Other channels needs to be enabled based on what type of device it is. So for a temperature sensor you will need to enable the `temperature` channel. Some devices may also support several channels. An example is the Fibaro switch which can measure power and energy consumption. In this example you can (besides the `dead`channel) enable `switch`, `power`and `energy` channels.
 
 ### Supported channels
@@ -121,7 +121,7 @@ Other channels needs to be enabled based on what type of device it is. So for a 
 |Battery level    |battery          |Reads current battery level (in %) of a device                                          |Number        | X    | X      |
 |Dead             |dead             |Reads device dead status (i.e. device is configured but not reachable from the gateway) |Switch        | X    | X      |
 |Dimmer           |dimmer           |Controls a dimmer                                                                       |Dimmer        | X    |        |
-|Door             |door             |Reads door sensor value                                                                 |Switch        |      | X      |
+|Door             |door             |Reads door sensor value                                                                 |Contact       |      | X      |
 |Electric current |electric-current |Reads the electric current (in A) of a device                                           |Number        |      | X      |
 |Energy           |energy           |Reads the total energy consumption (in kWh) of this device                              |Number        | X    | X      |
 |Heat             |heat             |Reads heat sensor value (from a smoke sensor for example)                               |Switch        |      | X      |
@@ -132,9 +132,9 @@ Other channels needs to be enabled based on what type of device it is. So for a 
 |Smoke            |smoke            |Reads smoke sensor value                                                                |Switch        |      | X      |
 |Switch           |switch           |Controls a binary switch                                                                |Switch        | X    |        |
 |Temperature      |temperature      |Reads the current temperature (in °C) of this device                                    |Number        |      | X      |
-|Thermostat       |thermostat       |Channel to control the temperature in a thermostat device                               |Number        | X    |        |
+|Thermostat       |thermostat       |Control the temperature in a thermostat device                                          |Number        | X    |        |
 |Voltage          |voltage          |Reads the current voltage (in V) of this device                                         |Number        |      | X      |
-|Window           |window           |Reads window sensor value                                                               |Switch        |      | X      |
+|Window           |window           |Reads window sensor value                                                               |Contact       |      | X      |
 
 ### Not yet supported channels
 |Name             |Id               |Description                                                                             |Item type     |Actor | Sensor |
@@ -190,5 +190,8 @@ Number  DimmerP_Entrance            "Entrance [%.2f W]"       <energy>          
 Dimmer  Dimmer_Hallway              "Hallway [%s]"            <dimmablelight>    { channel="fibaro:actor:hc2:145:dimmer" }
 Number  DimmerE_Hallway             "Hallway [%.2f kWh]"      <energy>           { channel="fibaro:actor:hc2:145:energy" }
 Number  DimmerP_Hallway             "Hallway [%.2f W]"        <energy>           { channel="fibaro:actor:hc2:145:power" }
+
+Contact Door_Entrance               "Entrance [%s]"           <frontdoor>        { channel="fibaro:sensor:hc2:102:door" }
+Contact Door_Garage                 "Garage [%s]"             <garagedoor>       { channel="fibaro:sensor:hc2:104:door" }
 ```
 
