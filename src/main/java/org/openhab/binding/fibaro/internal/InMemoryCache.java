@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2010-2017 by the respective copyright holders.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.openhab.binding.fibaro.internal;
 
 import java.util.ArrayList;
@@ -55,7 +63,7 @@ public class InMemoryCache<K, T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "null" })
     public T get(K key) {
         synchronized (crunchifyCacheMap) {
             CacheObject c = (CacheObject) crunchifyCacheMap.get(key);
@@ -91,8 +99,8 @@ public class InMemoryCache<K, T> {
             MapIterator itr = crunchifyCacheMap.mapIterator();
 
             deleteKey = new ArrayList<K>((crunchifyCacheMap.size() / 2) + 1);
-            K key = null;
-            CacheObject c = null;
+            K key;
+            CacheObject c;
 
             while (itr.hasNext()) {
                 key = (K) itr.next();

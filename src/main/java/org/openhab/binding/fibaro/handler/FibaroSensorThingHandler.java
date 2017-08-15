@@ -1,5 +1,6 @@
 /**
- * Copyright (c) 2014-2016 by the respective copyright holders.
+ * Copyright (c) 2010-2017 by the respective copyright holders.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +8,7 @@
  */
 package org.openhab.binding.fibaro.handler;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
@@ -31,14 +33,12 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroSensorThingHandler.class);
 
-    public FibaroSensorThingHandler(Thing thing) {
+    public FibaroSensorThingHandler(@NonNull Thing thing) {
         super(thing);
     }
 
     @Override
     public void initialize() {
-        super.initialize();
-
         try {
             init();
             updateStatus(ThingStatus.ONLINE);
@@ -73,10 +73,10 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
             if (command instanceof RefreshType) {
                 updateChannel(channelUID.getId(), bridge.getDeviceData(id));
             } else {
-                logger.debug("Can't handle command: " + command.toString());
+                logger.debug("Can't handle command: {}", command.toString());
             }
         } catch (Exception e) {
-            logger.debug("Failed to handle command " + command.toString() + " : " + e.getMessage());
+            logger.debug("Failed to handle command {} : {}", command.toString(), e.getMessage());
         }
 
     }

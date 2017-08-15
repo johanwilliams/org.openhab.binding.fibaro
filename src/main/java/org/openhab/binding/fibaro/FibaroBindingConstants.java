@@ -1,5 +1,6 @@
 /**
- * Copyright (c) 2014-2016 by the respective copyright holders.
+ * Copyright (c) 2010-2017 by the respective copyright holders.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,18 +32,18 @@ public class FibaroBindingConstants {
     public static final String THING_ID_SENSOR = "sensor";
 
     // List of all Bridge Thing Type UIDs
-    public final static ThingTypeUID THING_TYPE_BRIDGE_GATEWAY = new ThingTypeUID(BINDING_ID, BRIDGE_ID_GATEWAY);
+    public static final ThingTypeUID THING_TYPE_BRIDGE_GATEWAY = new ThingTypeUID(BINDING_ID, BRIDGE_ID_GATEWAY);
 
     // List of all Thing Type UIDs
-    public final static ThingTypeUID THING_TYPE_ACTOR = new ThingTypeUID(BINDING_ID, THING_ID_ACTOR);
-    public final static ThingTypeUID THING_TYPE_SENSOR = new ThingTypeUID(BINDING_ID, THING_ID_SENSOR);
+    public static final ThingTypeUID THING_TYPE_ACTOR = new ThingTypeUID(BINDING_ID, THING_ID_ACTOR);
+    public static final ThingTypeUID THING_TYPE_SENSOR = new ThingTypeUID(BINDING_ID, THING_ID_SENSOR);
 
     // Set of all supported Thing Type UIDs
-    public final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_GATEWAY,
+    public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(THING_TYPE_BRIDGE_GATEWAY,
             THING_TYPE_ACTOR, THING_TYPE_SENSOR);
 
     // Set of all supported Bridge Type UIDs
-    public final static Set<ThingTypeUID> SUPPORTED_BRIDGE_THING_TYPES_UIDS = ImmutableSet
+    public static final Set<ThingTypeUID> SUPPORTED_BRIDGE_THING_TYPES_UIDS = ImmutableSet
             .of(THING_TYPE_BRIDGE_GATEWAY);
 
 }

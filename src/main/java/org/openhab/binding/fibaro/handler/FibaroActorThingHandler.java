@@ -1,5 +1,6 @@
 /**
- * Copyright (c) 2014-2016 by the respective copyright holders.
+ * Copyright (c) 2010-2017 by the respective copyright holders.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +8,7 @@
  */
 package org.openhab.binding.fibaro.handler;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.IncreaseDecreaseType;
@@ -39,14 +41,12 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroActorThingHandler.class);
 
-    public FibaroActorThingHandler(Thing thing) {
+    public FibaroActorThingHandler(@NonNull Thing thing) {
         super(thing);
     }
 
     @Override
     public void initialize() {
-        super.initialize();
-
         try {
             init();
             updateStatus(ThingStatus.ONLINE);
@@ -85,13 +85,13 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
                 url += command.equals(OnOffType.ON) ? FibaroAction.TURN_ON.getAction()
                         : FibaroAction.TURN_OFF.getAction();
                 FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", FibaroApiResponse.class);
-                logger.debug(apiResponse.toString());
-                // TODO: Check FibaroApiResponse for error codes
+                logger.debug("{}", apiResponse.toString());
+                // TODO Check FibaroApiResponse for error codes
             } else if (command instanceof IncreaseDecreaseType) {
                 url += command.equals(IncreaseDecreaseType.INCREASE) ? FibaroAction.LEVEL_INCREASE.getAction()
                         : FibaroAction.LEVEL_DECREASE.getAction();
                 FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, "", FibaroApiResponse.class);
-                logger.debug(apiResponse.toString());
+                logger.debug("{}", apiResponse.toString());
                 // TODO: Check FibaroApiResponse for error codes
             } else if (command instanceof PercentType) {
                 url += FibaroAction.SET_VALUE.getAction();
@@ -101,7 +101,7 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
                 String content = gson.toJson(arguments);
                 FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, content,
                         FibaroApiResponse.class);
-                logger.debug(apiResponse.toString());
+                logger.debug("{}", apiResponse.toString());
                 // TODO: Check FibaroApiResponse for error codes
             } else if (command instanceof DecimalType) {
                 url += FibaroAction.SET_VALUE.getAction();
@@ -111,13 +111,13 @@ public class FibaroActorThingHandler extends FibaroAbstractThingHandler {
                 String content = gson.toJson(arguments);
                 FibaroApiResponse apiResponse = bridge.callFibaroApi(HttpMethod.POST, url, content,
                         FibaroApiResponse.class);
-                logger.debug(apiResponse.toString());
+                logger.debug("{}", apiResponse.toString());
                 // TODO: Check FibaroApiResponse for error codes
             } else {
-                logger.debug("Can't handle command: " + command.toString());
+                logger.debug("Can't handle command {}", command.toString());
             }
         } catch (Exception e) {
-            logger.debug("Failed to handle command " + command.toString() + " : " + e.getMessage());
+            logger.debug("Failed to handle command {} : {}", command.toString(), e.getMessage());
         }
     }
 

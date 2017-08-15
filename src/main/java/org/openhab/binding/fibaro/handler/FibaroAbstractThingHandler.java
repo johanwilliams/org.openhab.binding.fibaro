@@ -1,5 +1,6 @@
 /**
- * Copyright (c) 2014-2016 by the respective copyright holders.
+ * Copyright (c) 2010-2017 by the respective copyright holders.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.smarthome.core.library.types.DateTimeType;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
@@ -52,7 +54,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     // Reference to the bridge which we need for communication
     protected FibaroGatewayBridgeHandler bridge = null;
 
-    public FibaroAbstractThingHandler(Thing thing) {
+    public FibaroAbstractThingHandler(@NonNull Thing thing) {
         super(thing);
     }
 
@@ -267,7 +269,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     public void channelLinked(ChannelUID channelUID) {
         FibaroChannel channel = FibaroChannel.fromId(channelUID.getId());
         linkedChannels.add(channel);
-        logger.debug("Channel " + channel.toString() + " was linked");
+        logger.debug("Channel {} was linked", channel.toString());
         super.channelLinked(channelUID);
     }
 
@@ -275,7 +277,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
     public void channelUnlinked(ChannelUID channelUID) {
         FibaroChannel channel = FibaroChannel.fromId(channelUID.getId());
         linkedChannels.remove(channel);
-        logger.debug("Channel " + channel.toString() + " was unlinked");
+        logger.debug("Channel  {}  was unlinked", channel.toString());
         super.channelUnlinked(channelUID);
     }
 

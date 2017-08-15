@@ -1,5 +1,6 @@
 /**
- * Copyright (c) 2014-2016 by the respective copyright holders.
+ * Copyright (c) 2010-2017 by the respective copyright holders.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.AuthenticationStore;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -29,6 +31,7 @@ import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.fibaro.config.FibaroGatewayConfiguration;
 import org.openhab.binding.fibaro.internal.InMemoryCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
+import org.openhab.binding.fibaro.internal.exception.FibaroException;
 import org.openhab.binding.fibaro.internal.model.json.FibaroDevice;
 import org.openhab.binding.fibaro.internal.model.json.FibaroSettings;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
@@ -56,7 +59,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
     private final int CACHE_EXPIRY = 10; // 10s
     private final int CACHE_SIZE = 100; // 10s
 
-    private static int TIMEOUT = 5;
+    private static final int TIMEOUT = 5;
     private static HttpClient httpClient = new HttpClient();
     private FibaroServer server;
     private final String REALM = "fibaro";
@@ -64,7 +67,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
     private Map<Integer, FibaroAbstractThingHandler> things;
 
-    public FibaroGatewayBridgeHandler(Bridge bridge) {
+    public FibaroGatewayBridgeHandler(@NonNull Bridge bridge) {
         super(bridge);
         httpClient = new HttpClient();
         gson = new Gson();
@@ -102,7 +105,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
         String url = "http://" + getIpAddress() + "/api/settings/info";
         try {
             FibaroSettings settings = callFibaroApi(HttpMethod.GET, url, "", FibaroSettings.class);
-            logger.debug("Successfully connected to the Fibaro gateway " + settings.toString());
+            logger.debug("Successfully connected to the Fibaro gateway {}", settings.toString());
         } catch (Exception e1) {
             errorMsg = "Failed to connect to the Fibaro gateway through api call '" + url
                     + "'. Please check that username, password and ip is correctly configured.";
@@ -139,10 +142,10 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
     }
 
     public void handleFibaroUpdate(FibaroUpdate fibaroUpdate) {
-        logger.debug(fibaroUpdate.toString());
+        logger.debug("{}", fibaroUpdate.toString());
         FibaroAbstractThingHandler fibaroThingHandler = things.get(fibaroUpdate.getId());
         if (fibaroThingHandler == null) {
-            logger.debug("No thing with id " + fibaroUpdate.getId() + " is configured");
+            logger.debug("No thing with id {} is configured", fibaroUpdate.getId());
         } else {
             fibaroThingHandler.update(fibaroUpdate);
         }
@@ -171,7 +174,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
         try {
             server.stop();
         } catch (Exception e) {
-            logger.debug("Error stopping Fibaro update server " + e.getMessage());
+            logger.debug("Error stopping Fibaro update server {}", e.getMessage());
         }
     }
 
@@ -236,10 +239,10 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
         if (statusCode != HttpStatus.OK_200 && statusCode != HttpStatus.ACCEPTED_202) {
             String statusLine = response.getStatus() + " " + response.getReason();
             logger.debug("Method failed: {}", statusLine);
-            throw new Exception("Method failed: " + statusLine);
+            throw new FibaroException("Method failed: " + statusLine);
         }
 
-        logger.debug(response.getContentAsString());
+        logger.debug("{}", response.getContentAsString());
         return gson.fromJson(response.getContentAsString(), result);
     }
 

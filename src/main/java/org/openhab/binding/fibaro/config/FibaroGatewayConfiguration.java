@@ -1,5 +1,6 @@
 /**
- * Copyright (c) 2014-2016 by the respective copyright holders.
+ * Copyright (c) 2010-2017 by the respective copyright holders.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +16,10 @@ package org.openhab.binding.fibaro.config;
 
 public class FibaroGatewayConfiguration {
 
-    public static String IP_ADDRESS = "Ip address";
-    public static String PORT = "Port";
-    public static String USERNAME = "Username";
-    public static String PASSWORD = "Password";
+    public static final String IP_ADDRESS = "Ip address";
+    public static final String PORT = "Port";
+    public static final String USERNAME = "Username";
+    public static final String PASSWORD = "Password";
 
     /**
      * The IP address of the Fibaro controller
