@@ -21,6 +21,7 @@ public class FibaroDevice {
     private String type;
     private String baseType;
     private boolean enabled;
+    private boolean visible;
     private int parentId;
     private FibaroProperties properties;
     private int created;
@@ -72,6 +73,14 @@ public class FibaroDevice {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     public int getParentId() {

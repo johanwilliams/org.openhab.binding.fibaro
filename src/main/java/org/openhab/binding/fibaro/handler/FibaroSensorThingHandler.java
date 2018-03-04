@@ -15,11 +15,8 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
-import org.openhab.binding.fibaro.FibaroChannel;
 import org.openhab.binding.fibaro.config.FibaroThingConfiguration;
 import org.openhab.binding.fibaro.internal.exception.FibaroConfigurationException;
-import org.openhab.binding.fibaro.internal.model.PropertyName;
-import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Johan Williams - Initial contribution
  */
-public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
+public class FibaroSensorThingHandler extends FibaroAbstractSensorThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroSensorThingHandler.class);
 
@@ -79,41 +76,5 @@ public class FibaroSensorThingHandler extends FibaroAbstractThingHandler {
             logger.debug("Failed to handle command {} : {}", command.toString(), e.getMessage());
         }
 
-    }
-
-    @Override
-    public void update(FibaroUpdate fibaroUpdate) {
-        PropertyName property = PropertyName.fromName(fibaroUpdate.getProperty());
-        String value = fibaroUpdate.getValue();
-        switch (property) {
-            case BATTERY:
-                updateChannel(FibaroChannel.BATTERY, stringToDecimal(value));
-            case DEAD:
-                updateChannel(FibaroChannel.DEAD, stringToOnOff(value));
-                break;
-            case ENERGY:
-                updateChannel(FibaroChannel.ENERGY, stringToDecimal(value));
-                break;
-            case POWER:
-                updateChannel(FibaroChannel.POWER, stringToDecimal(value));
-                break;
-            case VALUE:
-                updateChannel(FibaroChannel.DOOR, stringToOpenClosed(value));
-                updateChannel(FibaroChannel.ELECTRIC_CURRENT, stringToDecimal(value));
-                updateChannel(FibaroChannel.HEAT, stringToOnOff(value));
-                updateChannel(FibaroChannel.ILLUMINANCE, stringToDecimal(value));
-                updateChannel(FibaroChannel.MOTION, stringToOnOff(value));
-                updateChannel(FibaroChannel.SMOKE, stringToOnOff(value));
-                updateChannel(FibaroChannel.TEMPERATURE, stringToDecimal(value));
-                updateChannel(FibaroChannel.VOLTAGE, stringToDecimal(value));
-                updateChannel(FibaroChannel.WINDOW, stringToOpenClosed(value));
-                break;
-            default:
-                logger.debug("Update received for an unknown property: {}", fibaroUpdate.getProperty());
-                break;
-        }
-
-        // Remove this device from the cache as it has been updated
-        bridge.removeFromCache(fibaroUpdate.getId());
     }
 }

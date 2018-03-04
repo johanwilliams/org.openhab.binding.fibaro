@@ -10,7 +10,9 @@ package org.openhab.binding.fibaro.handler;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +31,7 @@ import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.fibaro.config.FibaroGatewayConfiguration;
+import org.openhab.binding.fibaro.internal.FibaroHandlerFactory;
 import org.openhab.binding.fibaro.internal.InMemoryCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
 import org.openhab.binding.fibaro.internal.exception.FibaroException;
@@ -59,6 +62,9 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
     private final int CACHE_SIZE = 500;
 
     private static final int TIMEOUT = 5;
+
+    private List<BridgeStatusListener> listeners = new CopyOnWriteArrayList<BridgeStatusListener>();
+
     private static HttpClient httpClient = new HttpClient();
     private FibaroServer server;
     private final String REALM = "fibaro";
@@ -66,11 +72,15 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
     private Map<Integer, FibaroAbstractThingHandler> things;
 
-    public FibaroGatewayBridgeHandler(@NonNull Bridge bridge) {
+    private FibaroHandlerFactory factory;
+
+    public FibaroGatewayBridgeHandler(@NonNull Bridge bridge, FibaroHandlerFactory factory) {
         super(bridge);
         httpClient = new HttpClient();
         gson = new Gson();
         things = new HashMap<Integer, FibaroAbstractThingHandler>();
+
+        this.factory = factory;
     }
 
     @Override
@@ -126,6 +136,15 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
             updateStatus(ThingStatus.ONLINE);
         } else {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, errorMsg);
+        }
+    }
+
+    @Override
+    protected void updateStatus(ThingStatus status, ThingStatusDetail detail, String comment) {
+        super.updateStatus(status, detail, comment);
+        logger.debug("Updating listeners with status {}", status);
+        for (BridgeStatusListener listener : listeners) {
+            listener.bridgeStatusChanged(status);
         }
     }
 
@@ -247,5 +266,18 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
         return gson.fromJson(response.getContentAsString(), result);
     }
 
+
+    public void addBridgeStatusListener(BridgeStatusListener listener) {
+        listeners.add(listener);
+        listener.bridgeStatusChanged(getThing().getStatus());
+    }
+
+    public void removeBridgeStatusListener(BridgeStatusListener listener) {
+        listeners.remove(listener);
+    }
+
+    public FibaroServer getFibaroServer(){
+        return this.server;
+    }
 
 }

@@ -10,7 +10,12 @@ package org.openhab.binding.fibaro.internal;
 
 import static org.openhab.binding.fibaro.FibaroBindingConstants.SUPPORTED_THING_TYPES_UIDS;
 
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+
 import org.eclipse.smarthome.config.core.Configuration;
+import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
@@ -19,9 +24,13 @@ import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.fibaro.FibaroBindingConstants;
 import org.openhab.binding.fibaro.config.FibaroGatewayConfiguration;
+import org.openhab.binding.fibaro.discovery.FibaroDeviceDiscoveryService;
 import org.openhab.binding.fibaro.handler.FibaroActorThingHandler;
+import org.openhab.binding.fibaro.handler.FibaroDoorSensorThingHandler;
 import org.openhab.binding.fibaro.handler.FibaroGatewayBridgeHandler;
+import org.openhab.binding.fibaro.handler.FibaroMotionSensorThingHandler;
 import org.openhab.binding.fibaro.handler.FibaroSensorThingHandler;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +43,8 @@ import org.slf4j.LoggerFactory;
 public class FibaroHandlerFactory extends BaseThingHandlerFactory {
 
     private Logger logger = LoggerFactory.getLogger(FibaroHandlerFactory.class);
+
+    private Map<ThingUID, ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
     @Override
     public Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
@@ -52,6 +63,16 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
             ThingUID fibaroSensorThingUID = getFibaroSensorUID(thingTypeUID, thingUID, configuration, bridgeUID);
             logger.debug("createThing(): {}: Creating an '{}' type Thing - {}", FibaroBindingConstants.THING_ID_ACTOR,
                     thingTypeUID, fibaroSensorThingUID.getId());
+            return super.createThing(thingTypeUID, configuration, fibaroSensorThingUID, bridgeUID);
+        } else if (FibaroBindingConstants.THING_TYPE_MOTION_SENSOR.equals(thingTypeUID)) {
+            ThingUID fibaroSensorThingUID = getFibaroMotionSensorUID(thingTypeUID, thingUID, configuration, bridgeUID);
+            logger.debug("createThing(): {}: Creating an '{}' type Thing - {}",
+                    FibaroBindingConstants.THING_ID_MOTION_SENSOR, thingTypeUID, fibaroSensorThingUID.getId());
+            return super.createThing(thingTypeUID, configuration, fibaroSensorThingUID, bridgeUID);
+        } else if (FibaroBindingConstants.THING_TYPE_DOOR_SENSOR.equals(thingTypeUID)) {
+            ThingUID fibaroSensorThingUID = getFibaroDoorSensorUID(thingTypeUID, thingUID, configuration, bridgeUID);
+            logger.debug("createThing(): {}: Creating an '{}' type Thing - {}",
+                    FibaroBindingConstants.THING_ID_DOOR_SENSOR, thingTypeUID, fibaroSensorThingUID.getId());
             return super.createThing(thingTypeUID, configuration, fibaroSensorThingUID, bridgeUID);
         }
         throw new IllegalArgumentException(
@@ -115,14 +136,30 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
         return thingUID;
     }
 
+    private ThingUID getFibaroMotionSensorUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
+            ThingUID bridgeUID) {
+        if (thingUID == null) {
+            thingUID = new ThingUID(thingTypeUID, FibaroBindingConstants.THING_ID_MOTION_SENSOR, bridgeUID.getId());
+        }
+        return thingUID;
+    }
+
+    private ThingUID getFibaroDoorSensorUID(ThingTypeUID thingTypeUID, ThingUID thingUID, Configuration configuration,
+            ThingUID bridgeUID) {
+        if (thingUID == null) {
+            thingUID = new ThingUID(thingTypeUID, FibaroBindingConstants.THING_ID_DOOR_SENSOR, bridgeUID.getId());
+        }
+        return thingUID;
+    }
+
     @Override
     protected ThingHandler createHandler(Thing thing) {
 
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
         if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_BRIDGE_GATEWAY)) {
-            FibaroGatewayBridgeHandler handler = new FibaroGatewayBridgeHandler((Bridge) thing);
-            // registerFibaroDiscoveryService(handler);
+            FibaroGatewayBridgeHandler handler = new FibaroGatewayBridgeHandler((Bridge) thing, this);
+            registerFibaroDeviceDiscoveryService(handler);
             logger.debug("createHandler(): {}: ThingHandler created for {}", FibaroBindingConstants.BRIDGE_ID_GATEWAY,
                     thingTypeUID);
             return handler;
@@ -134,9 +171,25 @@ public class FibaroHandlerFactory extends BaseThingHandlerFactory {
             logger.debug("createHandler(): {}: ThingHandler created for {}", FibaroBindingConstants.THING_ID_SENSOR,
                     thingTypeUID);
             return new FibaroSensorThingHandler(thing);
+        } else if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_MOTION_SENSOR)) {
+            logger.debug("createHandler(): {}: ThingHandler created for {}",
+                    FibaroBindingConstants.THING_ID_MOTION_SENSOR, thingTypeUID);
+            return new FibaroMotionSensorThingHandler(thing);
+        } else if (thingTypeUID.equals(FibaroBindingConstants.THING_TYPE_DOOR_SENSOR)) {
+            logger.debug("createHandler(): {}: ThingHandler created for {}",
+                    FibaroBindingConstants.THING_ID_DOOR_SENSOR, thingTypeUID);
+            return new FibaroDoorSensorThingHandler(thing);
         } else {
             logger.debug("createHandler(): ThingHandler not found for {}", thingTypeUID);
             return null;
         }
     }
+
+    private synchronized void registerFibaroDeviceDiscoveryService(FibaroGatewayBridgeHandler fibaroBridgeHandler) {
+        FibaroDeviceDiscoveryService discoveryService = new FibaroDeviceDiscoveryService(fibaroBridgeHandler);
+        this.discoveryServiceRegs.put(fibaroBridgeHandler.getThing().getUID(), bundleContext
+                .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<String, Object>()));
+    }
+
+    // MAKE SOMETHING TO HANDLE CHANNELS
 }

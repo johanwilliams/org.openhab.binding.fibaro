@@ -65,12 +65,70 @@
             
         </config-description>        
     </thing-type>    
+    
+    <!-- Motion Sensor Thing Type -->
+    <thing-type id="motionsensor">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="gateway" />
+        </supported-bridge-type-refs>
+        <label>Motion Sensor</label>
+        <description>A Fibaro Motion Sensor device</description>
+
+        <channels>
+            <channel id="motion" typeId="motion"/>
+            <channel id="alarm" typeId="alarm"/>
+            <channel id="battery" typeId="battery"/>            
+            <channel id="dead" typeId="dead"/>
+                                           
+        </channels>
         
+        <config-description>
+            <parameter name="id" type="integer" min="1" required="true">
+                <label>Device id</label>
+                <description>The z-wave device id on the Fibaro controller</description>
+            </parameter>
+            
+        </config-description>        
+    </thing-type>
+        
+    <!-- Door Sensor Thing Type -->
+    <thing-type id="doorsensor">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="gateway" />
+        </supported-bridge-type-refs>
+        <label>Door Sensor</label>
+        <description>A Fibaro Door Sensor device</description>
+
+        <channels>
+            <channel id="door" typeId="door"/>
+            <channel id="tamper" typeId="tamper"/>
+            <channel id="battery" typeId="battery"/>            
+            <channel id="dead" typeId="dead"/>
+                                           
+        </channels>
+        
+        <config-description>
+            <parameter name="id" type="integer" min="1" required="true">
+                <label>Device id</label>
+                <description>The z-wave device id on the Fibaro controller</description>
+            </parameter>
+            
+        </config-description>        
+    </thing-type>
+    
     <channel-type id="alarm" advanced="true">
         <item-type>Switch</item-type>
         <label>Alarm</label>
         <description>Controls an alarm such as a siren</description>
         <category>Alarm</category>        
+    </channel-type>
+
+    <channel-type id="tamper" advanced="true">
+        <item-type>Switch</item-type>
+        <label>Tamper</label>
+        <description>Controls an alarm such as a siren</description>
+        <category>Tamper</category>
+        <state readOnly="true"></state>       
     </channel-type>
 
     <channel-type id="battery" advanced="true">
@@ -88,11 +146,12 @@
         <state readOnly="true"></state>
     </channel-type>
 
-    <channel-type id="dimmer" advanced="true">
+    <channel-type id="dimmer" advanced="false">
         <item-type>Dimmer</item-type>
         <label>Dimmer</label>
         <description>Controls a dimmer</description>
         <category>DimmableLight</category>
+        
     </channel-type>
 
     <channel-type id="door" advanced="true">

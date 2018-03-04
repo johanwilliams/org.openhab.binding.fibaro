@@ -17,6 +17,7 @@ package org.openhab.binding.fibaro;
 public enum FibaroChannel {
 
     ALARM("alarm"),
+    TAMPER("tamper"),
     BATTERY("battery"),
     BLINDS("blinds"),
     COLOR_LIGHT("color-light"),

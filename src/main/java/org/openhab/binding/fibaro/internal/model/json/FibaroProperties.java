@@ -19,6 +19,7 @@ public class FibaroProperties {
     private String zwaveInfo;
     private String configured;
     private String dead;
+    private String tamper;
     private double energy;
     private double power;
     private String value;
@@ -88,10 +89,19 @@ public class FibaroProperties {
         this.batteryLevel = batteryLevel;
     }
 
+    public String getTamper() {
+        return tamper;
+    }
+
+    public void setTamper(String tamper) {
+        this.tamper = tamper;
+    }
+
     @Override
     public String toString() {
         return "FibaroProperties [zwaveCompany=" + zwaveCompany + ", zwaveInfo=" + zwaveInfo + ", configured="
                 + configured + ", dead=" + dead + ", energy=" + energy + ", power=" + power + ", value=" + value
                 + ", batteryLevel=" + batteryLevel + "]";
     }
+
 }

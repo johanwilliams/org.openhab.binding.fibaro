@@ -48,3 +48,4 @@ Temporary Items
 
 # Maven build files
 target/*
+/target/
