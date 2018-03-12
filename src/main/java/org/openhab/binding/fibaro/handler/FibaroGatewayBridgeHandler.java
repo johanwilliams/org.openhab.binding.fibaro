@@ -12,7 +12,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,18 +28,21 @@ import org.eclipse.jetty.client.util.BasicAuthentication;
 import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.smarthome.core.common.ThreadPoolManager;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.openhab.binding.fibaro.FibaroChannel;
 import org.openhab.binding.fibaro.config.FibaroGatewayConfiguration;
 import org.openhab.binding.fibaro.internal.FibaroHandlerFactory;
 import org.openhab.binding.fibaro.internal.InMemoryCache;
 import org.openhab.binding.fibaro.internal.communicator.server.FibaroServer;
 import org.openhab.binding.fibaro.internal.exception.FibaroException;
 import org.openhab.binding.fibaro.internal.model.json.FibaroDevice;
+import org.openhab.binding.fibaro.internal.model.json.FibaroScene;
 import org.openhab.binding.fibaro.internal.model.json.FibaroUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +59,14 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
     private Logger logger = LoggerFactory.getLogger(FibaroGatewayBridgeHandler.class);
 
-    protected String ipAddress;
+    protected String fibaroIpAddress;
     protected String username;
     protected String password;
     protected int port;
+    protected String ohIpAddress;
+    protected String scriptName;
 
+    // TODO Considder using ExpiringCacheAsync?
     private InMemoryCache<Integer, FibaroDevice> cache;
     private final int CACHE_EXPIRY = 10; // 10s
     private final int CACHE_SIZE = 500;
@@ -74,6 +84,10 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
     private FibaroHandlerFactory factory;
 
+    private ScheduledFuture<?> scriptTask;
+    private Map<Integer, FibaroChannel> channelRegistry = new HashMap<Integer, FibaroChannel>();
+    private final ScheduledExecutorService scheduler = ThreadPoolManager.getScheduledPool("ScriptUpdater");
+
     public FibaroGatewayBridgeHandler(@NonNull Bridge bridge, FibaroHandlerFactory factory) {
         super(bridge);
         httpClient = new HttpClient();
@@ -81,6 +95,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
         things = new HashMap<Integer, FibaroAbstractThingHandler>();
 
         this.factory = factory;
+
     }
 
     @Override
@@ -90,52 +105,131 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
         cache = new InMemoryCache<Integer, FibaroDevice>(CACHE_EXPIRY, 1, CACHE_SIZE);
 
-        boolean validConfig = true;
-        String errorMsg = null;
+        try {
+            validateConfiguration();
 
-        if (StringUtils.trimToNull(ipAddress) == null) {
-            errorMsg = "Parameter '" + FibaroGatewayConfiguration.IP_ADDRESS + "' is mandatory and must be configured";
-            validConfig = false;
+            // Populate the cache with all devices to avoid spamming the api when all things refresh
+            populateDeviceCache();
+
+            // createScene(devices);
+
+            // Start our http server to listen for device updates
+            try {
+                server = new FibaroServer(port, new FibaroServerHandler(this));
+            } catch (Exception e) {
+                throw new FibaroException("Failed to start the server communicating with Fibaro on port " + port);
+            }
+
+            updateStatus(ThingStatus.ONLINE);
+        } catch (FibaroException fe) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, fe.getMessage());
+        }
+
+    }
+
+    private void validateConfiguration() throws FibaroException {
+        if (StringUtils.trimToNull(fibaroIpAddress) == null) {
+            throw new FibaroException(
+                    "Parameter '" + FibaroGatewayConfiguration.IP_ADDRESS + "' is mandatory and must be configured");
         }
         if (port <= 1024 || port > 65535) {
-            errorMsg = "Parameter '" + FibaroGatewayConfiguration.PORT + "' must be between 1025 and 65535";
-            validConfig = false;
+            throw new FibaroException(
+                    "Parameter '" + FibaroGatewayConfiguration.PORT + "' must be between 1025 and 65535");
         }
         if (StringUtils.trimToNull(username) == null) {
-            errorMsg = "Parameter '" + FibaroGatewayConfiguration.USERNAME + "' is mandatory and must be configured";
-            validConfig = false;
+            throw new FibaroException(
+                    "Parameter '" + FibaroGatewayConfiguration.USERNAME + "' is mandatory and must be configured");
         }
         if (StringUtils.trimToNull(password) == null) {
-            errorMsg = "Parameter '" + FibaroGatewayConfiguration.PASSWORD + "' is mandatory and must be configured";
-            validConfig = false;
+            throw new FibaroException(
+                    "Parameter '" + FibaroGatewayConfiguration.PASSWORD + "' is mandatory and must be configured");
         }
+        if (StringUtils.trimToNull(ohIpAddress) == null) {
+            throw new FibaroException(
+                    "Parameter '" + FibaroGatewayConfiguration.OH_IP_ADDRESS + "' is mandatory and must be configured");
+        }
+        // if (StringUtils.trimToNull(scriptName) == null) {
+        // scriptName = "OHBridge";
+        // }
+    }
 
-        // Populate the cache with all devices to avoid spamming the api when all things refresh
-        String url = "http://" + getIpAddress() + "/api/devices";
+    private FibaroDevice[] populateDeviceCache() throws FibaroException {
+        String devicesUrl = "http://" + getIpAddress() + "/api/devices";
+        FibaroDevice[] devices = null;
         try {
-            FibaroDevice[] devices = callFibaroApi(HttpMethod.GET, url, "", FibaroDevice[].class);
+            devices = callFibaroApi(HttpMethod.GET, devicesUrl, "", FibaroDevice[].class);
             for (FibaroDevice device : devices) {
                 addToCache(device.getId(), device);
             }
         } catch (Exception e1) {
-            errorMsg = "Failed to connect to the Fibaro gateway through api call '" + url
-                    + "'. Please check that username, password and ip is correctly configured.";
-            validConfig = false;
+            throw new FibaroException("Failed to connect to the Fibaro gateway through api call '" + devicesUrl
+                    + "'. Please check that username, password and ip is correctly configured.");
         }
+        return devices;
+    }
 
-        // Start our http server to listen for device updates
+    private void createScene(Set<Entry<Integer, FibaroChannel>> channels) throws FibaroException {
+
+        String scenesBaseUrl = "http://" + getIpAddress() + "/api/scenes";
+
         try {
-            server = new FibaroServer(port, new FibaroServerHandler(this));
-        } catch (Exception e) {
-            errorMsg = "Failed to start the server communicating with Fibaro on port " + port;
-            validConfig = false;
-        }
+            /* Create or update OH bridge scene on Fibaro */
+            int sceneId = 0;
 
-        if (validConfig) {
-            // TODO: startAutomaticRefresh();
-            updateStatus(ThingStatus.ONLINE);
-        } else {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, errorMsg);
+            // Get all scenes and find out if it already exists
+            FibaroScene[] scenes = callFibaroApi(HttpMethod.GET, scenesBaseUrl, "", FibaroScene[].class);
+            for (FibaroScene fibaroScene : scenes) {
+                if (scriptName.equals(fibaroScene.getName())) {
+                    sceneId = fibaroScene.getId();
+                    break;
+                }
+            }
+
+            if (sceneId == 0) {
+                // Create new scene stub and set id
+                FibaroScene newScene = callFibaroApi(HttpMethod.POST, scenesBaseUrl,
+                        "{ \"name\": \"" + scriptName + "\"," + "  \"type\": \"com.fibaro.luaScene\" }",
+                        FibaroScene.class);
+                sceneId = newScene.getId();
+            }
+
+            // Call fibaro and set all current values in the scene
+            String luaDevices = "";
+            for (Entry<Integer, FibaroChannel> fibaroChannel : channels) {
+                luaDevices += fibaroChannel.getKey() + " " + fibaroChannel.getValue() + "\\n";
+            }
+
+            String script = "-- Give debug a fancy color\\n" + "function log(message, color) \\n"
+                    + " fibaro:debug(string.format(\\\"<span style = 'color:%s;'>%s</span>\\\", color, message)) \\n"
+                    + "end\\n" + "\\n" + "-- HTTP requests\\n" + "local function request(requestUrl, deviceData) \\n"
+                    + " local http = net.HTTPClient() \\n" + " \\n" + " http:request(requestUrl, { \\n"
+                    + " options = {\\n" + " method = 'PUT',\\n" + " headers = {},\\n" + " data = deviceData \\n"
+                    + " }, \\n" + " success = function (response) \\n"
+                    + " log('OK: ' .. requestUrl .. ' - ' .. deviceData, 'green')\\n" + " end, \\n"
+                    + " error = function (err) \\n"
+                    + " log('FAIL: ' .. requestUrl .. ' - ' .. deviceData '. Error: ' .. err, 'red') \\n" + " end\\n"
+                    + " })\\n" + "end\\n" + "\\n" + "-- MAIN\\n" + "\\n" + "-- Server settings \\n"
+                    + "local openhabIp = '" + ohIpAddress + "'\\n" + "local openhabPort = 9000\\n"
+                    + "local openhabUrl = 'http://' .. openhabIp .. ':' .. openhabPort\\n" + "\\n"
+                    + "-- Info needed in the json request\\n" + "local trigger = fibaro:getSourceTrigger()\\n"
+                    + "local deviceID = trigger['deviceID']\\n" + "local deviceName = fibaro:getName(deviceID)\\n"
+                    + "local propertyName = trigger['propertyName']\\n"
+                    + "local propertyValue = fibaro:getValue(deviceID, propertyName)\\n" + "\\n"
+                    + "-- Assemble the json string\\n" + "jsonTable = {}\\n" + "jsonTable.id = deviceID\\n"
+                    + "jsonTable.name = deviceName\\n" + "jsonTable.property = propertyName\\n"
+                    + "jsonTable.value = propertyValue\\n" + "jsonString = json.encode(jsonTable)\\n" + "\\n"
+                    + "log(jsonString,red)\\n" + "\\n" + "-- Send it!\\n" + "request(openhabUrl, jsonString)";
+
+            String lua = "--[[ \\n" + "%% properties \\n" + luaDevices + "%% globals \\n" + "--]] \\n\\n" + script;
+
+            String content = "{ \"autostart\": true, " + "\"protectedByPIN\": false, " + "\"killable\": true, "
+                    + "\"killOtherInstances\": false, " + "\"maxRunningInstances\": 10, "
+                    + "\"runningManualInstances\": 0, " + "\"visible\": true, " + "\"lua\": \"" + lua + "\"}";
+
+            FibaroScene scc = callFibaroApi(HttpMethod.PUT, scenesBaseUrl + "/" + sceneId, content, FibaroScene.class);
+        } catch (Exception e1) {
+            throw new FibaroException("Failed to connect to the Fibaro gateway through api call '" + scenesBaseUrl
+                    + "'. Please check that username, password and ip is correctly configured.");
         }
     }
 
@@ -150,15 +244,18 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
     private void loadConfiguration() {
         FibaroGatewayConfiguration config = getConfigAs(FibaroGatewayConfiguration.class);
-        ipAddress = config.ipAddress;
+        fibaroIpAddress = config.ipAddress;
         username = config.username;
         password = config.password;
         port = config.port;
+        ohIpAddress = config.ohIpAddress;
+        scriptName = config.scriptName;
 
-        logger.debug("config ipAddress = {}", ipAddress);
+        logger.debug("config ipAddress = {}", fibaroIpAddress);
         logger.debug("config id = {}", port);
         logger.debug("config id = {}", username);
         logger.debug("config id = (omitted from logging)");
+        logger.debug("config id = {}", ohIpAddress);
     }
 
     public void handleFibaroUpdate(FibaroUpdate fibaroUpdate) {
@@ -204,7 +301,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
     }
 
     public String getIpAddress() {
-        return ipAddress;
+        return fibaroIpAddress;
     }
 
     public FibaroDevice getDeviceData(int id) throws Exception {
@@ -256,7 +353,7 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
         int statusCode = response.getStatus();
 
-        if (statusCode != HttpStatus.OK_200 && statusCode != HttpStatus.ACCEPTED_202) {
+        if (statusCode != HttpStatus.OK_200 && statusCode != HttpStatus.CREATED_201 && statusCode != HttpStatus.ACCEPTED_202) {
             String statusLine = response.getStatus() + " " + response.getReason();
             logger.debug("Method failed: {}", statusLine);
             throw new FibaroException("Method failed: " + statusLine);
@@ -278,6 +375,47 @@ public class FibaroGatewayBridgeHandler extends BaseBridgeHandler {
 
     public FibaroServer getFibaroServer(){
         return this.server;
+    }
+
+    public void childThingLinkedToChannel(int id, FibaroChannel channel){
+        channelRegistry.put(Integer.valueOf(id), channel);
+
+        if(scriptTask != null && !scriptTask.isDone()) {
+            logger.debug("ScriptTask is already running. Cancelling");
+            scriptTask.cancel(false);
+        }
+
+        logger.debug("Scheduling new script task to execute in 60 s");
+        scriptTask = scheduler.schedule(() -> {
+            try {
+                logger.debug("Executing scheduled script task.");
+                createScene(channelRegistry.entrySet());
+                logger.debug("Script task done.");
+            }catch(FibaroException fe) {
+
+            }
+        }, 15, TimeUnit.SECONDS);
+
+    }
+
+    public void childThingUnlinkedFromChannel(int id){
+        channelRegistry.remove(Integer.valueOf(id));
+
+        if(scriptTask != null && !scriptTask.isDone()) {
+            logger.debug("ScriptTask is already running. Cancelling");
+            scriptTask.cancel(false);
+        }
+
+        logger.debug("Scheduling new script task to execute in 60 s");
+        scriptTask = scheduler.schedule(() -> {
+            try {
+                logger.debug("Executing scheduled script task.");
+                createScene(channelRegistry.entrySet());
+                logger.debug("Script task done.");
+            }catch(FibaroException fe) {
+
+            }
+        }, 60, TimeUnit.SECONDS);
     }
 
 }

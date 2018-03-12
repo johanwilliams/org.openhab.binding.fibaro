@@ -273,6 +273,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         FibaroChannel channel = FibaroChannel.fromId(channelUID.getId());
         linkedChannels.add(channel);
         logger.debug("Channel {} was linked", channel.toString());
+        bridge.childThingLinkedToChannel(id, channel);
         super.channelLinked(channelUID);
     }
 
@@ -281,6 +282,7 @@ public abstract class FibaroAbstractThingHandler extends BaseThingHandler {
         FibaroChannel channel = FibaroChannel.fromId(channelUID.getId());
         linkedChannels.remove(channel);
         logger.debug("Channel  {}  was unlinked", channel.toString());
+        bridge.childThingUnlinkedFromChannel(id);
         super.channelUnlinked(channelUID);
     }
 

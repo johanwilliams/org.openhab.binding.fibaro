@@ -20,7 +20,8 @@ public class FibaroGatewayConfiguration {
     public static final String PORT = "Port";
     public static final String USERNAME = "Username";
     public static final String PASSWORD = "Password";
-
+    public static final String OH_IP_ADDRESS = "OpenHAB address";
+    public static final String SCRIPT_NAME = "Fibaro script name";
     /**
      * The IP address of the Fibaro controller
      */
@@ -40,5 +41,15 @@ public class FibaroGatewayConfiguration {
      * The admin password of the Fibaro controller
      */
     public String password;
+
+    /**
+     * The IP address of the OpenHAB gateway
+     */
+    public String ohIpAddress;
+
+    /**
+     * The name of the Fibaro side script
+     */
+    public String scriptName;
 
 }

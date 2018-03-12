@@ -1,0 +1,50 @@
+-- Give debug a fancy color
+function log(message, color)
+  fibaro:debug(string.format('<span style="color:%s;">%s</span>', color, message)) 
+end
+
+-- HTTP requests
+local function request(requestUrl, deviceData)
+  local http = net.HTTPClient() 
+  
+  http:request(requestUrl, {
+      options = {
+        method = "PUT",
+        headers = {},
+        data = deviceData
+      },      
+      success = function (response)        
+        log("OK: " .. requestUrl .. " - " .. deviceData, "green")
+      end,
+      error = function (err)        
+        log("FAIL: " .. requestUrl .. " - " .. deviceData ". Error: " .. err, "red")
+      end
+    })
+end
+
+-- MAIN
+
+-- Server settings
+local openhabIp = "192.168.0.108"
+local openhabPort = 9000
+local openhabUrl = "http://" .. openhabIp .. ":" .. openhabPort
+
+-- Info needed in the json request
+local trigger = fibaro:getSourceTrigger()
+local deviceID = trigger['deviceID']
+local deviceName = fibaro:getName(deviceID)
+local propertyName = trigger['propertyName']
+local propertyValue = fibaro:getValue(deviceID, propertyName)
+
+-- Assemble the json string
+jsonTable = {}
+jsonTable.id = deviceID
+jsonTable.name = deviceName
+jsonTable.property = propertyName
+jsonTable.value = propertyValue
+jsonString = json.encode(jsonTable)
+
+log(jsonString,red)
+
+-- Send it!
+request(openhabUrl, jsonString)
