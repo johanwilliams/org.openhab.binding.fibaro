@@ -60,7 +60,7 @@ local function request(requestUrl, deviceData)
         log("OK: " .. requestUrl .. " - " .. deviceData, "green")
       end,
       error = function (err)        
-        log("FAIL: " .. requestUrl .. " - " .. deviceData ". Error: " .. err, "red")
+        log("FAIL: " .. requestUrl .. " - " .. deviceData .. ". Error: " .. err, "red")
       end
     })
 end
